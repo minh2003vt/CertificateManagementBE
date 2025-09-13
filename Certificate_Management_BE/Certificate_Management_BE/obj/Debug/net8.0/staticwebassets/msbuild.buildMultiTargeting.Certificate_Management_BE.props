@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\Certificate_Management_BE.props" />
-</Project>
