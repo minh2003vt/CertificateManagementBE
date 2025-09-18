@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Domain.Enums;
+
+namespace Domain.Entities
+{
+    public class DecisionTemplate
+    {
+        [Key]
+        public string DecisionTemplateId { get; set; } = string.Empty;
+
+        [Required]
+        public string TemplateName { get; set; } = string.Empty;
+
+        [Required]
+        public string TemplateContent { get; set; } = string.Empty;
+
+        [Required]
+        public string Description { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+
+        [ForeignKey("CreatedByUser")]
+        public string CreatedByUserId { get; set; } = string.Empty;
+        public virtual User CreatedByUser { get; set; } = null!;
+
+        [ForeignKey("ApprovedByUser")]
+        public string? ApprovedByUserId { get; set; }
+        public User? ApprovedByUser { get; set; }
+       
+        public DateTime? LastUpdatedAt { get; set; }
+       
+        public TemplateStatus TemplateStatus { get; set; }
+        public virtual ICollection<Decision> Decisions { get; set; } = [];
+    }
+}
