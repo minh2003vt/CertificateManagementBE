@@ -36,11 +36,14 @@ namespace Domain.Entities
         public string SubjectId { get; set; } = string.Empty;
         public virtual Subject Subject { get; set; } = null!;
         public string Notes { get; set; } = string.Empty;
+        [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
         public double AssignmentScore { get; set; }
+        [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
         public double FinalExamScore { get; set; }
         public double? FinalResitScore { get; set; }
+        [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
         public double TotalScore { get; set; }
-        public GradeStatus GradeStatus { get; set; }
+        public GradeStatus GradeStatus { get; set; } = GradeStatus.Pending;
         public string Remarks { get; set; } = string.Empty;
 
         [ForeignKey("GradeUser")]
@@ -49,8 +52,7 @@ namespace Domain.Entities
 
         public DateTime EvaluationDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime UpdateDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public virtual ICollection<Class> Classes { get; set; } = [];
+        public virtual ICollection<ClassTraineeAssignation> ClassTraineeAssignations { get; set; } = [];
         //public virtual Grade Grade { get; set; } = null!;
-
     }
 }

@@ -14,13 +14,16 @@ namespace Domain.Entities
         //[Key]
         //public string AssignmentId { get; set; }
 
+        [Key, Column(Order = 0)]
         [ForeignKey("Subject")]
         public string SubjectId { get; set; } = string.Empty;
         public virtual Subject Subject { get; set; } = null!;
 
+        [Key, Column(Order = 1)]
         [ForeignKey("Instructor")]
         public string InstructorId { get; set; } = string.Empty;
         public virtual User Instructor { get; set; } = null!;
+
         [ForeignKey("AssignedByUser")]
         public string AssignedByUserId { get; set; } = string.Empty;
         public virtual User AssignedByUser { get; set; } = null!;

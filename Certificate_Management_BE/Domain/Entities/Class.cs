@@ -13,10 +13,6 @@ namespace Domain.Entities
         [Key]
         public int ClassId { get; set; }
 
-        [ForeignKey("TraineeAssignation")]
-        public string TraineeAssignId { get; set; } = string.Empty;
-        public virtual TraineeAssignation TraineeAssignation { get; set; } = null!;
-
         [ForeignKey("Instructor")]
         public string InstructorId { get; set; } = string.Empty;
         public virtual User Instructor { get; set; } = null!;
@@ -27,6 +23,7 @@ namespace Domain.Entities
         public DateTime End { get; set; }
 
         public virtual ICollection<AllotedSlot> AllotedSlots { get; set; } = [];
+        public virtual ICollection<ClassTraineeAssignation> ClassTraineeAssignations { get; set; } = [];
 
     }
 }

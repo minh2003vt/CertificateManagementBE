@@ -121,7 +121,7 @@ namespace Domain.Enums
     }
     public enum RequestType
     {
-        NewPlan = 0, NewCourse = 1, UpdateCourse = 2, AssignInstructor = 4, ClassSchedule, DeleteCourse = 18, Complaint = 3, CreateNew = 6, CreateRecurrent = 7, CreateRelearn = 8, CandidateImport = 9, Update = 10, Delete = 11, AssignTrainee = 12, AddTraineeAssignation = 13, CertificateTemplate = 14, DecisionTemplate = 15, SignRequest = 16, Revoke = 17
+        NewPlan = 0, NewCourse = 1, UpdateCourse = 2, AssignInstructor = 4, ClassSchedule = 5, DeleteCourse = 18, Complaint = 3, CreateNew = 6, CreateRecurrent = 7, CreateRelearn = 8, CandidateImport = 9, Update = 10, Delete = 11, AssignTrainee = 12, AddTraineeAssignation = 13, CertificateTemplate = 14, DecisionTemplate = 15, SignRequest = 16, Revoke = 17
     }
     public enum DecisionStatus
     {

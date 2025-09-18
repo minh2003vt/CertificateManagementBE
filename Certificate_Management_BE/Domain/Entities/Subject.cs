@@ -19,8 +19,8 @@ namespace Domain.Entities
         public int Credits { get; set; }
         public double PassingScore { get; set; }
 
-        [ForeignKey("CreatedByUserId")]
-        public string CreatedByUserId { get; set; } = string.Empty;
+        [ForeignKey("CreatedByUser")]
+        public string? CreatedByUserId { get; set; }
         public virtual User? CreatedByUser { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);

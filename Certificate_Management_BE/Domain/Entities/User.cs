@@ -51,7 +51,7 @@ namespace Domain.Entities
         public virtual Department? Department { get; set; }
         public virtual Specialty? Specialty { get; set; }
 
-        public string? AvatarUrl { get; set; } = string.Empty;
+        public string? AvatarUrl { get; set; }
         public virtual ICollection<Class> Classes { get; set; } = [];
         public virtual ICollection<TraineeAssignation> TraineeAssignations { get; set; } = [];
         public virtual ICollection<InstructorAssignation> InstructorAssignations { get; set; } = [];

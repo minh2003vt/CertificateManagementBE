@@ -29,5 +29,6 @@ namespace Domain.Entities
         public DepartmentStatus Status { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime UpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public virtual ICollection<User>? Reports { get; set; }
     }
 }

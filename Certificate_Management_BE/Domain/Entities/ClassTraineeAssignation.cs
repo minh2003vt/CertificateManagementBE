@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class AllotedSlot
+    public class ClassTraineeAssignation
     {
         [Key, Column(Order = 0)]
-        [ForeignKey("Slot")]
-        public int SlotId { get; set; }
-
-        [Key, Column(Order = 1)]
         [ForeignKey("Class")]
         public int ClassId { get; set; }
-        public virtual Slot Slot { get; set; } = null!;
         public virtual Class Class { get; set; } = null!;
+
+        [Key, Column(Order = 1)]
+        [ForeignKey("TraineeAssignation")]
+        public string TraineeAssignationId { get; set; } = string.Empty;
+        public virtual TraineeAssignation TraineeAssignation { get; set; } = null!;
     }
 }

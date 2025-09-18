@@ -32,7 +32,7 @@ namespace Domain.Entities
 
         [ForeignKey("ApprovedByUser")]
         public string? ApprovedByUserId { get; set; }
-        public User? ApprovedByUser { get; set; }
+        public virtual User? ApprovedByUser { get; set; }
        
         public DateTime? LastUpdatedAt { get; set; }
        

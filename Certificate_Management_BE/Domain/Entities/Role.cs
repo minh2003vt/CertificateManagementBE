@@ -14,6 +14,6 @@ namespace Domain.Entities
 
         [Required, MaxLength(50)]
         public string RoleName { get; set; } = string.Empty; // Administrator, Instructor, etc.
-        public virtual ICollection<User> Users { get; set; } = null!;
+        public virtual ICollection<User> Users { get; set; } = [];
     }
 }
