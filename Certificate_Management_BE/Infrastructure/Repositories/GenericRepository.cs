@@ -65,6 +65,13 @@ namespace Infrastructure.Repositories
             predicate ??= p => true;
             return await _context.Set<T>().CountAsync(predicate);
         }
+
+        public async Task AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task UpdateAsync(T entity)
         {
             _context.Set<T>().Update(entity);
