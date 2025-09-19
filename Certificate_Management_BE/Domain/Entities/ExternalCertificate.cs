@@ -29,7 +29,7 @@ namespace Domain.Entities
         public DateTime VerifyDate { get; set; }
         public VerificationStatus VerificationStatus { get; set; }
         [Required]
-        public string CertificateFileURL { get; set; } = string.Empty;// Path to uploaded file
+        public string CertificateFileUrl { get; set; } = string.Empty;// Path to uploaded file
         public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
     }
 }

@@ -40,6 +40,7 @@ namespace Domain.Entities
         public double AssignmentScore { get; set; }
         [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
         public double FinalExamScore { get; set; }
+        [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
         public double? FinalResitScore { get; set; }
         [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
         public double TotalScore { get; set; }
@@ -47,8 +48,8 @@ namespace Domain.Entities
         public string Remarks { get; set; } = string.Empty;
 
         [ForeignKey("GradeUser")]
-        public string GradedByInstructorId { get; set; } = string.Empty;
-        public virtual User GradedByInstructor { get; set; } = null!;
+        public string? GradedByInstructorId { get; set; }
+        public virtual User? GradedByInstructor { get; set; }
 
         public DateTime EvaluationDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime UpdateDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);

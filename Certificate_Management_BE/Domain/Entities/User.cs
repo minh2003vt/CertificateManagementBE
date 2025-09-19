@@ -40,7 +40,7 @@ namespace Domain.Entities
 
         [ForeignKey("Department")]
         public string? DepartmentId { get; set; }
-        public bool IsAssign {  get; set; } = false;
+        //public bool IsAssign { get; set; } = false;
         public AccountStatus Status { get; set; } = AccountStatus.Active;
 
         public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
@@ -61,5 +61,7 @@ namespace Domain.Entities
         public virtual ICollection<Report> Reports { get; set; } = [];
         public virtual ICollection<Request> Requests { get; set; } = [];
         public virtual ICollection<ExternalCertificate>? ExternalCertificates { get; set; }
+        public virtual ICollection<Certificate> Certificates { get; set; } = [];
+        public virtual ICollection<Decision> Decisions { get; set; } = [];
     }
 }

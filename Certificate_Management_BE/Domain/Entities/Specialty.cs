@@ -24,14 +24,15 @@ namespace Domain.Entities
 
         [ForeignKey("CreatedByUser")]
         public string? CreatedByUserId { get; set; }
+        public virtual User? CreatedByUser { get; set; }
 
         [ForeignKey("UpdatedByUser")]
         public string? UpdatedByUserId { get; set; }
+        public virtual User? UpdatedByUser { get; set; }
 
         public int Status { get; set; } = 1;
-        public virtual User? CreatedByUser { get; set; }
-        public virtual User? UpdatedByUser { get; set; }
         public virtual ICollection<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; } = [];
         public virtual ICollection<User> Users { get; set; } = [];
+        public virtual ICollection<Department> Departments { get; set; } = [];
     }
 }

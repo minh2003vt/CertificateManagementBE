@@ -37,12 +37,15 @@ namespace Domain.Entities
 
         public DateTime SignDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime? ExpirationDate { get; set; }
-        public string CertificateURL { get; set; } = string.Empty;
-        public bool IsRevoked { get; set; } = false;
+        public string CertificateUrl { get; set; } = string.Empty;
         public string? RevocationReason { get; set; }
         public DateTime? RevocationDate { get; set; }
         public bool IncludesRelearn { get; set; } = false;
         public string? RelearnSubjects { get; set; }
+        public virtual PlanCertificate? PlanCertificate { get; set; }
+        public virtual SubjectCertificate? SubjectCertificate { get; set; }
+        public virtual CourseCertificate? CourseCertificate { get; set; }
+        public virtual ICollection<Decision> Decisions { get; set; } = [];
 
     }
 }

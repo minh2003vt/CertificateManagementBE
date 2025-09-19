@@ -49,8 +49,8 @@ namespace Domain.Enums
     public enum CourseLevel
     {
         Initial = 0,
-        Relearn = 2,
         Recurrent = 1,
+        Relearn = 2,
         Professional = 3
     }
 
@@ -121,7 +121,40 @@ namespace Domain.Enums
     }
     public enum RequestType
     {
-        NewPlan = 0, NewCourse = 1, UpdateCourse = 2, AssignInstructor = 4, ClassSchedule = 5, DeleteCourse = 18, Complaint = 3, CreateNew = 6, CreateRecurrent = 7, CreateRelearn = 8, CandidateImport = 9, Update = 10, Delete = 11, AssignTrainee = 12, AddTraineeAssignation = 13, CertificateTemplate = 14, DecisionTemplate = 15, SignRequest = 16, Revoke = 17
+        // Plan Management
+        NewPlan = 0,
+
+        // Course Management
+        NewCourse = 1,
+        UpdateCourse = 2,
+        DeleteCourse = 3,
+
+        // Instructor Management
+        AssignInstructor = 4,
+
+        // Class Management
+        ClassSchedule = 5,
+
+        // Trainee Management
+        AssignTrainee = 6,
+        AddTraineeAssignation = 7,
+
+        // Template Management
+        CertificateTemplate = 8,
+        DecisionTemplate = 9,
+
+        // Creation Types
+        CreateNew = 10,
+        CreateRecurrent = 11,
+        CreateRelearn = 12,
+        CandidateImport = 13,
+
+        // General Actions
+        Complaint = 14,
+        Update = 15,
+        Delete = 16,
+        SignRequest = 17,
+        Revoke = 18
     }
     public enum DecisionStatus
     {
