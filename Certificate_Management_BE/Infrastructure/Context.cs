@@ -207,13 +207,13 @@ namespace Infrastructure
                 .HasOne(t => t.AssignedByUser)
                 .WithMany()
                 .HasForeignKey(t => t.AssignedByUserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<TraineeAssignation>()
                 .HasOne(t => t.ApprovedByUser)
                 .WithMany()
                 .HasForeignKey(t => t.ApprovedByUserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<TraineeAssignation>()
                 .HasOne(t => t.Request)
@@ -231,7 +231,7 @@ namespace Infrastructure
                 .HasOne(t => t.GradedByInstructor)
                 .WithMany()
                 .HasForeignKey(t => t.GradedByInstructorId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<InstructorAssignation>()
                 .HasOne(i => i.Subject)
