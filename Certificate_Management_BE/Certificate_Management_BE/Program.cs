@@ -24,11 +24,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
 builder.Services.AddDbContext<Context>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-    npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+    sqlOptions => sqlOptions.EnableRetryOnFailure(
         maxRetryCount: 5,
         maxRetryDelay: TimeSpan.FromSeconds(30),
-        errorCodesToAdd: null)));
+        errorNumbersToAdd: null)));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -40,7 +40,7 @@ builder.Services.AddAuthentication(options =>
             .AddJwtBearer(options =>
             {
                 IConfiguration config = builder.Configuration; // Correct way to access the configuration
-                var secretKey = config["JWTSection:SecretKey"];
+                var secretKey = config["Jwt:Key"];
 
                 // Check if secretKey is null or empty
                 if (string.IsNullOrWhiteSpace(secretKey))
@@ -55,8 +55,8 @@ builder.Services.AddAuthentication(options =>
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
 
-                    ValidIssuer = config["JWTSection:Issuer"],
-                    ValidAudience = config["JWTSection:Audience"],
+                    ValidIssuer = config["Jwt:Issuer"],
+                    ValidAudience = config["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
                 };
                 options.Events = new JwtBearerEvents
