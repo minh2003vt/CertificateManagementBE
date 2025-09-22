@@ -19,13 +19,11 @@ namespace Application.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtTokenHelper _jwtTokenHelper;
 
-        public AuthenticationService(IUserRepository userRepository, IUnitOfWork unitOfWork, JwtTokenHelper jwtTokenHelper)
+        public AuthenticationService(IUnitOfWork unitOfWork, JwtTokenHelper jwtTokenHelper)
         {
-            _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _jwtTokenHelper = jwtTokenHelper;
         }
@@ -46,7 +44,7 @@ namespace Application.Services
                     return response;
                 }
 
-                var user = await _userRepository.GetSingleOrDefaultByNullableExpressionAsNoTrackingAsync(u => u.Username.Equals(loginModel.Username, StringComparison.OrdinalIgnoreCase));
+                var user = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsNoTrackingAsync(u => u.Username.Equals(loginModel.Username, StringComparison.OrdinalIgnoreCase));
 
                 if (user == null || !PasswordHashHelper.VerifyPassword(loginModel.Password, user.PasswordHash))
                 {
