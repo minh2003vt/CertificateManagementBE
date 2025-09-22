@@ -22,7 +22,6 @@ namespace Domain.Entities
         [Required]
         public DateTime End { get; set; }
 
-        public virtual ICollection<AllotedSlot> AllotedSlots { get; set; } = [];
         public virtual ICollection<ClassTraineeAssignation> ClassTraineeAssignations { get; set; } = [];
 
     }

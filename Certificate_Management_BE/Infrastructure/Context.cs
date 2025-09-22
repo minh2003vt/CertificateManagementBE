@@ -25,8 +25,6 @@ namespace Infrastructure
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Class> Classes { get; set; }
-        public DbSet<Slot> Slots { get; set; }
-        public DbSet<AllotedSlot> AllotedSlots { get; set; }
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<CertificateTemplate> CertificateTemplates { get; set; }
         public DbSet<Decision> Decisions { get; set; }
@@ -52,8 +50,7 @@ namespace Infrastructure
             base.OnModelCreating(modelBuilder);
 
             // Configure composite keys
-            modelBuilder.Entity<AllotedSlot>()
-                .HasKey(e => new { e.SlotId, e.ClassId });
+            // Removed: AllotedSlot composite key (entity deleted)
 
             modelBuilder.Entity<ClassTraineeAssignation>()
                 .HasKey(e => new { e.ClassId, e.TraineeAssignationId });
@@ -119,17 +116,7 @@ namespace Infrastructure
                 .HasForeignKey(c => c.InstructorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<AllotedSlot>()
-                .HasOne(a => a.Slot)
-                .WithMany(s => s.AllotedSlots)
-                .HasForeignKey(a => a.SlotId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AllotedSlot>()
-                .HasOne(a => a.Class)
-                .WithMany(c => c.AllotedSlots)
-                .HasForeignKey(a => a.ClassId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // Removed: AllotedSlot relations (entity deleted)
 
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.User)
