@@ -62,7 +62,10 @@ namespace Domain.Entities
         public virtual ICollection<Request> Requests { get; set; } = [];
         public virtual ICollection<Request>? ApprovedRequests { get; set; }
         public virtual ICollection<ExternalCertificate>? ExternalCertificates { get; set; }
+        public virtual ICollection<Department>? ManagedDepartments { get; set; }
         public virtual ICollection<Certificate> Certificates { get; set; } = [];
+        public virtual ICollection<Certificate>? IssuedCertificates { get; set; }
+        public virtual ICollection<Certificate>? ApprovedCertificates { get; set; }
         public virtual ICollection<Decision> Decisions { get; set; } = [];
     }
 }

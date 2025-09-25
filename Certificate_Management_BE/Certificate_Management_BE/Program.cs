@@ -25,9 +25,18 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
 builder.Services.AddDbContext<Context>(options =>
- {
-     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
- });
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseNpgsql(connectionString, npgsqlOptions =>
+    {
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 3,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorCodesToAdd: null);
+    });
+    options.EnableSensitiveDataLogging(builder.Environment.IsDevelopment());
+    options.EnableDetailedErrors(builder.Environment.IsDevelopment());
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
