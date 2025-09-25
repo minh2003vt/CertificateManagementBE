@@ -21,12 +21,7 @@ namespace Domain.Entities
         [ForeignKey("User")]
         public string? UserId { get; set; }
         public virtual User? User { get; set; }
-
-        [ForeignKey("VerifiedByUser")]
-        public string? VerifiedByUserId { get; set; }
-        public virtual User? VerifiedByUser { get; set; }
-        public DateTime IssueDate { get; set; }
-        public DateTime VerifyDate { get; set; }
+        public DateTime IssueDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public VerificationStatus VerificationStatus { get; set; }
         [Required]
         public string CertificateFileUrl { get; set; } = string.Empty;// Path to uploaded file

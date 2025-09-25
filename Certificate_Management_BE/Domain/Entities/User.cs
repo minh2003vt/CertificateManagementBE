@@ -60,6 +60,7 @@ namespace Domain.Entities
         public virtual ICollection<Notification> Notifications { get; set; } = [];
         public virtual ICollection<Report> Reports { get; set; } = [];
         public virtual ICollection<Request> Requests { get; set; } = [];
+        public virtual ICollection<Request>? ApprovedRequests { get; set; }
         public virtual ICollection<ExternalCertificate>? ExternalCertificates { get; set; }
         public virtual ICollection<Certificate> Certificates { get; set; } = [];
         public virtual ICollection<Decision> Decisions { get; set; } = [];

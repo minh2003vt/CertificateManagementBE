@@ -17,7 +17,6 @@ namespace Infrastructure
         {
         }
 
-        // Entity DbSets
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Department> Departments { get; set; }
@@ -48,9 +47,6 @@ namespace Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Configure composite keys
-            // Removed: AllotedSlot composite key (entity deleted)
 
             modelBuilder.Entity<ClassTraineeAssignation>()
                 .HasKey(e => new { e.ClassId, e.TraineeAssignationId });
@@ -116,13 +112,11 @@ namespace Infrastructure
                 .HasForeignKey(c => c.InstructorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Removed: AllotedSlot relations (entity deleted)
-
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.User)
-                .WithMany(u => u.Certificates) // Note: This navigation property wasn't in your original model but is needed
+                .WithMany(u => u.Certificates)
                 .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.CertificateTemplate)
@@ -162,7 +156,7 @@ namespace Infrastructure
 
             modelBuilder.Entity<Decision>()
                 .HasOne(d => d.Certificate)
-                .WithMany(c => c.Decisions) // Note: This navigation property wasn't in your original model but is needed
+                .WithMany(c => c.Decisions)
                 .HasForeignKey(d => d.CertificateId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -286,21 +280,21 @@ namespace Infrastructure
                 .HasForeignKey(ec => ec.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ExternalCertificate>()
-                .HasOne(ec => ec.VerifiedByUser)
-                .WithMany()
-                .HasForeignKey(ec => ec.VerifiedByUserId)
-                .OnDelete(DeleteBehavior.SetNull);
-
             modelBuilder.Entity<Request>()
                 .HasOne(r => r.RequestUser)
                 .WithMany(u => u.Requests)
                 .HasForeignKey(r => r.RequestUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Requests)
+                .WithOne(r => r.RequestUser)
+                .HasForeignKey(r => r.RequestUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Request>()
                 .HasOne(r => r.ApprovedByUser)
-                .WithMany()
+                .WithMany(u => u.ApprovedRequests)
                 .HasForeignKey(r => r.ApprovedByUserId)
                 .OnDelete(DeleteBehavior.SetNull);
 
@@ -333,6 +327,12 @@ namespace Infrastructure
                 .WithMany(u => u.Sessions)
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Sessions)
+                .WithOne(s => s.User)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configure enum conversions
             modelBuilder.Entity<User>()
