@@ -5,6 +5,7 @@ using Application.IServices;
 using Application.Services;
 using Infrastructure;
 using Infrastructure.Repositories;
+using Infrastructure.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -156,5 +157,12 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Runtime seeding
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<Context>();
+    await DataSeeder.SeedAsync(db);
+}
 
 app.Run();

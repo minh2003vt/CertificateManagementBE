@@ -29,10 +29,9 @@ namespace Domain.Entities
         [ForeignKey("UpdatedByUser")]
         public string? UpdatedByUserId { get; set; }
         public virtual User? UpdatedByUser { get; set; }
+        public virtual ICollection<UserSpecialty> UserSpecialties { get; set; } = [];
 
-        public int Status { get; set; } = 1;
         public virtual ICollection<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; } = [];
-        public virtual ICollection<User> Users { get; set; } = [];
         public virtual ICollection<Department> Departments { get; set; } = [];
     }
 }
