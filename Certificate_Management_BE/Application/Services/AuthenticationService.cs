@@ -21,7 +21,6 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtTokenHelper _jwtTokenHelper;
-
         public AuthenticationService(IUnitOfWork unitOfWork, JwtTokenHelper jwtTokenHelper)
         {
             _unitOfWork = unitOfWork;
@@ -43,9 +42,7 @@ namespace Application.Services
                     response.Message = string.Join("; ", errorMessages);
                     return response;
                 }
-
-                var user = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsNoTrackingAsync(u => u.Username.Equals(loginModel.Username, StringComparison.OrdinalIgnoreCase));
-
+                var user = await _unitOfWork.UserRepository.GetByUsernameAsync(loginModel.Username);
                 if (user == null || !PasswordHashHelper.VerifyPassword(loginModel.Password, user.PasswordHash))
                 {
                     response.Success = false;

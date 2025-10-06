@@ -13,6 +13,7 @@ namespace Domain.Entities
     {
         [Key]
         public string RequestId { get; set; } = string.Empty;
+
         [ForeignKey("RequestUser")]
         public string RequestUserId { get; set; } = string.Empty;
         public virtual User RequestUser { get; set; } = null!;
@@ -24,7 +25,7 @@ namespace Domain.Entities
         public RequestStatus Status { get; set; }
 
         [ForeignKey("ApprovedByUser")]
-        public string? ApprovedByUserId { get; set; } // Nullable, only set if approved
+        public string? ApprovedByUserId { get; set; }
         public virtual User? ApprovedByUser { get; set; }
         public DateTime? ApprovedDate { get; set; }
 

@@ -24,8 +24,8 @@ namespace Domain.Entities
         public virtual CertificateTemplate CertificateTemplate { get; set; } = null!;
 
         [ForeignKey("IssuedByUser")]
-        public string IssuedByUserId { get; set; } = string.Empty;
-        public virtual User IssuedByUser { get; set; } = null!;
+        public string? IssuedByUserId { get; set; }
+        public virtual User? IssuedByUser { get; set; }
 
         public DateTime IssueDate { get; set; }
 

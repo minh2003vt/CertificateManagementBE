@@ -33,7 +33,7 @@ namespace Domain.Entities
 
         //public ICollection<Class> Classes { get; set; } = [];
         public virtual ICollection<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; } = [];
-        public virtual ICollection<PlanCourse> PlanCourses { get; set; } = [];
+        public virtual ICollection<StudyRecord> StudyRecords { get; set; } = [];
         public virtual ICollection<CourseCertificate> CourseCertificates { get; set; } = [];
     }
 }

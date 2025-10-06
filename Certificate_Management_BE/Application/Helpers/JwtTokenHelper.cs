@@ -22,9 +22,9 @@ namespace Application.Helpers
         public JwtTokenHelper(IConfiguration configuration)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _secretKey = _configuration["JwtSettings:SecretKey"];
-            _issuer = _configuration["JwtSettings:Issuer"];
-            _audience = _configuration["JwtSettings:Audience"];
+            _secretKey = _configuration["Jwt:Key"];
+            _issuer = _configuration["Jwt:Issuer"];
+            _audience = _configuration["Jwt:Audience"];
         }
 
         public string GenerateToken(User user, IList<string> roles)

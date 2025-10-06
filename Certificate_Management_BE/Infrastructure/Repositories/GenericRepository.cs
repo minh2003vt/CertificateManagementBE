@@ -24,7 +24,6 @@ namespace Infrastructure.Repositories
         {
             return await _context.Set<T>().ToListAsync();
         }
-
         public async Task<T?> GetSingleOrDefaultByNullableExpressionAsync(Expression<Func<T, bool>>? predicate = null)
         {
             if (predicate == null)
