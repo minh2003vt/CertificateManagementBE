@@ -11,7 +11,6 @@ namespace Application
     {
         public IUserRepository UserRepository { get; }
         public ISessionRepository SessionRepository { get; }
-        public IAuditLogRepository AuditLogRepository { get; }
         public ICertificateRepository CertificateRepository { get; }
         public ICertificateTemplateRepository CertificateTemplateRepository { get; }
         public IClassRepository ClassRepository { get; }
@@ -27,7 +26,7 @@ namespace Application
         public INotificationRepository NotificationRepository { get; }
         public IPlanRepository PlanRepository { get; }
         public IPlanCertificateRepository PlanCertificateRepository { get; }
-        public IPlanCourseRepository PlanCourseRepository { get; }
+        public IStudyRecordRepository PlanCourseRepository { get; }
         public IReportRepository ReportRepository { get; }
         public IRequestRepository RequestRepository { get; }
         public IRoleRepository RoleRepository { get; }

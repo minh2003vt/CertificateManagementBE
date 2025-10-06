@@ -7,23 +7,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Plans",
-                columns: table => new
-                {
-                    PlanId = table.Column<string>(type: "text", nullable: false),
-                    PlanName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Plans", x => x.PlanId);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -35,23 +23,6 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.RoleId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AuditLogs",
-                columns: table => new
-                {
-                    AuditLogId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    SessionId = table.Column<string>(type: "text", nullable: false),
-                    Action = table.Column<string>(type: "text", nullable: false),
-                    ActionDetails = table.Column<string>(type: "text", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AuditLogs", x => x.AuditLogId);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,30 +48,6 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Certificates", x => x.CertificateId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PlanCertificates",
-                columns: table => new
-                {
-                    CertificateId = table.Column<string>(type: "text", nullable: false),
-                    PlanId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlanCertificates", x => new { x.CertificateId, x.PlanId });
-                    table.ForeignKey(
-                        name: "FK_PlanCertificates_Certificates_CertificateId",
-                        column: x => x.CertificateId,
-                        principalTable: "Certificates",
-                        principalColumn: "CertificateId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PlanCertificates_Plans_PlanId",
-                        column: x => x.PlanId,
-                        principalTable: "Plans",
-                        principalColumn: "PlanId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -192,30 +139,6 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.CourseId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PlanCourses",
-                columns: table => new
-                {
-                    CourseId = table.Column<string>(type: "text", nullable: false),
-                    PlanId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlanCourses", x => new { x.CourseId, x.PlanId });
-                    table.ForeignKey(
-                        name: "FK_PlanCourses_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "CourseId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PlanCourses_Plans_PlanId",
-                        column: x => x.PlanId,
-                        principalTable: "Plans",
-                        principalColumn: "PlanId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -313,7 +236,7 @@ namespace Infrastructure.Migrations
                     IssuingOrganization = table.Column<string>(type: "text", nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: true),
                     IssueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    VerificationStatus = table.Column<string>(type: "text", nullable: false),
+                    Exp_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CertificateFileUrl = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
                 },
@@ -354,6 +277,42 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Notifications", x => x.NotificationId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlanCertificates",
+                columns: table => new
+                {
+                    CertificateId = table.Column<string>(type: "text", nullable: false),
+                    PlanId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlanCertificates", x => new { x.CertificateId, x.PlanId });
+                    table.ForeignKey(
+                        name: "FK_PlanCertificates_Certificates_CertificateId",
+                        column: x => x.CertificateId,
+                        principalTable: "Certificates",
+                        principalColumn: "CertificateId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Plans",
+                columns: table => new
+                {
+                    PlanId = table.Column<string>(type: "text", nullable: false),
+                    PlanName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
+                    CreatedByUserId = table.Column<string>(type: "text", nullable: true),
+                    SpecialtyId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plans", x => x.PlanId);
                 });
 
             migrationBuilder.CreateTable(
@@ -442,15 +401,15 @@ namespace Infrastructure.Migrations
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
+                    CitizenId = table.Column<string>(type: "text", nullable: false),
                     RoleId = table.Column<int>(type: "integer", nullable: false),
-                    SpecialtyId = table.Column<string>(type: "text", nullable: true),
-                    PlanId = table.Column<string>(type: "text", nullable: true),
                     DepartmentId = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
                     LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    AvatarUrl = table.Column<string>(type: "text", nullable: true)
+                    AvatarUrl = table.Column<string>(type: "text", nullable: true),
+                    SpecialtyId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -462,12 +421,6 @@ namespace Infrastructure.Migrations
                         principalColumn: "DepartmentId",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_Users_Plans_PlanId",
-                        column: x => x.PlanId,
-                        principalTable: "Plans",
-                        principalColumn: "PlanId",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
                         name: "FK_Users_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
@@ -477,8 +430,7 @@ namespace Infrastructure.Migrations
                         name: "FK_Users_Specialties_SpecialtyId",
                         column: x => x.SpecialtyId,
                         principalTable: "Specialties",
-                        principalColumn: "SpecialtyId",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "SpecialtyId");
                 });
 
             migrationBuilder.CreateTable(
@@ -488,8 +440,10 @@ namespace Infrastructure.Migrations
                     SubjectId = table.Column<string>(type: "text", nullable: false),
                     SubjectName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Credits = table.Column<int>(type: "integer", nullable: false),
-                    PassingScore = table.Column<double>(type: "double precision", nullable: false),
+                    MinAttendance = table.Column<int>(type: "integer", nullable: true),
+                    MinPracticeExamScore = table.Column<double>(type: "double precision", nullable: true),
+                    MinFinalExamScore = table.Column<double>(type: "double precision", nullable: true),
+                    MinTotalScore = table.Column<double>(type: "double precision", nullable: false),
                     CreatedByUserId = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
@@ -503,6 +457,62 @@ namespace Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSpecialty",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    SpecialtyId = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSpecialty", x => new { x.UserId, x.SpecialtyId });
+                    table.ForeignKey(
+                        name: "FK_UserSpecialty_Specialties_SpecialtyId",
+                        column: x => x.SpecialtyId,
+                        principalTable: "Specialties",
+                        principalColumn: "SpecialtyId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserSpecialty_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudyRecords",
+                columns: table => new
+                {
+                    CourseId = table.Column<string>(type: "text", nullable: false),
+                    PlanId = table.Column<string>(type: "text", nullable: false),
+                    SubjectId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudyRecords", x => new { x.CourseId, x.PlanId, x.SubjectId });
+                    table.ForeignKey(
+                        name: "FK_StudyRecords_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudyRecords_Plans_PlanId",
+                        column: x => x.PlanId,
+                        principalTable: "Plans",
+                        principalColumn: "PlanId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudyRecords_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "SubjectId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -543,10 +553,12 @@ namespace Infrastructure.Migrations
                     RequestId = table.Column<string>(type: "text", nullable: false),
                     SubjectId = table.Column<string>(type: "text", nullable: false),
                     Notes = table.Column<string>(type: "text", nullable: false),
-                    AssignmentScore = table.Column<double>(type: "double precision", nullable: false),
-                    FinalExamScore = table.Column<double>(type: "double precision", nullable: false),
-                    FinalResitScore = table.Column<double>(type: "double precision", nullable: true),
                     TotalScore = table.Column<double>(type: "double precision", nullable: false),
+                    Attendance = table.Column<int>(type: "integer", nullable: true),
+                    PracticeExamScore = table.Column<double>(type: "double precision", nullable: true),
+                    FinalExamScore = table.Column<double>(type: "double precision", nullable: true),
+                    ResitPracticeExamScore = table.Column<double>(type: "double precision", nullable: true),
+                    ResitFinalExamScore = table.Column<double>(type: "double precision", nullable: true),
                     GradeStatus = table.Column<string>(type: "text", nullable: false),
                     Remarks = table.Column<string>(type: "text", nullable: false),
                     GradedByInstructorId = table.Column<string>(type: "text", nullable: true),
@@ -590,21 +602,6 @@ namespace Infrastructure.Migrations
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AuditLogs_SessionId",
-                table: "AuditLogs",
-                column: "SessionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AuditLogs_Timestamp",
-                table: "AuditLogs",
-                column: "Timestamp");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AuditLogs_UserId",
-                table: "AuditLogs",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Certificates_ApprovedByUserId",
@@ -769,14 +766,14 @@ namespace Infrastructure.Migrations
                 column: "PlanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlanCourses_CourseId",
-                table: "PlanCourses",
-                column: "CourseId");
+                name: "IX_Plans_CreatedByUserId",
+                table: "Plans",
+                column: "CreatedByUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlanCourses_PlanId",
-                table: "PlanCourses",
-                column: "PlanId");
+                name: "IX_Plans_SpecialtyId",
+                table: "Plans",
+                column: "SpecialtyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reports_GeneratedByUserId",
@@ -812,6 +809,21 @@ namespace Infrastructure.Migrations
                 name: "IX_Specialties_UpdatedByUserId",
                 table: "Specialties",
                 column: "UpdatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudyRecords_CourseId",
+                table: "StudyRecords",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudyRecords_PlanId",
+                table: "StudyRecords",
+                column: "PlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudyRecords_SubjectId",
+                table: "StudyRecords",
+                column: "SubjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubjectCertificates_CertificateId",
@@ -871,11 +883,6 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_PlanId",
-                table: "Users",
-                column: "PlanId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
@@ -891,21 +898,15 @@ namespace Infrastructure.Migrations
                 column: "Username",
                 unique: true);
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_AuditLogs_Sessions_SessionId",
-                table: "AuditLogs",
-                column: "SessionId",
-                principalTable: "Sessions",
-                principalColumn: "SessionId",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSpecialty_SpecialtyId",
+                table: "UserSpecialty",
+                column: "SpecialtyId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_AuditLogs_Users_UserId",
-                table: "AuditLogs",
-                column: "UserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSpecialty_UserId",
+                table: "UserSpecialty",
+                column: "UserId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Certificates_CertificateTemplates_CertificateTemplateId",
@@ -1099,6 +1100,30 @@ namespace Infrastructure.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_PlanCertificates_Plans_PlanId",
+                table: "PlanCertificates",
+                column: "PlanId",
+                principalTable: "Plans",
+                principalColumn: "PlanId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Plans_Specialties_SpecialtyId",
+                table: "Plans",
+                column: "SpecialtyId",
+                principalTable: "Specialties",
+                principalColumn: "SpecialtyId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Plans_Users_CreatedByUserId",
+                table: "Plans",
+                column: "CreatedByUserId",
+                principalTable: "Users",
+                principalColumn: "UserId",
+                onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Reports_Users_GeneratedByUserId",
                 table: "Reports",
                 column: "GeneratedByUserId",
@@ -1163,9 +1188,6 @@ namespace Infrastructure.Migrations
                 table: "Specialties");
 
             migrationBuilder.DropTable(
-                name: "AuditLogs");
-
-            migrationBuilder.DropTable(
                 name: "ClassTraineeAssignations");
 
             migrationBuilder.DropTable(
@@ -1190,16 +1212,19 @@ namespace Infrastructure.Migrations
                 name: "PlanCertificates");
 
             migrationBuilder.DropTable(
-                name: "PlanCourses");
+                name: "Reports");
 
             migrationBuilder.DropTable(
-                name: "Reports");
+                name: "Sessions");
+
+            migrationBuilder.DropTable(
+                name: "StudyRecords");
 
             migrationBuilder.DropTable(
                 name: "SubjectCertificates");
 
             migrationBuilder.DropTable(
-                name: "Sessions");
+                name: "UserSpecialty");
 
             migrationBuilder.DropTable(
                 name: "Classes");
@@ -1212,6 +1237,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Courses");
+
+            migrationBuilder.DropTable(
+                name: "Plans");
 
             migrationBuilder.DropTable(
                 name: "Certificates");
@@ -1230,9 +1258,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Departments");
-
-            migrationBuilder.DropTable(
-                name: "Plans");
 
             migrationBuilder.DropTable(
                 name: "Roles");

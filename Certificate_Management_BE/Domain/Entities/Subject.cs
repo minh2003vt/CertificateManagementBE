@@ -38,5 +38,7 @@ namespace Domain.Entities
         public virtual ICollection<TraineeAssignation> TraineeAssignations { get; set; } = [];
         public virtual ICollection<InstructorAssignation> InstructorAssignations { get; set; } = [];
         public virtual ICollection<SubjectCertificate> SubjectCertificates { get; set; } = [];
+        public virtual ICollection<StudyRecord> StudyRecords { get; set; } = [];
+
     }
 }

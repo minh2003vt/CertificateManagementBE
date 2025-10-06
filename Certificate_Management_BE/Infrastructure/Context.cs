@@ -35,13 +35,12 @@ namespace Infrastructure
         public DbSet<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; }
         public DbSet<CourseCertificate> CourseCertificates { get; set; }
         public DbSet<SubjectCertificate> SubjectCertificates { get; set; }
-        public DbSet<PlanCourse> PlanCourses { get; set; }
+        public DbSet<StudyRecord> StudyRecords { get; set; }
         public DbSet<PlanCertificate> PlanCertificates { get; set; }
         public DbSet<ExternalCertificate> ExternalCertificates { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Report> Reports { get; set; }
-        public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<Session> Sessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -63,11 +62,14 @@ namespace Infrastructure
             modelBuilder.Entity<PlanCertificate>()
                 .HasKey(e => new { e.CertificateId, e.PlanId });
 
-            modelBuilder.Entity<PlanCourse>()
-                .HasKey(e => new { e.CourseId, e.PlanId });
+            modelBuilder.Entity<StudyRecord>()
+                .HasKey(e => new { e.CourseId, e.PlanId, e.SubjectId });
 
             modelBuilder.Entity<SubjectCertificate>()
                 .HasKey(e => new { e.CertificateId, e.SubjectId });
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasKey(e => new { e.UserId, e.SpecialtyId });
 
             // Configure relationships
             modelBuilder.Entity<User>()
@@ -80,18 +82,6 @@ namespace Infrastructure
                 .HasOne(u => u.Department)
                 .WithMany(d => d.Users)
                 .HasForeignKey(u => u.DepartmentId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Specialty)
-                .WithMany(s => s.Users)
-                .HasForeignKey(u => u.SpecialtyId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Plan)
-                .WithMany(p => p.Users)
-                .HasForeignKey(u => u.PlanId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Department>()
@@ -262,16 +252,22 @@ namespace Infrastructure
                 .HasForeignKey(c => c.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<PlanCourse>()
-                .HasOne(pc => pc.Course)
-                .WithMany(c => c.PlanCourses)
-                .HasForeignKey(pc => pc.CourseId)
+            modelBuilder.Entity<StudyRecord>()
+                .HasOne(sr => sr.Course)
+                .WithMany(c => c.StudyRecords)
+                .HasForeignKey(sr => sr.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<PlanCourse>()
-                .HasOne(pc => pc.Plan)
-                .WithMany(p => p.PlanCourses)
-                .HasForeignKey(pc => pc.PlanId)
+            modelBuilder.Entity<StudyRecord>()
+                .HasOne(sr => sr.Subject)
+                .WithMany(s => s.StudyRecords)
+                .HasForeignKey(sr => sr.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StudyRecord>()
+                .HasOne(sr => sr.Plan)
+                .WithMany(p => p.StudyRecords)
+                .HasForeignKey(sr => sr.PlanId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ExternalCertificate>()
@@ -309,19 +305,6 @@ namespace Infrastructure
                 .WithMany(u => u.Reports)
                 .HasForeignKey(r => r.GeneratedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<AuditLog>()
-                .HasOne(a => a.User)
-                .WithMany(u => u.AuditLogs)
-                .HasForeignKey(a => a.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AuditLog>()
-                .HasOne(a => a.Session)
-                .WithMany(s => s.AuditLogs)
-                .HasForeignKey(a => a.SessionId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<Session>()
                 .HasOne(s => s.User)
                 .WithMany(u => u.Sessions)
@@ -357,6 +340,30 @@ namespace Infrastructure
                 .WithMany()
                 .HasForeignKey(s => s.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Plan>()
+                .HasOne(p => p.CreatedByUser)
+                .WithMany()
+                .HasForeignKey(p => p.CreatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Plan>()
+                .HasOne(p => p.Specialty)
+                .WithMany()
+                .HasForeignKey(p => p.SpecialtyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasOne(us => us.User)
+                .WithMany(u => u.UserSpecialties)
+                .HasForeignKey(us => us.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasOne(us => us.Specialty)
+                .WithMany()
+                .HasForeignKey(us => us.SpecialtyId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<DecisionTemplate>()
                 .HasOne(dt => dt.CreatedByUser)
@@ -399,10 +406,6 @@ namespace Infrastructure
                 .Property(d => d.Status)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<ExternalCertificate>()
-                .Property(ec => ec.VerificationStatus)
-                .HasConversion<string>();
-
             modelBuilder.Entity<TraineeAssignation>()
                 .Property(t => t.RequestStatus)
                 .HasConversion<string>();
@@ -439,13 +442,6 @@ namespace Infrastructure
                 .Property(r => r.ReportType)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<Department>()
-                .Property(d => d.Status)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<ExternalCertificate>()
-                .Property(ec => ec.VerificationStatus)
-                .HasConversion<string>();
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
@@ -463,9 +459,6 @@ namespace Infrastructure
 
             modelBuilder.Entity<Request>()
                 .HasIndex(r => r.RequestDate);
-
-            modelBuilder.Entity<AuditLog>()
-                .HasIndex(a => a.Timestamp);
 
             // Add missing indexes for better performance
             modelBuilder.Entity<ExternalCertificate>()
@@ -567,11 +560,14 @@ namespace Infrastructure
             modelBuilder.Entity<CourseSubjectSpecialty>()
                 .HasIndex(c => c.CourseId);
 
-            modelBuilder.Entity<PlanCourse>()
-                .HasIndex(pc => pc.CourseId);
+            modelBuilder.Entity<StudyRecord>()
+                .HasIndex(sr => sr.CourseId);
 
-            modelBuilder.Entity<PlanCourse>()
-                .HasIndex(pc => pc.PlanId);
+            modelBuilder.Entity<StudyRecord>()
+                .HasIndex(sr => sr.PlanId);
+
+            modelBuilder.Entity<StudyRecord>()
+                .HasIndex(sr => sr.SubjectId);
 
             modelBuilder.Entity<PlanCertificate>()
                 .HasIndex(pc => pc.CertificateId);
@@ -606,18 +602,21 @@ namespace Infrastructure
             modelBuilder.Entity<Report>()
                 .HasIndex(r => r.GeneratedByUserId);
 
-            modelBuilder.Entity<AuditLog>()
-                .HasIndex(a => a.UserId);
-
-            modelBuilder.Entity<AuditLog>()
-                .HasIndex(a => a.SessionId);
 
             modelBuilder.Entity<Session>()
                 .HasIndex(s => s.UserId);
 
-            modelBuilder.Entity<AuditLog>()
-                .Property(a => a.Timestamp)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+            modelBuilder.Entity<Plan>()
+                .HasIndex(p => p.CreatedByUserId);
+
+            modelBuilder.Entity<Plan>()
+                .HasIndex(p => p.SpecialtyId);
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasIndex(us => us.UserId);
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasIndex(us => us.SpecialtyId);
 
             modelBuilder.Entity<Certificate>()
                 .Property(c => c.SignDate)
@@ -747,8 +746,16 @@ namespace Infrastructure
                 .Property(u => u.UpdatedAt)
                 .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
 
-            modelBuilder.Entity<User>()
-                .HasQueryFilter(u => u.Status == AccountStatus.Active);
+            modelBuilder.Entity<Plan>()
+                .Property(p => p.CreatedAt)
+                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+
+            modelBuilder.Entity<UserSpecialty>()
+                .Property(us => us.CreatedAt)
+                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+
+          //  modelBuilder.Entity<User>()
+            //    .HasQueryFilter(u => u.Status == AccountStatus.Active);
 
             modelBuilder.Entity<Certificate>()
                 .HasQueryFilter(c => c.Status != CertificateStatus.Revoked);

@@ -17,6 +17,5 @@ namespace Domain.Entities
         public DateTime LoginTime { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime? SessionExpiry { get; set; }  
 
-        public virtual ICollection<AuditLog> AuditLogs { get; set; } = [];// Liên kết với AuditLog
     }
 }

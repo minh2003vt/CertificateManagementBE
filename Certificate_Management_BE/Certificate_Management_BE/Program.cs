@@ -38,7 +38,6 @@ builder.Services.AddDbContext<Context>(options =>
     options.EnableDetailedErrors(builder.Environment.IsDevelopment());
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthentication(options =>
 {
@@ -82,7 +81,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "GameMkt.API",
+        Title = "OCMS.API",
     });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -118,7 +117,6 @@ builder.Services.AddScoped<JwtTokenHelper>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
-builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<ICertificateTemplateRepository, CertificateTemplateRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
@@ -134,7 +132,7 @@ builder.Services.AddScoped<IInstructorAssignationRepository, InstructorAssignati
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 builder.Services.AddScoped<IPlanCertificateRepository, PlanCertificateRepository>();
-builder.Services.AddScoped<IPlanCourseRepository, PlanCourseRepository>();
+builder.Services.AddScoped<IStudyRecordRepository, StudyRecordRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();

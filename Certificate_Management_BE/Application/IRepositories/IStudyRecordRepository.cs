@@ -2,7 +2,7 @@ using Domain.Entities;
 
 namespace Application.IRepositories
 {
-    public interface IPlanCourseRepository : IGenericRepository<PlanCourse>
+    public interface IStudyRecordRepository : IGenericRepository<StudyRecord>
     {
     }
 }

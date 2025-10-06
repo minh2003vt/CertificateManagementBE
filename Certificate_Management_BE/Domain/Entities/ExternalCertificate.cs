@@ -22,7 +22,7 @@ namespace Domain.Entities
         public string? UserId { get; set; }
         public virtual User? User { get; set; }
         public DateTime IssueDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public VerificationStatus VerificationStatus { get; set; }
+        public DateTime Exp_date { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         [Required]
         public string CertificateFileUrl { get; set; } = string.Empty;// Path to uploaded file
         public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);

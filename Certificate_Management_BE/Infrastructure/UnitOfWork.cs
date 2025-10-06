@@ -12,7 +12,6 @@ namespace Infrastructure
     {
         private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
-        private readonly IAuditLogRepository _auditLogRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly ICertificateTemplateRepository _certificateTemplateRepository;
         private readonly IClassRepository _classRepository;
@@ -28,7 +27,7 @@ namespace Infrastructure
         private readonly INotificationRepository _notificationRepository;
         private readonly IPlanRepository _planRepository;
         private readonly IPlanCertificateRepository _planCertificateRepository;
-        private readonly IPlanCourseRepository _planCourseRepository;
+        private readonly IStudyRecordRepository _planCourseRepository;
         private readonly IReportRepository _reportRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IRoleRepository _roleRepository;
@@ -39,7 +38,6 @@ namespace Infrastructure
         public UnitOfWork(
             IUserRepository userRepository,
             ISessionRepository sessionRepository,
-            IAuditLogRepository auditLogRepository,
             ICertificateRepository certificateRepository,
             ICertificateTemplateRepository certificateTemplateRepository,
             IClassRepository classRepository,
@@ -55,7 +53,7 @@ namespace Infrastructure
             INotificationRepository notificationRepository,
             IPlanRepository planRepository,
             IPlanCertificateRepository planCertificateRepository,
-            IPlanCourseRepository planCourseRepository,
+            IStudyRecordRepository planCourseRepository,
             IReportRepository reportRepository,
             IRequestRepository requestRepository,
             IRoleRepository roleRepository,
@@ -66,7 +64,6 @@ namespace Infrastructure
         {
             _userRepository = userRepository;
             _sessionRepository = sessionRepository;
-            _auditLogRepository = auditLogRepository;
             _certificateRepository = certificateRepository;
             _certificateTemplateRepository = certificateTemplateRepository;
             _classRepository = classRepository;
@@ -93,7 +90,6 @@ namespace Infrastructure
         }
         public IUserRepository UserRepository => _userRepository;
         public ISessionRepository SessionRepository => _sessionRepository;
-        public IAuditLogRepository AuditLogRepository => _auditLogRepository;
         public ICertificateRepository CertificateRepository => _certificateRepository;
         public ICertificateTemplateRepository CertificateTemplateRepository => _certificateTemplateRepository;
         public IClassRepository ClassRepository => _classRepository;
@@ -109,7 +105,7 @@ namespace Infrastructure
         public INotificationRepository NotificationRepository => _notificationRepository;
         public IPlanRepository PlanRepository => _planRepository;
         public IPlanCertificateRepository PlanCertificateRepository => _planCertificateRepository;
-        public IPlanCourseRepository PlanCourseRepository => _planCourseRepository;
+        public IStudyRecordRepository PlanCourseRepository => _planCourseRepository;
         public IReportRepository ReportRepository => _reportRepository;
         public IRequestRepository RequestRepository => _requestRepository;
         public IRoleRepository RoleRepository => _roleRepository;
