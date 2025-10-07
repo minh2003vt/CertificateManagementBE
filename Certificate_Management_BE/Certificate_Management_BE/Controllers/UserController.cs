@@ -1,6 +1,8 @@
 using Application.IServices;
 using Certificate_Management_BE.Attributes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -29,6 +31,40 @@ namespace Certificate_Management_BE.Controllers
             }
 
             var result = await _userService.GetUserProfileAsync(userId);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region ImportTrainee
+        /// <summary>
+        /// Import trainees from Excel file
+        /// </summary>
+        /// <param name="file">Excel file (.xlsx or .xls)</param>
+        /// <returns>Import result with success/failure counts</returns>
+        [HttpPost("import-trainees")]
+        [AuthorizeRoles("Education Officer")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> ImportTrainees(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { Success = false, Message = "Please upload a valid Excel file" });
+            }
+
+            // Validate file extension
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+            if (fileExtension != ".xlsx" && fileExtension != ".xls")
+            {
+                return BadRequest(new { Success = false, Message = "Only Excel files (.xlsx, .xls) are allowed" });
+            }
+
+            var result = await _userService.ImportTraineesAsync(file);
+
             if (!result.Success)
             {
                 return BadRequest(result);
