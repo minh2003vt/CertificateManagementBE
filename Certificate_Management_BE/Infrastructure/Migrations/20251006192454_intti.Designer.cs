@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20251006095710_init")]
-    partial class init
+    [Migration("20251006192454_intti")]
+    partial class intti
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,9 +67,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("SignDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -103,9 +101,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .IsRequired()
@@ -116,9 +112,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("TemplateFile")
                         .IsRequired()
@@ -200,9 +194,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .IsRequired()
@@ -212,27 +204,21 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EndDateTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Progress")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("StartDateTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("CourseId");
 
@@ -276,9 +262,7 @@ namespace Infrastructure.Migrations
                         .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("SpecialtyId", "SubjectId", "CourseId");
 
@@ -318,18 +302,14 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("IssueDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("IssuedByUserId")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("SignDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -360,9 +340,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .IsRequired()
@@ -402,9 +380,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DepartmentDescription")
                         .IsRequired()
@@ -426,9 +402,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("DepartmentId");
 
@@ -460,9 +434,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("Exp_date")
                         .HasColumnType("timestamp with time zone");
@@ -531,9 +503,7 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("NotificationId"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean");
@@ -567,9 +537,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .HasColumnType("text");
@@ -632,9 +600,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EndDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FileUrl")
                         .IsRequired()
@@ -645,9 +611,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("GenerateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("GeneratedByUserId")
                         .IsRequired()
@@ -662,9 +626,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("StartDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("ReportId");
 
@@ -685,9 +647,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -698,9 +658,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("RequestDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("RequestType")
                         .IsRequired()
@@ -715,9 +673,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("RequestId");
 
@@ -754,9 +710,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LoginTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("SessionExpiry")
                         .HasColumnType("timestamp with time zone");
@@ -778,9 +732,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .HasColumnType("text");
@@ -793,13 +745,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UpdatedByUserId")
                         .HasColumnType("text");
@@ -844,9 +791,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .HasColumnType("text");
@@ -873,9 +818,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("SubjectId");
 
@@ -910,17 +853,13 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ApprovalDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ApprovedByUserId")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("AssignDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("AssignedByUserId")
                         .HasColumnType("text");
@@ -929,9 +868,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("EvaluationDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<double?>("FinalExamScore")
                         .HasColumnType("double precision");
@@ -980,9 +917,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UpdateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("TraineeAssignationId");
 
@@ -1018,12 +953,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-                    b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<string>("DepartmentId")
                         .HasColumnType("text");
@@ -1054,17 +987,12 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("SpecialtyId")
-                        .HasColumnType("text");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -1079,8 +1007,6 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("SpecialtyId");
 
                     b.HasIndex("Username")
                         .IsUnique();
@@ -1099,9 +1025,7 @@ namespace Infrastructure.Migrations
                         .HasColumnOrder(1);
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("UserId", "SpecialtyId");
 
@@ -1576,10 +1500,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Specialty", null)
-                        .WithMany("Users")
-                        .HasForeignKey("SpecialtyId");
-
                     b.Navigation("Department");
 
                     b.Navigation("Role");
@@ -1588,7 +1508,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.UserSpecialty", b =>
                 {
                     b.HasOne("Domain.Entities.Specialty", "Specialty")
-                        .WithMany()
+                        .WithMany("UserSpecialties")
                         .HasForeignKey("SpecialtyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1667,7 +1587,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Departments");
 
-                    b.Navigation("Users");
+                    b.Navigation("UserSpecialties");
                 });
 
             modelBuilder.Entity("Domain.Entities.Subject", b =>
