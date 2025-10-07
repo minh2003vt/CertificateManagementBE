@@ -9,6 +9,7 @@ namespace Application
 {
     public interface IUnitOfWork
     {
+        public object Context { get; }
         public IUserRepository UserRepository { get; }
         public ISessionRepository SessionRepository { get; }
         public ICertificateRepository CertificateRepository { get; }
