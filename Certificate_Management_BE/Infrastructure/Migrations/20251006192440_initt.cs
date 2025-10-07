@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initt : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,7 +37,7 @@ namespace Infrastructure.Migrations
                     IssueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ApprovedByUserId = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false),
-                    SignDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
+                    SignDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CertificateUrl = table.Column<string>(type: "text", nullable: false),
                     RevocationReason = table.Column<string>(type: "text", nullable: true),
@@ -61,8 +61,8 @@ namespace Infrastructure.Migrations
                     CreatedByUserId = table.Column<string>(type: "text", nullable: false),
                     TemplateStatus = table.Column<string>(type: "text", nullable: false),
                     ApprovedByUserId = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    LastUpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastUpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,11 +130,11 @@ namespace Infrastructure.Migrations
                     CourseLevel = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false),
                     Progress = table.Column<string>(type: "text", nullable: false),
-                    StartDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    EndDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
+                    StartDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -148,7 +148,7 @@ namespace Infrastructure.Migrations
                     SpecialtyId = table.Column<string>(type: "text", nullable: false),
                     SubjectId = table.Column<string>(type: "text", nullable: false),
                     CourseId = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -169,11 +169,11 @@ namespace Infrastructure.Migrations
                     DecisionCode = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
-                    IssueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
+                    IssueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IssuedByUserId = table.Column<string>(type: "text", nullable: false),
                     CertificateId = table.Column<string>(type: "text", nullable: false),
                     DecisionTemplateId = table.Column<string>(type: "text", nullable: false),
-                    SignDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
+                    SignDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DecisionStatus = table.Column<string>(type: "text", nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: true)
                 },
@@ -196,7 +196,7 @@ namespace Infrastructure.Migrations
                     TemplateName = table.Column<string>(type: "text", nullable: false),
                     TemplateContent = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<string>(type: "text", nullable: false),
                     ApprovedByUserId = table.Column<string>(type: "text", nullable: true),
                     LastUpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -217,175 +217,12 @@ namespace Infrastructure.Migrations
                     SpecialtyId = table.Column<string>(type: "text", nullable: false),
                     ManagerId = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Departments", x => x.DepartmentId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExternalCertificates",
-                columns: table => new
-                {
-                    ExternalCertificateId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CertificateCode = table.Column<string>(type: "text", nullable: false),
-                    CertificateName = table.Column<string>(type: "text", nullable: false),
-                    IssuingOrganization = table.Column<string>(type: "text", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: true),
-                    IssueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Exp_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CertificateFileUrl = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExternalCertificates", x => x.ExternalCertificateId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "InstructorAssignations",
-                columns: table => new
-                {
-                    SubjectId = table.Column<string>(type: "text", nullable: false),
-                    InstructorId = table.Column<string>(type: "text", nullable: false),
-                    AssignedByUserId = table.Column<string>(type: "text", nullable: false),
-                    AssignDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    RequestStatus = table.Column<string>(type: "text", nullable: false),
-                    Notes = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InstructorAssignations", x => new { x.SubjectId, x.InstructorId });
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Notifications",
-                columns: table => new
-                {
-                    NotificationId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false),
-                    NotificationType = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    IsRead = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PlanCertificates",
-                columns: table => new
-                {
-                    CertificateId = table.Column<string>(type: "text", nullable: false),
-                    PlanId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlanCertificates", x => new { x.CertificateId, x.PlanId });
-                    table.ForeignKey(
-                        name: "FK_PlanCertificates_Certificates_CertificateId",
-                        column: x => x.CertificateId,
-                        principalTable: "Certificates",
-                        principalColumn: "CertificateId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Plans",
-                columns: table => new
-                {
-                    PlanId = table.Column<string>(type: "text", nullable: false),
-                    PlanName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    CreatedByUserId = table.Column<string>(type: "text", nullable: true),
-                    SpecialtyId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Plans", x => x.PlanId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Reports",
-                columns: table => new
-                {
-                    ReportId = table.Column<string>(type: "text", nullable: false),
-                    ReportName = table.Column<string>(type: "text", nullable: false),
-                    ReportType = table.Column<string>(type: "text", nullable: false),
-                    GeneratedByUserId = table.Column<string>(type: "text", nullable: false),
-                    GenerateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    Content = table.Column<string>(type: "text", nullable: false),
-                    Format = table.Column<string>(type: "text", nullable: false),
-                    FileUrl = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reports", x => x.ReportId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Requests",
-                columns: table => new
-                {
-                    RequestId = table.Column<string>(type: "text", nullable: false),
-                    RequestUserId = table.Column<string>(type: "text", nullable: false),
-                    RequestType = table.Column<string>(type: "text", nullable: false),
-                    RequestDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Notes = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false),
-                    ApprovedByUserId = table.Column<string>(type: "text", nullable: true),
-                    ApprovedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Requests", x => x.RequestId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sessions",
-                columns: table => new
-                {
-                    SessionId = table.Column<string>(type: "text", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    LoginTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    SessionExpiry = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sessions", x => x.SessionId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Specialties",
-                columns: table => new
-                {
-                    SpecialtyId = table.Column<string>(type: "text", nullable: false),
-                    SpecialtyName = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    CreatedByUserId = table.Column<string>(type: "text", nullable: true),
-                    UpdatedByUserId = table.Column<string>(type: "text", nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Specialties", x => x.SpecialtyId);
                 });
 
             migrationBuilder.CreateTable(
@@ -396,7 +233,7 @@ namespace Infrastructure.Migrations
                     Username = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     FullName = table.Column<string>(type: "text", nullable: false),
                     Sex = table.Column<string>(type: "text", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
@@ -405,11 +242,10 @@ namespace Infrastructure.Migrations
                     RoleId = table.Column<int>(type: "integer", nullable: false),
                     DepartmentId = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    AvatarUrl = table.Column<string>(type: "text", nullable: true),
-                    SpecialtyId = table.Column<string>(type: "text", nullable: true)
+                    AvatarUrl = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -426,11 +262,164 @@ namespace Infrastructure.Migrations
                         principalTable: "Roles",
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExternalCertificates",
+                columns: table => new
+                {
+                    ExternalCertificateId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CertificateCode = table.Column<string>(type: "text", nullable: false),
+                    CertificateName = table.Column<string>(type: "text", nullable: false),
+                    IssuingOrganization = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    IssueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Exp_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CertificateFileUrl = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExternalCertificates", x => x.ExternalCertificateId);
                     table.ForeignKey(
-                        name: "FK_Users_Specialties_SpecialtyId",
-                        column: x => x.SpecialtyId,
-                        principalTable: "Specialties",
-                        principalColumn: "SpecialtyId");
+                        name: "FK_ExternalCertificates_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false),
+                    NotificationType = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reports",
+                columns: table => new
+                {
+                    ReportId = table.Column<string>(type: "text", nullable: false),
+                    ReportName = table.Column<string>(type: "text", nullable: false),
+                    ReportType = table.Column<string>(type: "text", nullable: false),
+                    GeneratedByUserId = table.Column<string>(type: "text", nullable: false),
+                    GenerateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    Format = table.Column<string>(type: "text", nullable: false),
+                    FileUrl = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reports", x => x.ReportId);
+                    table.ForeignKey(
+                        name: "FK_Reports_Users_GeneratedByUserId",
+                        column: x => x.GeneratedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Requests",
+                columns: table => new
+                {
+                    RequestId = table.Column<string>(type: "text", nullable: false),
+                    RequestUserId = table.Column<string>(type: "text", nullable: false),
+                    RequestType = table.Column<string>(type: "text", nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Notes = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    ApprovedByUserId = table.Column<string>(type: "text", nullable: true),
+                    ApprovedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Requests", x => x.RequestId);
+                    table.ForeignKey(
+                        name: "FK_Requests_Users_ApprovedByUserId",
+                        column: x => x.ApprovedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Requests_Users_RequestUserId",
+                        column: x => x.RequestUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sessions",
+                columns: table => new
+                {
+                    SessionId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    LoginTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    SessionExpiry = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sessions", x => x.SessionId);
+                    table.ForeignKey(
+                        name: "FK_Sessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Specialties",
+                columns: table => new
+                {
+                    SpecialtyId = table.Column<string>(type: "text", nullable: false),
+                    SpecialtyName = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<string>(type: "text", nullable: true),
+                    UpdatedByUserId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Specialties", x => x.SpecialtyId);
+                    table.ForeignKey(
+                        name: "FK_Specialties_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Specialties_Users_UpdatedByUserId",
+                        column: x => x.UpdatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -445,8 +434,8 @@ namespace Infrastructure.Migrations
                     MinFinalExamScore = table.Column<double>(type: "double precision", nullable: true),
                     MinTotalScore = table.Column<double>(type: "double precision", nullable: false),
                     CreatedByUserId = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -460,12 +449,42 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Plans",
+                columns: table => new
+                {
+                    PlanId = table.Column<string>(type: "text", nullable: false),
+                    PlanName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<string>(type: "text", nullable: true),
+                    SpecialtyId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plans", x => x.PlanId);
+                    table.ForeignKey(
+                        name: "FK_Plans_Specialties_SpecialtyId",
+                        column: x => x.SpecialtyId,
+                        principalTable: "Specialties",
+                        principalColumn: "SpecialtyId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Plans_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserSpecialty",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
                     SpecialtyId = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -485,33 +504,36 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StudyRecords",
+                name: "InstructorAssignations",
                 columns: table => new
                 {
-                    CourseId = table.Column<string>(type: "text", nullable: false),
-                    PlanId = table.Column<string>(type: "text", nullable: false),
-                    SubjectId = table.Column<string>(type: "text", nullable: false)
+                    SubjectId = table.Column<string>(type: "text", nullable: false),
+                    InstructorId = table.Column<string>(type: "text", nullable: false),
+                    AssignedByUserId = table.Column<string>(type: "text", nullable: false),
+                    AssignDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    RequestStatus = table.Column<string>(type: "text", nullable: false),
+                    Notes = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StudyRecords", x => new { x.CourseId, x.PlanId, x.SubjectId });
+                    table.PrimaryKey("PK_InstructorAssignations", x => new { x.SubjectId, x.InstructorId });
                     table.ForeignKey(
-                        name: "FK_StudyRecords_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "CourseId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StudyRecords_Plans_PlanId",
-                        column: x => x.PlanId,
-                        principalTable: "Plans",
-                        principalColumn: "PlanId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StudyRecords_Subjects_SubjectId",
+                        name: "FK_InstructorAssignations_Subjects_SubjectId",
                         column: x => x.SubjectId,
                         principalTable: "Subjects",
                         principalColumn: "SubjectId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InstructorAssignations_Users_AssignedByUserId",
+                        column: x => x.AssignedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InstructorAssignations_Users_InstructorId",
+                        column: x => x.InstructorId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -547,9 +569,9 @@ namespace Infrastructure.Migrations
                     TraineeId = table.Column<string>(type: "text", nullable: false),
                     RequestStatus = table.Column<string>(type: "text", nullable: false),
                     AssignedByUserId = table.Column<string>(type: "text", nullable: true),
-                    AssignDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
+                    AssignDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ApprovedByUserId = table.Column<string>(type: "text", nullable: true),
-                    ApprovalDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
+                    ApprovalDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     RequestId = table.Column<string>(type: "text", nullable: false),
                     SubjectId = table.Column<string>(type: "text", nullable: false),
                     Notes = table.Column<string>(type: "text", nullable: false),
@@ -562,8 +584,8 @@ namespace Infrastructure.Migrations
                     GradeStatus = table.Column<string>(type: "text", nullable: false),
                     Remarks = table.Column<string>(type: "text", nullable: false),
                     GradedByInstructorId = table.Column<string>(type: "text", nullable: true),
-                    EvaluationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'"),
-                    UpdateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW() + INTERVAL '7 hours'")
+                    EvaluationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -600,6 +622,61 @@ namespace Infrastructure.Migrations
                         column: x => x.TraineeId,
                         principalTable: "Users",
                         principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlanCertificates",
+                columns: table => new
+                {
+                    CertificateId = table.Column<string>(type: "text", nullable: false),
+                    PlanId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlanCertificates", x => new { x.CertificateId, x.PlanId });
+                    table.ForeignKey(
+                        name: "FK_PlanCertificates_Certificates_CertificateId",
+                        column: x => x.CertificateId,
+                        principalTable: "Certificates",
+                        principalColumn: "CertificateId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlanCertificates_Plans_PlanId",
+                        column: x => x.PlanId,
+                        principalTable: "Plans",
+                        principalColumn: "PlanId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudyRecords",
+                columns: table => new
+                {
+                    CourseId = table.Column<string>(type: "text", nullable: false),
+                    PlanId = table.Column<string>(type: "text", nullable: false),
+                    SubjectId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudyRecords", x => new { x.CourseId, x.PlanId, x.SubjectId });
+                    table.ForeignKey(
+                        name: "FK_StudyRecords_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudyRecords_Plans_PlanId",
+                        column: x => x.PlanId,
+                        principalTable: "Plans",
+                        principalColumn: "PlanId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudyRecords_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "SubjectId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -888,11 +965,6 @@ namespace Infrastructure.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_SpecialtyId",
-                table: "Users",
-                column: "SpecialtyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_Username",
                 table: "Users",
                 column: "Username",
@@ -1055,118 +1127,6 @@ namespace Infrastructure.Migrations
                 name: "FK_Departments_Users_ManagerId",
                 table: "Departments",
                 column: "ManagerId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.SetNull);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ExternalCertificates_Users_UserId",
-                table: "ExternalCertificates",
-                column: "UserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_InstructorAssignations_Subjects_SubjectId",
-                table: "InstructorAssignations",
-                column: "SubjectId",
-                principalTable: "Subjects",
-                principalColumn: "SubjectId",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_InstructorAssignations_Users_AssignedByUserId",
-                table: "InstructorAssignations",
-                column: "AssignedByUserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_InstructorAssignations_Users_InstructorId",
-                table: "InstructorAssignations",
-                column: "InstructorId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Notifications_Users_UserId",
-                table: "Notifications",
-                column: "UserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_PlanCertificates_Plans_PlanId",
-                table: "PlanCertificates",
-                column: "PlanId",
-                principalTable: "Plans",
-                principalColumn: "PlanId",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Plans_Specialties_SpecialtyId",
-                table: "Plans",
-                column: "SpecialtyId",
-                principalTable: "Specialties",
-                principalColumn: "SpecialtyId",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Plans_Users_CreatedByUserId",
-                table: "Plans",
-                column: "CreatedByUserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.SetNull);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Reports_Users_GeneratedByUserId",
-                table: "Reports",
-                column: "GeneratedByUserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Requests_Users_ApprovedByUserId",
-                table: "Requests",
-                column: "ApprovedByUserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.SetNull);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Requests_Users_RequestUserId",
-                table: "Requests",
-                column: "RequestUserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Sessions_Users_UserId",
-                table: "Sessions",
-                column: "UserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Specialties_Users_CreatedByUserId",
-                table: "Specialties",
-                column: "CreatedByUserId",
-                principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.SetNull);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Specialties_Users_UpdatedByUserId",
-                table: "Specialties",
-                column: "UpdatedByUserId",
                 principalTable: "Users",
                 principalColumn: "UserId",
                 onDelete: ReferentialAction.SetNull);
