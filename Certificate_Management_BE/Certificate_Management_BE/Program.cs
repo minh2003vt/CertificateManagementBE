@@ -5,6 +5,7 @@ using Application.IServices;
 using Application.Services;
 using Infrastructure;
 using Infrastructure.Repositories;
+using Infrastructure.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -55,6 +56,12 @@ builder.Services.AddAuthentication(options =>
                     throw new InvalidOperationException("JWT secret key is missing in the configuration.");
                 }
 
+                var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
+                if (secretKeyBytes.Length != 32)
+                {
+                    secretKeyBytes = System.Security.Cryptography.SHA256.HashData(secretKeyBytes);
+                }
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -64,7 +71,7 @@ builder.Services.AddAuthentication(options =>
 
                     ValidIssuer = config["Jwt:Issuer"],
                     ValidAudience = config["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes)
                 };
                 options.Events = new JwtBearerEvents
                 {
@@ -141,6 +148,8 @@ builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<ISubjectCertificateRepository, SubjectCertificateRepository>();
 builder.Services.AddScoped<ITraineeAssignationRepository, TraineeAssignationRepository>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
@@ -153,8 +162,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Runtime seeding
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<Context>();
+    await DataSeeder.SeedAsync(db);
+}
 
 app.Run();

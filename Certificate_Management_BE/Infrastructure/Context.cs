@@ -361,7 +361,7 @@ namespace Infrastructure
 
             modelBuilder.Entity<UserSpecialty>()
                 .HasOne(us => us.Specialty)
-                .WithMany()
+                .WithMany(s => s.UserSpecialties)
                 .HasForeignKey(us => us.SpecialtyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -618,147 +618,6 @@ namespace Infrastructure
             modelBuilder.Entity<UserSpecialty>()
                 .HasIndex(us => us.SpecialtyId);
 
-            modelBuilder.Entity<Certificate>()
-                .Property(c => c.SignDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<CertificateTemplate>()
-                .Property(ct => ct.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<CertificateTemplate>()
-                .Property(ct => ct.LastUpdatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Course>()
-                .Property(c => c.StartDateTime)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Course>()
-                .Property(c => c.EndDateTime)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Course>()
-                .Property(c => c.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Course>()
-                .Property(c => c.UpdatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<CourseSubjectSpecialty>()
-                .Property(c => c.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Decision>()
-                .Property(d => d.IssueDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Decision>()
-                .Property(d => d.SignDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<DecisionTemplate>()
-                .Property(dt => dt.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Department>()
-                .Property(d => d.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Department>()
-                .Property(d => d.UpdatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<ExternalCertificate>()
-                .Property(ec => ec.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Notification>()
-                .Property(n => n.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Report>()
-                .Property(r => r.GenerateDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Report>()
-                .Property(r => r.StartDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Report>()
-                .Property(r => r.EndDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Request>()
-                .Property(r => r.RequestDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Request>()
-                .Property(r => r.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Request>()
-                .Property(r => r.UpdatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Session>()
-                .Property(s => s.LoginTime)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Specialty>()
-                .Property(s => s.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Specialty>()
-                .Property(s => s.UpdatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Subject>()
-                .Property(s => s.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Subject>()
-                .Property(s => s.UpdatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.AssignDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.ApprovalDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.EvaluationDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.UpdateDate)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.UpdatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<Plan>()
-                .Property(p => p.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-            modelBuilder.Entity<UserSpecialty>()
-                .Property(us => us.CreatedAt)
-                .HasDefaultValueSql("NOW() + INTERVAL '7 hours'");
-
-          //  modelBuilder.Entity<User>()
-            //    .HasQueryFilter(u => u.Status == AccountStatus.Active);
-
-            modelBuilder.Entity<Certificate>()
-                .HasQueryFilter(c => c.Status != CertificateStatus.Revoked);
 
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.PlanCertificate)
@@ -777,6 +636,7 @@ namespace Infrastructure
                 .WithOne(cc => cc.Certificate)
                 .HasForeignKey<CourseCertificate>(cc => cc.CertificateId)
                 .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }
