@@ -63,7 +63,11 @@ namespace Certificate_Management_BE.Controllers
                 return BadRequest(new { Success = false, Message = "Only Excel files (.xlsx, .xls) are allowed" });
             }
 
-            var result = await _userService.ImportTraineesAsync(file);
+            // Get current user info for notification
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown User";
+
+            var result = await _userService.ImportTraineesAsync(file, username);
 
             if (!result.Success)
             {

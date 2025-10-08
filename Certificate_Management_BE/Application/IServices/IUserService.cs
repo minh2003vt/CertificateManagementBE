@@ -8,7 +8,7 @@ namespace Application.IServices
     public interface IUserService
     {
         Task<ServiceResponse<UserProfileDto>> GetUserProfileAsync(string userId);
-        Task<ServiceResponse<ImportResultDto>> ImportTraineesAsync(IFormFile file);
+        Task<ServiceResponse<ImportResultDto>> ImportTraineesAsync(IFormFile file, string performedByUsername);
     }
 }
 

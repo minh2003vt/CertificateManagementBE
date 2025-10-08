@@ -80,6 +80,18 @@ builder.Services.AddAuthentication(options =>
                         var exception = context.Exception;
                         Console.WriteLine("Token validation failed: " + exception.Message);
                         return Task.CompletedTask;
+                    },
+                    OnMessageReceived = context =>
+                    {
+                        // Allow SignalR to read JWT from query string
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/notification"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
                     }
                 };
             });
@@ -183,6 +195,10 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IExternalCertificateService, ExternalCertificateService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// Add SignalR
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -198,6 +214,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map SignalR Hub
+app.MapHub<Certificate_Management_BE.Hubs.NotificationHub>("/hubs/notification");
 
 app.MapControllers();
 

@@ -103,9 +103,10 @@ namespace Application.Services
             var response = new ServiceResponse<string>();
             try
             {
-                // Find user by email or username
-                var users = await _unitOfWork.UserRepository.GetAll();
-                var user = users.FirstOrDefault(u => u.Email == dto.EmailOrUsername || u.Username == dto.EmailOrUsername);
+                // Find user by email or username - query directly instead of GetAll()
+                var user = await _unitOfWork.UserRepository
+                    .GetSingleOrDefaultByNullableExpressionAsync(u => 
+                        u.Email == dto.EmailOrUsername || u.Username == dto.EmailOrUsername);
 
                 if (user == null)
                 {

@@ -35,5 +35,7 @@ namespace Application
         public ISubjectRepository SubjectRepository { get; }
         public ISubjectCertificateRepository SubjectCertificateRepository { get; }
         public ITraineeAssignationRepository TraineeAssignationRepository { get; }
+
+        Task<int> SaveChangesAsync();
     }
 }
