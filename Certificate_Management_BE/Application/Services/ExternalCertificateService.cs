@@ -66,9 +66,11 @@ namespace Application.Services
                     return response;
                 }
 
-                var certificates = await _unitOfWork.ExternalCertificateRepository.GetAll();
+                // Query by UserId directly instead of GetAll() then filtering
+                var certificates = await _unitOfWork.ExternalCertificateRepository
+                    .GetByNullableExpressionWithOrderingAsync(c => c.UserId == userId);
+                
                 var userCertificates = certificates
-                    .Where(c => c.UserId == userId)
                     .Select(c => new ExternalCertificateListDto
                     {
                         ExternalCertificateId = c.ExternalCertificateId,
