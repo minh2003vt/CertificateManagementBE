@@ -26,7 +26,7 @@ namespace Domain.Entities
         [Required]
         public string NotificationType { get; set; } = string.Empty; // Certificate Expiration, Course Enrollment, Grade Update
 
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public bool IsRead { get; set; } = false;
     }

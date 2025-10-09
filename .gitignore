@@ -111,6 +111,7 @@ _ReSharper*/
 
 # StyleCop
 StyleCopReport.xml
+**/Migrations/
 
 # NCrunch
 _NCrunch_*
@@ -166,3 +167,7 @@ components/
 # Ignore appsettings.json
 appsettings.json
 appsettings.Development.json
+
+# Ignore EF Core migration files
+[Migrations]/
+*.Migrations/

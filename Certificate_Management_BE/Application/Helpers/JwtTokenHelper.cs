@@ -22,9 +22,9 @@ namespace Application.Helpers
         public JwtTokenHelper(IConfiguration configuration)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _secretKey = _configuration["JwtSettings:SecretKey"];
-            _issuer = _configuration["JwtSettings:Issuer"];
-            _audience = _configuration["JwtSettings:Audience"];
+            _secretKey = _configuration["Jwt:Key"];
+            _issuer = _configuration["Jwt:Issuer"];
+            _audience = _configuration["Jwt:Audience"];
         }
 
         public string GenerateToken(User user, IList<string> roles)
@@ -74,6 +74,93 @@ namespace Application.Helpers
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string GeneratePasswordResetToken(string userId, string email)
+        {
+            if (string.IsNullOrEmpty(_secretKey))
+            {
+                throw new InvalidOperationException("JWT SecretKey is not configured.");
+            }
+            if (string.IsNullOrEmpty(_issuer))
+            {
+                throw new InvalidOperationException("JWT Issuer is not configured.");
+            }
+            if (string.IsNullOrEmpty(_audience))
+            {
+                throw new InvalidOperationException("JWT Audience is not configured.");
+            }
+
+            var claims = new List<Claim>
+            {
+                new(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(ClaimTypes.NameIdentifier, userId),
+                new(ClaimTypes.Email, email),
+                new("purpose", "password-reset")
+            };
+
+            var secretKeyBytes = Encoding.UTF8.GetBytes(_secretKey);
+            if (secretKeyBytes.Length != 32)
+            {
+                secretKeyBytes = System.Security.Cryptography.SHA256.HashData(secretKeyBytes);
+            }
+            var secretKey = new SymmetricSecurityKey(secretKeyBytes);
+            var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _issuer,
+                audience: _audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(5), // 5 minutes expiry
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public ClaimsPrincipal? ValidatePasswordResetToken(string token)
+        {
+            if (string.IsNullOrEmpty(_secretKey))
+            {
+                throw new InvalidOperationException("JWT SecretKey is not configured.");
+            }
+
+            var secretKeyBytes = Encoding.UTF8.GetBytes(_secretKey);
+            if (secretKeyBytes.Length != 32)
+            {
+                secretKeyBytes = System.Security.Cryptography.SHA256.HashData(secretKeyBytes);
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _issuer,
+                ValidAudience = _audience,
+                IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+                ClockSkew = TimeSpan.Zero // No tolerance for expiration
+            };
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+                
+                // Check if token has password-reset purpose
+                var purposeClaim = principal.FindFirst("purpose");
+                if (purposeClaim?.Value != "password-reset")
+                {
+                    return null;
+                }
+
+                return principal;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

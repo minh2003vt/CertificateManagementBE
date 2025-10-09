@@ -17,7 +17,6 @@ namespace Infrastructure
         {
         }
 
-        // Entity DbSets
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Department> Departments { get; set; }
@@ -25,8 +24,6 @@ namespace Infrastructure
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Class> Classes { get; set; }
-        public DbSet<Slot> Slots { get; set; }
-        public DbSet<AllotedSlot> AllotedSlots { get; set; }
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<CertificateTemplate> CertificateTemplates { get; set; }
         public DbSet<Decision> Decisions { get; set; }
@@ -38,22 +35,17 @@ namespace Infrastructure
         public DbSet<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; }
         public DbSet<CourseCertificate> CourseCertificates { get; set; }
         public DbSet<SubjectCertificate> SubjectCertificates { get; set; }
-        public DbSet<PlanCourse> PlanCourses { get; set; }
+        public DbSet<StudyRecord> StudyRecords { get; set; }
         public DbSet<PlanCertificate> PlanCertificates { get; set; }
         public DbSet<ExternalCertificate> ExternalCertificates { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Report> Reports { get; set; }
-        public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<Session> Sessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Configure composite keys
-            modelBuilder.Entity<AllotedSlot>()
-                .HasKey(e => new { e.SlotId, e.ClassId });
 
             modelBuilder.Entity<ClassTraineeAssignation>()
                 .HasKey(e => new { e.ClassId, e.TraineeAssignationId });
@@ -70,11 +62,14 @@ namespace Infrastructure
             modelBuilder.Entity<PlanCertificate>()
                 .HasKey(e => new { e.CertificateId, e.PlanId });
 
-            modelBuilder.Entity<PlanCourse>()
-                .HasKey(e => new { e.CourseId, e.PlanId });
+            modelBuilder.Entity<StudyRecord>()
+                .HasKey(e => new { e.CourseId, e.PlanId, e.SubjectId });
 
             modelBuilder.Entity<SubjectCertificate>()
                 .HasKey(e => new { e.CertificateId, e.SubjectId });
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasKey(e => new { e.UserId, e.SpecialtyId });
 
             // Configure relationships
             modelBuilder.Entity<User>()
@@ -85,20 +80,8 @@ namespace Infrastructure
 
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Department)
-                .WithMany(d => d.Reports)
+                .WithMany(d => d.Users)
                 .HasForeignKey(u => u.DepartmentId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Specialty)
-                .WithMany(s => s.Users)
-                .HasForeignKey(u => u.SpecialtyId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Plan)
-                .WithMany(p => p.Users)
-                .HasForeignKey(u => u.PlanId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Department>()
@@ -109,7 +92,7 @@ namespace Infrastructure
 
             modelBuilder.Entity<Department>()
                 .HasOne(d => d.Manager)
-                .WithMany()
+                .WithMany(u => u.ManagedDepartments)
                 .HasForeignKey(d => d.ManagerId)
                 .OnDelete(DeleteBehavior.SetNull);
 
@@ -119,23 +102,11 @@ namespace Infrastructure
                 .HasForeignKey(c => c.InstructorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<AllotedSlot>()
-                .HasOne(a => a.Slot)
-                .WithMany(s => s.AllotedSlots)
-                .HasForeignKey(a => a.SlotId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AllotedSlot>()
-                .HasOne(a => a.Class)
-                .WithMany(c => c.AllotedSlots)
-                .HasForeignKey(a => a.ClassId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.User)
-                .WithMany(u => u.Certificates) // Note: This navigation property wasn't in your original model but is needed
+                .WithMany(u => u.Certificates)
                 .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.CertificateTemplate)
@@ -145,13 +116,13 @@ namespace Infrastructure
 
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.IssuedByUser)
-                .WithMany()
+                .WithMany(u => u.IssuedCertificates)
                 .HasForeignKey(c => c.IssuedByUserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.ApprovedByUser)
-                .WithMany()
+                .WithMany(u => u.ApprovedCertificates)
                 .HasForeignKey(c => c.ApprovedByUserId)
                 .OnDelete(DeleteBehavior.SetNull);
 
@@ -175,7 +146,7 @@ namespace Infrastructure
 
             modelBuilder.Entity<Decision>()
                 .HasOne(d => d.Certificate)
-                .WithMany(c => c.Decisions) // Note: This navigation property wasn't in your original model but is needed
+                .WithMany(c => c.Decisions)
                 .HasForeignKey(d => d.CertificateId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -281,16 +252,22 @@ namespace Infrastructure
                 .HasForeignKey(c => c.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<PlanCourse>()
-                .HasOne(pc => pc.Course)
-                .WithMany(c => c.PlanCourses)
-                .HasForeignKey(pc => pc.CourseId)
+            modelBuilder.Entity<StudyRecord>()
+                .HasOne(sr => sr.Course)
+                .WithMany(c => c.StudyRecords)
+                .HasForeignKey(sr => sr.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<PlanCourse>()
-                .HasOne(pc => pc.Plan)
-                .WithMany(p => p.PlanCourses)
-                .HasForeignKey(pc => pc.PlanId)
+            modelBuilder.Entity<StudyRecord>()
+                .HasOne(sr => sr.Subject)
+                .WithMany(s => s.StudyRecords)
+                .HasForeignKey(sr => sr.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StudyRecord>()
+                .HasOne(sr => sr.Plan)
+                .WithMany(p => p.StudyRecords)
+                .HasForeignKey(sr => sr.PlanId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ExternalCertificate>()
@@ -299,21 +276,21 @@ namespace Infrastructure
                 .HasForeignKey(ec => ec.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ExternalCertificate>()
-                .HasOne(ec => ec.VerifiedByUser)
-                .WithMany()
-                .HasForeignKey(ec => ec.VerifiedByUserId)
-                .OnDelete(DeleteBehavior.SetNull);
-
             modelBuilder.Entity<Request>()
                 .HasOne(r => r.RequestUser)
                 .WithMany(u => u.Requests)
                 .HasForeignKey(r => r.RequestUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Requests)
+                .WithOne(r => r.RequestUser)
+                .HasForeignKey(r => r.RequestUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Request>()
                 .HasOne(r => r.ApprovedByUser)
-                .WithMany()
+                .WithMany(u => u.ApprovedRequests)
                 .HasForeignKey(r => r.ApprovedByUserId)
                 .OnDelete(DeleteBehavior.SetNull);
 
@@ -328,24 +305,77 @@ namespace Infrastructure
                 .WithMany(u => u.Reports)
                 .HasForeignKey(r => r.GeneratedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<AuditLog>()
-                .HasOne(a => a.User)
-                .WithMany(u => u.AuditLogs)
-                .HasForeignKey(a => a.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AuditLog>()
-                .HasOne(a => a.Session)
-                .WithMany(s => s.AuditLogs)
-                .HasForeignKey(a => a.SessionId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<Session>()
                 .HasOne(s => s.User)
                 .WithMany(u => u.Sessions)
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Sessions)
+                .WithOne(s => s.User)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.CreatedByUser)
+                .WithMany()
+                .HasForeignKey(c => c.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Subject>()
+                .HasOne(s => s.CreatedByUser)
+                .WithMany()
+                .HasForeignKey(s => s.CreatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Specialty>()
+                .HasOne(s => s.CreatedByUser)
+                .WithMany()
+                .HasForeignKey(s => s.CreatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Specialty>()
+                .HasOne(s => s.UpdatedByUser)
+                .WithMany()
+                .HasForeignKey(s => s.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Plan>()
+                .HasOne(p => p.CreatedByUser)
+                .WithMany()
+                .HasForeignKey(p => p.CreatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Plan>()
+                .HasOne(p => p.Specialty)
+                .WithMany()
+                .HasForeignKey(p => p.SpecialtyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasOne(us => us.User)
+                .WithMany(u => u.UserSpecialties)
+                .HasForeignKey(us => us.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasOne(us => us.Specialty)
+                .WithMany(s => s.UserSpecialties)
+                .HasForeignKey(us => us.SpecialtyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DecisionTemplate>()
+                .HasOne(dt => dt.CreatedByUser)
+                .WithMany()
+                .HasForeignKey(dt => dt.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DecisionTemplate>()
+                .HasOne(dt => dt.ApprovedByUser)
+                .WithMany()
+                .HasForeignKey(dt => dt.ApprovedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Configure enum conversions
             modelBuilder.Entity<User>()
@@ -374,10 +404,6 @@ namespace Infrastructure
 
             modelBuilder.Entity<Department>()
                 .Property(d => d.Status)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<ExternalCertificate>()
-                .Property(ec => ec.VerificationStatus)
                 .HasConversion<string>();
 
             modelBuilder.Entity<TraineeAssignation>()
@@ -416,12 +442,17 @@ namespace Infrastructure
                 .Property(r => r.ReportType)
                 .HasConversion<string>();
 
+
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.CitizenId)
                 .IsUnique();
 
             modelBuilder.Entity<Certificate>()
@@ -433,146 +464,164 @@ namespace Infrastructure
             modelBuilder.Entity<Request>()
                 .HasIndex(r => r.RequestDate);
 
-            modelBuilder.Entity<AuditLog>()
-                .HasIndex(a => a.Timestamp);
-
-            modelBuilder.Entity<AuditLog>()
-                .Property(a => a.Timestamp)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Certificate>()
-                .Property(c => c.SignDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<CertificateTemplate>()
-                .Property(ct => ct.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<CertificateTemplate>()
-                .Property(ct => ct.LastUpdatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+            // Add missing indexes for better performance
+            modelBuilder.Entity<ExternalCertificate>()
+                .HasIndex(ec => ec.CertificateCode);
 
             modelBuilder.Entity<Course>()
-                .Property(c => c.StartDateTime)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                .HasIndex(c => c.CreatedByUserId);
 
-            modelBuilder.Entity<Course>()
-                .Property(c => c.EndDateTime)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+            modelBuilder.Entity<Subject>()
+                .HasIndex(s => s.CreatedByUserId);
 
-            modelBuilder.Entity<Course>()
-                .Property(c => c.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+            modelBuilder.Entity<Specialty>()
+                .HasIndex(s => s.CreatedByUserId);
 
-            modelBuilder.Entity<Course>()
-                .Property(c => c.UpdatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<CourseSubjectSpecialty>()
-                .Property(c => c.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Decision>()
-                .Property(d => d.IssueDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Decision>()
-                .Property(d => d.SignDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+            modelBuilder.Entity<Specialty>()
+                .HasIndex(s => s.UpdatedByUserId);
 
             modelBuilder.Entity<DecisionTemplate>()
-                .Property(dt => dt.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                .HasIndex(dt => dt.CreatedByUserId);
+
+            modelBuilder.Entity<DecisionTemplate>()
+                .HasIndex(dt => dt.ApprovedByUserId);
+
+            modelBuilder.Entity<CertificateTemplate>()
+                .HasIndex(ct => ct.CreatedByUserId);
+
+            modelBuilder.Entity<CertificateTemplate>()
+                .HasIndex(ct => ct.ApprovedByUserId);
 
             modelBuilder.Entity<Department>()
-                .Property(d => d.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                .HasIndex(d => d.ManagerId);
 
             modelBuilder.Entity<Department>()
-                .Property(d => d.UpdatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                .HasIndex(d => d.SpecialtyId);
 
-            modelBuilder.Entity<ExternalCertificate>()
-                .Property(ec => ec.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Notification>()
-                .Property(n => n.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Report>()
-                .Property(r => r.GenerateDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Report>()
-                .Property(r => r.StartDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Report>()
-                .Property(r => r.EndDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Request>()
-                .Property(r => r.RequestDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Request>()
-                .Property(r => r.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Request>()
-                .Property(r => r.UpdatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Session>()
-                .Property(s => s.LoginTime)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Specialty>()
-                .Property(s => s.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Specialty>()
-                .Property(s => s.UpdatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Subject>()
-                .Property(s => s.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<Subject>()
-                .Property(s => s.UpdatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.AssignDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.ApprovalDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.EvaluationDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.UpdateDate)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.CreatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.UpdatedAt)
-                .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-            modelBuilder.Entity<User>()
-                .HasQueryFilter(u => u.Status == AccountStatus.Active);
+            modelBuilder.Entity<Class>()
+                .HasIndex(c => c.InstructorId);
 
             modelBuilder.Entity<Certificate>()
-                .HasQueryFilter(c => c.Status != CertificateStatus.Revoked);
+                .HasIndex(c => c.UserId);
+
+            modelBuilder.Entity<Certificate>()
+                .HasIndex(c => c.CertificateTemplateId);
+
+            modelBuilder.Entity<Certificate>()
+                .HasIndex(c => c.IssuedByUserId);
+
+            modelBuilder.Entity<Certificate>()
+                .HasIndex(c => c.ApprovedByUserId);
+
+            modelBuilder.Entity<Decision>()
+                .HasIndex(d => d.IssuedByUserId);
+
+            modelBuilder.Entity<Decision>()
+                .HasIndex(d => d.CertificateId);
+
+            modelBuilder.Entity<Decision>()
+                .HasIndex(d => d.DecisionTemplateId);
+
+            modelBuilder.Entity<TraineeAssignation>()
+                .HasIndex(t => t.TraineeId);
+
+            modelBuilder.Entity<TraineeAssignation>()
+                .HasIndex(t => t.AssignedByUserId);
+
+            modelBuilder.Entity<TraineeAssignation>()
+                .HasIndex(t => t.ApprovedByUserId);
+
+            modelBuilder.Entity<TraineeAssignation>()
+                .HasIndex(t => t.RequestId);
+
+            modelBuilder.Entity<TraineeAssignation>()
+                .HasIndex(t => t.SubjectId);
+
+            modelBuilder.Entity<TraineeAssignation>()
+                .HasIndex(t => t.GradedByInstructorId);
+
+            modelBuilder.Entity<InstructorAssignation>()
+                .HasIndex(i => i.SubjectId);
+
+            modelBuilder.Entity<InstructorAssignation>()
+                .HasIndex(i => i.InstructorId);
+
+            modelBuilder.Entity<InstructorAssignation>()
+                .HasIndex(i => i.AssignedByUserId);
+
+            modelBuilder.Entity<ClassTraineeAssignation>()
+                .HasIndex(ct => ct.ClassId);
+
+            modelBuilder.Entity<ClassTraineeAssignation>()
+                .HasIndex(ct => ct.TraineeAssignationId);
+
+            modelBuilder.Entity<CourseSubjectSpecialty>()
+                .HasIndex(c => c.SpecialtyId);
+
+            modelBuilder.Entity<CourseSubjectSpecialty>()
+                .HasIndex(c => c.SubjectId);
+
+            modelBuilder.Entity<CourseSubjectSpecialty>()
+                .HasIndex(c => c.CourseId);
+
+            modelBuilder.Entity<StudyRecord>()
+                .HasIndex(sr => sr.CourseId);
+
+            modelBuilder.Entity<StudyRecord>()
+                .HasIndex(sr => sr.PlanId);
+
+            modelBuilder.Entity<StudyRecord>()
+                .HasIndex(sr => sr.SubjectId);
+
+            modelBuilder.Entity<PlanCertificate>()
+                .HasIndex(pc => pc.CertificateId);
+
+            modelBuilder.Entity<PlanCertificate>()
+                .HasIndex(pc => pc.PlanId);
+
+            modelBuilder.Entity<SubjectCertificate>()
+                .HasIndex(sc => sc.CertificateId);
+
+            modelBuilder.Entity<SubjectCertificate>()
+                .HasIndex(sc => sc.SubjectId);
+
+            modelBuilder.Entity<CourseCertificate>()
+                .HasIndex(cc => cc.CertificateId);
+
+            modelBuilder.Entity<CourseCertificate>()
+                .HasIndex(cc => cc.CourseId);
+
+            modelBuilder.Entity<ExternalCertificate>()
+                .HasIndex(ec => ec.UserId);
+
+            modelBuilder.Entity<Request>()
+                .HasIndex(r => r.RequestUserId);
+
+            modelBuilder.Entity<Request>()
+                .HasIndex(r => r.ApprovedByUserId);
+
+            modelBuilder.Entity<Notification>()
+                .HasIndex(n => n.UserId);
+
+            modelBuilder.Entity<Report>()
+                .HasIndex(r => r.GeneratedByUserId);
+
+
+            modelBuilder.Entity<Session>()
+                .HasIndex(s => s.UserId);
+
+            modelBuilder.Entity<Plan>()
+                .HasIndex(p => p.CreatedByUserId);
+
+            modelBuilder.Entity<Plan>()
+                .HasIndex(p => p.SpecialtyId);
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasIndex(us => us.UserId);
+
+            modelBuilder.Entity<UserSpecialty>()
+                .HasIndex(us => us.SpecialtyId);
+
 
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.PlanCertificate)
@@ -591,6 +640,7 @@ namespace Infrastructure
                 .WithOne(cc => cc.Certificate)
                 .HasForeignKey<CourseCertificate>(cc => cc.CertificateId)
                 .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

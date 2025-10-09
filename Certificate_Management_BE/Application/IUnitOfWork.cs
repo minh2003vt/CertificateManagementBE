@@ -9,7 +9,33 @@ namespace Application
 {
     public interface IUnitOfWork
     {
+        public object Context { get; }
         public IUserRepository UserRepository { get; }
         public ISessionRepository SessionRepository { get; }
+        public ICertificateRepository CertificateRepository { get; }
+        public ICertificateTemplateRepository CertificateTemplateRepository { get; }
+        public IClassRepository ClassRepository { get; }
+        public IClassTraineeAssignationRepository ClassTraineeAssignationRepository { get; }
+        public ICourseRepository CourseRepository { get; }
+        public ICourseCertificateRepository CourseCertificateRepository { get; }
+        public ICourseSubjectSpecialtyRepository CourseSubjectSpecialtyRepository { get; }
+        public IDecisionRepository DecisionRepository { get; }
+        public IDecisionTemplateRepository DecisionTemplateRepository { get; }
+        public IDepartmentRepository DepartmentRepository { get; }
+        public IExternalCertificateRepository ExternalCertificateRepository { get; }
+        public IInstructorAssignationRepository InstructorAssignationRepository { get; }
+        public INotificationRepository NotificationRepository { get; }
+        public IPlanRepository PlanRepository { get; }
+        public IPlanCertificateRepository PlanCertificateRepository { get; }
+        public IStudyRecordRepository PlanCourseRepository { get; }
+        public IReportRepository ReportRepository { get; }
+        public IRequestRepository RequestRepository { get; }
+        public IRoleRepository RoleRepository { get; }
+        public ISpecialtyRepository SpecialtyRepository { get; }
+        public ISubjectRepository SubjectRepository { get; }
+        public ISubjectCertificateRepository SubjectCertificateRepository { get; }
+        public ITraineeAssignationRepository TraineeAssignationRepository { get; }
+
+        Task<int> SaveChangesAsync();
     }
 }

@@ -3,8 +3,8 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -18,121 +18,61 @@ namespace Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Domain.Entities.AllotedSlot", b =>
-                {
-                    b.Property<int>("SlotId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(0);
-
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.HasKey("SlotId", "ClassId");
-
-                    b.HasIndex("ClassId");
-
-                    b.ToTable("AllotedSlots");
-                });
-
-            modelBuilder.Entity("Domain.Entities.AuditLog", b =>
-                {
-                    b.Property<int>("AuditLogId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuditLogId"));
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ActionDetails")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SessionId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Timestamp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("AuditLogId");
-
-                    b.HasIndex("SessionId");
-
-                    b.HasIndex("Timestamp");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AuditLogs");
-                });
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Domain.Entities.Certificate", b =>
                 {
                     b.Property<string>("CertificateId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ApprovedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CertificateCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CertificateTemplateId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CertificateUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("ExpirationDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IncludesRelearn")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("IssueDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("IssuedByUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RelearnSubjects")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("RevocationDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("RevocationReason")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("SignDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("CertificateId");
 
@@ -152,40 +92,36 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.CertificateTemplate", b =>
                 {
                     b.Property<string>("CertificateTemplateId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ApprovedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("TemplateFile")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("TemplateName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("TemplateStatus")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("CertificateTemplateId");
 
@@ -200,19 +136,19 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("ClassId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClassId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ClassId"));
 
                     b.Property<DateTime>("End")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("InstructorId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("Start")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("ClassId");
 
@@ -224,14 +160,16 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.ClassTraineeAssignation", b =>
                 {
                     b.Property<int>("ClassId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnOrder(0);
 
                     b.Property<string>("TraineeAssignationId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(1);
 
                     b.HasKey("ClassId", "TraineeAssignationId");
+
+                    b.HasIndex("ClassId");
 
                     b.HasIndex("TraineeAssignationId");
 
@@ -241,51 +179,43 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Course", b =>
                 {
                     b.Property<string>("CourseId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CourseLevel")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CourseName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("EndDateTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Progress")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("StartDateTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("CourseId");
 
@@ -297,11 +227,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.CourseCertificate", b =>
                 {
                     b.Property<string>("CertificateId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(0);
 
                     b.Property<string>("CourseId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(1);
 
                     b.HasKey("CertificateId", "CourseId");
@@ -317,25 +247,25 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.CourseSubjectSpecialty", b =>
                 {
                     b.Property<string>("SpecialtyId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(0);
 
                     b.Property<string>("SubjectId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(1);
 
                     b.Property<string>("CourseId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("SpecialtyId", "SubjectId", "CourseId");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("SpecialtyId");
 
                     b.HasIndex("SubjectId");
 
@@ -345,49 +275,45 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Decision", b =>
                 {
                     b.Property<string>("DecisionId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CertificateId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("DecisionCode")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("DecisionStatus")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("DecisionTemplateId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("IssueDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("IssuedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("SignDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("DecisionId");
 
@@ -405,38 +331,36 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.DecisionTemplate", b =>
                 {
                     b.Property<string>("DecisionTemplateId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ApprovedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("TemplateContent")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("TemplateName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("TemplateStatus")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("DecisionTemplateId");
 
@@ -450,36 +374,32 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Department", b =>
                 {
                     b.Property<string>("DepartmentId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DepartmentDescription")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("DepartmentName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ManagerId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("SpecialtyId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("DepartmentId");
 
@@ -494,46 +414,37 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("ExternalCertificateId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExternalCertificateId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ExternalCertificateId"));
 
                     b.Property<string>("CertificateCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CertificateFileUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CertificateName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Exp_date")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("IssueDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("IssuingOrganization")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("VerificationStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VerifiedByUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("VerifyDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("text");
 
                     b.HasKey("ExternalCertificateId");
 
@@ -541,41 +452,41 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("VerifiedByUserId");
-
                     b.ToTable("ExternalCertificates");
                 });
 
             modelBuilder.Entity("Domain.Entities.InstructorAssignation", b =>
                 {
                     b.Property<string>("SubjectId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(0);
 
                     b.Property<string>("InstructorId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(1);
 
                     b.Property<DateTime>("AssignDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("AssignedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Notes")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RequestStatus")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("SubjectId", "InstructorId");
 
                     b.HasIndex("AssignedByUserId");
 
                     b.HasIndex("InstructorId");
+
+                    b.HasIndex("SubjectId");
 
                     b.ToTable("InstructorAssignations");
                 });
@@ -584,33 +495,31 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("NotificationId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("NotificationId"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("NotificationType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("NotificationId");
 
@@ -622,14 +531,38 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Plan", b =>
                 {
                     b.Property<string>("PlanId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PlanName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("SpecialtyId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("PlanId");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("SpecialtyId");
 
                     b.ToTable("Plans");
                 });
@@ -637,11 +570,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.PlanCertificate", b =>
                 {
                     b.Property<string>("CertificateId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(0);
 
                     b.Property<string>("PlanId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(1);
 
                     b.HasKey("CertificateId", "PlanId");
@@ -654,66 +587,43 @@ namespace Infrastructure.Migrations
                     b.ToTable("PlanCertificates");
                 });
 
-            modelBuilder.Entity("Domain.Entities.PlanCourse", b =>
-                {
-                    b.Property<string>("CourseId")
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("PlanId")
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnOrder(1);
-
-                    b.HasKey("CourseId", "PlanId");
-
-                    b.HasIndex("PlanId");
-
-                    b.ToTable("PlanCourses");
-                });
-
             modelBuilder.Entity("Domain.Entities.Report", b =>
                 {
                     b.Property<string>("ReportId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("EndDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FileUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Format")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("GenerateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("GeneratedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ReportName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ReportType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("StartDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("ReportId");
 
@@ -725,48 +635,42 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Request", b =>
                 {
                     b.Property<string>("RequestId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ApprovedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("ApprovedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Notes")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("RequestDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("RequestType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RequestUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("RequestId");
 
@@ -783,14 +687,14 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RoleId"));
 
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("RoleId");
 
@@ -800,19 +704,17 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Session", b =>
                 {
                     b.Property<string>("SessionId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("LoginTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("SessionExpiry")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("SessionId");
 
@@ -821,59 +723,30 @@ namespace Infrastructure.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Slot", b =>
-                {
-                    b.Property<int>("SlotId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SlotId"));
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.HasKey("SlotId");
-
-                    b.ToTable("Slots");
-                });
-
             modelBuilder.Entity("Domain.Entities.Specialty", b =>
                 {
                     b.Property<string>("SpecialtyId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("SpecialtyName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UpdatedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("SpecialtyId");
 
@@ -884,38 +757,65 @@ namespace Infrastructure.Migrations
                     b.ToTable("Specialties");
                 });
 
+            modelBuilder.Entity("Domain.Entities.StudyRecord", b =>
+                {
+                    b.Property<string>("CourseId")
+                        .HasColumnType("text")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("PlanId")
+                        .HasColumnType("text")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("text")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("CourseId", "PlanId", "SubjectId");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("StudyRecords");
+                });
+
             modelBuilder.Entity("Domain.Entities.Subject", b =>
                 {
                     b.Property<string>("SubjectId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Credits")
-                        .HasColumnType("int");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
-                    b.Property<double>("PassingScore")
-                        .HasColumnType("float");
+                    b.Property<int?>("MinAttendance")
+                        .HasColumnType("integer");
+
+                    b.Property<double?>("MinFinalExamScore")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("MinPracticeExamScore")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("MinTotalScore")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("SubjectName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("SubjectId");
 
@@ -927,11 +827,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.SubjectCertificate", b =>
                 {
                     b.Property<string>("CertificateId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(0);
 
                     b.Property<string>("SubjectId")
-                        .HasColumnType("nvarchar(450)")
+                        .HasColumnType("text")
                         .HasColumnOrder(1);
 
                     b.HasKey("CertificateId", "SubjectId");
@@ -947,76 +847,74 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.TraineeAssignation", b =>
                 {
                     b.Property<string>("TraineeAssignationId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("ApprovalDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ApprovedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("AssignDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("AssignedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
-                    b.Property<double>("AssignmentScore")
-                        .HasColumnType("float");
+                    b.Property<int?>("Attendance")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("EvaluationDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<double>("FinalExamScore")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("FinalResitScore")
-                        .HasColumnType("float");
+                    b.Property<double?>("FinalExamScore")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("GradeStatus")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("GradedByInstructorId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Notes")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<double?>("PracticeExamScore")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Remarks")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RequestId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RequestStatus")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<double?>("ResitFinalExamScore")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("ResitPracticeExamScore")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("SubjectId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<double>("TotalScore")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("TraineeId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("TraineeAssignationId");
 
@@ -1038,84 +936,77 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("AvatarUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<string>("CitizenId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<string>("DepartmentId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlanId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Sex")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SpecialtyId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("DATEADD(hour, 7, GETUTCDATE())");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("CitizenId")
+                        .IsUnique();
 
                     b.HasIndex("DepartmentId");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("PlanId");
-
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("SpecialtyId");
 
                     b.HasIndex("Username")
                         .IsUnique();
@@ -1123,48 +1014,32 @@ namespace Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Domain.Entities.AllotedSlot", b =>
+            modelBuilder.Entity("Domain.Entities.UserSpecialty", b =>
                 {
-                    b.HasOne("Domain.Entities.Class", "Class")
-                        .WithMany("AllotedSlots")
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("UserId")
+                        .HasColumnType("text")
+                        .HasColumnOrder(0);
 
-                    b.HasOne("Domain.Entities.Slot", "Slot")
-                        .WithMany("AllotedSlots")
-                        .HasForeignKey("SlotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("SpecialtyId")
+                        .HasColumnType("text")
+                        .HasColumnOrder(1);
 
-                    b.Navigation("Class");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Navigation("Slot");
-                });
+                    b.HasKey("UserId", "SpecialtyId");
 
-            modelBuilder.Entity("Domain.Entities.AuditLog", b =>
-                {
-                    b.HasOne("Domain.Entities.Session", "Session")
-                        .WithMany("AuditLogs")
-                        .HasForeignKey("SessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasIndex("SpecialtyId");
 
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("AuditLogs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasIndex("UserId");
 
-                    b.Navigation("Session");
-
-                    b.Navigation("User");
+                    b.ToTable("UserSpecialty");
                 });
 
             modelBuilder.Entity("Domain.Entities.Certificate", b =>
                 {
                     b.HasOne("Domain.Entities.User", "ApprovedByUser")
-                        .WithMany()
+                        .WithMany("ApprovedCertificates")
                         .HasForeignKey("ApprovedByUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -1175,15 +1050,14 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "IssuedByUser")
-                        .WithMany()
+                        .WithMany("IssuedCertificates")
                         .HasForeignKey("IssuedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany("Certificates")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ApprovedByUser");
@@ -1248,7 +1122,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CreatedByUser");
@@ -1352,7 +1226,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Department", b =>
                 {
                     b.HasOne("Domain.Entities.User", "Manager")
-                        .WithMany()
+                        .WithMany("ManagedDepartments")
                         .HasForeignKey("ManagerId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -1374,14 +1248,7 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Domain.Entities.User", "VerifiedByUser")
-                        .WithMany()
-                        .HasForeignKey("VerifiedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("User");
-
-                    b.Navigation("VerifiedByUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.InstructorAssignation", b =>
@@ -1422,6 +1289,24 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Plan", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Domain.Entities.Specialty", "Specialty")
+                        .WithMany()
+                        .HasForeignKey("SpecialtyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Specialty");
+                });
+
             modelBuilder.Entity("Domain.Entities.PlanCertificate", b =>
                 {
                     b.HasOne("Domain.Entities.Certificate", "Certificate")
@@ -1441,25 +1326,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Plan");
                 });
 
-            modelBuilder.Entity("Domain.Entities.PlanCourse", b =>
-                {
-                    b.HasOne("Domain.Entities.Course", "Course")
-                        .WithMany("PlanCourses")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Plan", "Plan")
-                        .WithMany("PlanCourses")
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Plan");
-                });
-
             modelBuilder.Entity("Domain.Entities.Report", b =>
                 {
                     b.HasOne("Domain.Entities.User", "GeneratedByUser")
@@ -1474,14 +1340,14 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Request", b =>
                 {
                     b.HasOne("Domain.Entities.User", "ApprovedByUser")
-                        .WithMany()
+                        .WithMany("ApprovedRequests")
                         .HasForeignKey("ApprovedByUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.Entities.User", "RequestUser")
                         .WithMany("Requests")
                         .HasForeignKey("RequestUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ApprovedByUser");
@@ -1494,7 +1360,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany("Sessions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1504,22 +1370,52 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("CreatedByUserId");
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.Entities.User", "UpdatedByUser")
                         .WithMany()
-                        .HasForeignKey("UpdatedByUserId");
+                        .HasForeignKey("UpdatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("UpdatedByUser");
                 });
 
+            modelBuilder.Entity("Domain.Entities.StudyRecord", b =>
+                {
+                    b.HasOne("Domain.Entities.Course", "Course")
+                        .WithMany("StudyRecords")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Plan", "Plan")
+                        .WithMany("StudyRecords")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Subject", "Subject")
+                        .WithMany("StudyRecords")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("Subject");
+                });
+
             modelBuilder.Entity("Domain.Entities.Subject", b =>
                 {
                     b.HasOne("Domain.Entities.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("CreatedByUserId");
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("CreatedByUser");
                 });
@@ -1558,7 +1454,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.User", "GradedByInstructor")
                         .WithMany()
                         .HasForeignKey("GradedByInstructorId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Entities.Request", "Request")
                         .WithMany("TraineeAssignations")
@@ -1594,13 +1490,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.HasOne("Domain.Entities.Department", "Department")
-                        .WithMany("Reports")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Domain.Entities.Plan", "Plan")
                         .WithMany("Users")
-                        .HasForeignKey("PlanId")
+                        .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.Entities.Role", "Role")
@@ -1609,18 +1500,28 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Specialty", "Specialty")
-                        .WithMany("Users")
-                        .HasForeignKey("SpecialtyId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Department");
 
-                    b.Navigation("Plan");
-
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserSpecialty", b =>
+                {
+                    b.HasOne("Domain.Entities.Specialty", "Specialty")
+                        .WithMany("UserSpecialties")
+                        .HasForeignKey("SpecialtyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("UserSpecialties")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Specialty");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.Certificate", b =>
@@ -1641,8 +1542,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Class", b =>
                 {
-                    b.Navigation("AllotedSlots");
-
                     b.Navigation("ClassTraineeAssignations");
                 });
 
@@ -1652,7 +1551,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("CourseSubjectSpecialties");
 
-                    b.Navigation("PlanCourses");
+                    b.Navigation("StudyRecords");
                 });
 
             modelBuilder.Entity("Domain.Entities.DecisionTemplate", b =>
@@ -1662,16 +1561,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Department", b =>
                 {
-                    b.Navigation("Reports");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Domain.Entities.Plan", b =>
                 {
                     b.Navigation("PlanCertificates");
 
-                    b.Navigation("PlanCourses");
-
-                    b.Navigation("Users");
+                    b.Navigation("StudyRecords");
                 });
 
             modelBuilder.Entity("Domain.Entities.Request", b =>
@@ -1684,23 +1581,13 @@ namespace Infrastructure.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Session", b =>
-                {
-                    b.Navigation("AuditLogs");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Slot", b =>
-                {
-                    b.Navigation("AllotedSlots");
-                });
-
             modelBuilder.Entity("Domain.Entities.Specialty", b =>
                 {
                     b.Navigation("CourseSubjectSpecialties");
 
                     b.Navigation("Departments");
 
-                    b.Navigation("Users");
+                    b.Navigation("UserSpecialties");
                 });
 
             modelBuilder.Entity("Domain.Entities.Subject", b =>
@@ -1708,6 +1595,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("CourseSubjectSpecialties");
 
                     b.Navigation("InstructorAssignations");
+
+                    b.Navigation("StudyRecords");
 
                     b.Navigation("SubjectCertificates");
 
@@ -1721,7 +1610,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
-                    b.Navigation("AuditLogs");
+                    b.Navigation("ApprovedCertificates");
+
+                    b.Navigation("ApprovedRequests");
 
                     b.Navigation("Certificates");
 
@@ -1733,6 +1624,10 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("InstructorAssignations");
 
+                    b.Navigation("IssuedCertificates");
+
+                    b.Navigation("ManagedDepartments");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("Reports");
@@ -1742,6 +1637,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Sessions");
 
                     b.Navigation("TraineeAssignations");
+
+                    b.Navigation("UserSpecialties");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,11 +16,17 @@ namespace Domain.Entities
         [Required, MaxLength(100)]
         public string SubjectName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public int Credits { get; set; }
+        public int? MinAttendance { get; set; }
+
+        [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
+        public double? MinPracticeExamScore { get; set; }
+
+        [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
+        public double? MinFinalExamScore { get; set; }
 
         [Required]
         [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
-        public double PassingScore { get; set; }
+        public double MinTotalScore { get; set; } = 0;
 
         [ForeignKey("CreatedByUser")]
         public string? CreatedByUserId { get; set; }
@@ -32,5 +38,7 @@ namespace Domain.Entities
         public virtual ICollection<TraineeAssignation> TraineeAssignations { get; set; } = [];
         public virtual ICollection<InstructorAssignation> InstructorAssignations { get; set; } = [];
         public virtual ICollection<SubjectCertificate> SubjectCertificates { get; set; } = [];
+        public virtual ICollection<StudyRecord> StudyRecords { get; set; } = [];
+
     }
 }
