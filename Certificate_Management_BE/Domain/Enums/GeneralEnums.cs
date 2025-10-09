@@ -39,7 +39,6 @@ namespace Domain.Enums
         Initial = 0,
         Recurrent = 1,
         Relearn = 2,
-        Professional = 3
     }
 
     public enum RequestStatus

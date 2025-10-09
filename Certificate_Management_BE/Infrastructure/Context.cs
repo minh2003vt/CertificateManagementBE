@@ -451,6 +451,10 @@ namespace Infrastructure
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.CitizenId)
+                .IsUnique();
+
             modelBuilder.Entity<Certificate>()
                 .HasIndex(c => c.CertificateCode);
 
