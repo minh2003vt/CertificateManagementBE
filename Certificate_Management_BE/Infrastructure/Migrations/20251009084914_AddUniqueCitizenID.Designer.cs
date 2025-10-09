@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20251006192454_intti")]
-    partial class intti
+    [Migration("20251009084914_AddUniqueCitizenID")]
+    partial class AddUniqueCitizenID
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1000,6 +1000,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("CitizenId")
+                        .IsUnique();
 
                     b.HasIndex("DepartmentId");
 
