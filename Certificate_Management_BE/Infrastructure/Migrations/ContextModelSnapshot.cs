@@ -998,6 +998,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("CitizenId")
+                        .IsUnique();
+
                     b.HasIndex("DepartmentId");
 
                     b.HasIndex("Email")
