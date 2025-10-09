@@ -117,5 +117,10 @@ namespace Infrastructure
         public ISubjectRepository SubjectRepository => _subjectRepository;
         public ISubjectCertificateRepository SubjectCertificateRepository => _subjectCertificateRepository;
         public ITraineeAssignationRepository TraineeAssignationRepository => _traineeAssignationRepository;
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
     }
 }
