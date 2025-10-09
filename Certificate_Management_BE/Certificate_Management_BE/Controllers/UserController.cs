@@ -22,7 +22,7 @@ namespace Certificate_Management_BE.Controllers
 
         #region GetProfile
         [HttpGet("profile")]
-        [AuthorizeRoles()] 
+        [AuthorizeRoles()]
         public async Task<IActionResult> GetProfile()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -74,6 +74,15 @@ namespace Certificate_Management_BE.Controllers
             }
 
             var result = await _userService.ChangePasswordAsync(userId, dto);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        #endregion
+
         #region ImportTrainee
         /// <summary>
         /// Import trainees from Excel file
@@ -113,4 +122,3 @@ namespace Certificate_Management_BE.Controllers
         #endregion
     }
 }
-

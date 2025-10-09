@@ -136,6 +136,17 @@ namespace Application.Services
                 response.Success = true;
                 response.Data = updated;
                 response.Message = "Profile updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Failed to update profile: {ex.Message}";
+            }
+
+            return response;
+        }
+        #endregion
+
         #region ImportTrainees
         public async Task<ServiceResponse<ImportResultDto>> ImportTraineesAsync(IFormFile file, string performedByUsername)
         {
@@ -660,9 +671,38 @@ namespace Application.Services
                 response.Data = result;
                 response.Message = $"Trainee Import: {result.TraineeData.SuccessCount} succeeded, {result.TraineeData.FailureCount} failed | Certificate Import: {result.ExternalCertificateData.SuccessCount} succeeded, {result.ExternalCertificateData.FailureCount} failed";
                 
-                // Notify admins about the import (only if there were successful imports)
-                if (result.TraineeData.SuccessCount > 0 || result.ExternalCertificateData.SuccessCount > 0)
+                // Notify admins about the import 
+                if (result.TraineeData.SuccessCount > 0)
                 {
+                    // Get all admin users (RoleId = 1)
+                    var adminUsers = await _unitOfWork.UserRepository
+                        .GetByNullableExpressionWithOrderingAsync(
+                            u => u.RoleId == 1,
+                            null
+                        );
+
+                    var title = "New Trainees Imported";
+                    var message = $"{performedByUsername} successfully imported {result.TraineeData.SuccessCount} trainee(s)" +
+                                  (result.TraineeData.FailureCount > 0 ? $" ({result.TraineeData.FailureCount} failed)" : "");
+                    var notificationType = "Trainee Import";
+
+                    // Create notification for each admin
+                    foreach (var admin in adminUsers)
+                    {
+                        var notification = new Domain.Entities.Notification
+                        {
+                            UserId = admin.UserId,
+                            Title = title,
+                            Message = message,
+                            NotificationType = notificationType,
+                            CreatedAt = DateTime.UtcNow,
+                            IsRead = false
+                        };
+                        
+                        await _unitOfWork.NotificationRepository.AddAsync(notification);
+                    }
+                    await _unitOfWork.SaveChangesAsync();
+                    // Send SignalR real-time notifications to each admin
                     await _notificationService.NotifyAdminsAboutNewTraineesAsync(
                         result.TraineeData.SuccessCount,
                         result.TraineeData.FailureCount,
@@ -725,11 +765,6 @@ namespace Application.Services
             return response;
         }
         #endregion
-                response.Message = $"Failed to import trainees: {ex.Message}";
-                response.Data = result;
-                return response;
-            }
-        }
 
         private Task<string> GenerateNextUserIdAsync(List<User> existingUsers)
         {
@@ -793,7 +828,6 @@ namespace Application.Services
 
             return username;
         }
-        #endregion
     }
 
     // Helper class for external certificate data
