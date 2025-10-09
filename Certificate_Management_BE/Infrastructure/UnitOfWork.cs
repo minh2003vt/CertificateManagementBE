@@ -10,6 +10,7 @@ namespace Infrastructure
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private readonly Context _context;
         private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
         private readonly ICertificateRepository _certificateRepository;
@@ -36,6 +37,7 @@ namespace Infrastructure
         private readonly ISubjectCertificateRepository _subjectCertificateRepository;
         private readonly ITraineeAssignationRepository _traineeAssignationRepository;
         public UnitOfWork(
+            Context context,
             IUserRepository userRepository,
             ISessionRepository sessionRepository,
             ICertificateRepository certificateRepository,
@@ -62,6 +64,7 @@ namespace Infrastructure
             ISubjectCertificateRepository subjectCertificateRepository,
             ITraineeAssignationRepository traineeAssignationRepository) 
         {
+            _context = context;
             _userRepository = userRepository;
             _sessionRepository = sessionRepository;
             _certificateRepository = certificateRepository;
@@ -88,6 +91,7 @@ namespace Infrastructure
             _subjectCertificateRepository = subjectCertificateRepository;
             _traineeAssignationRepository = traineeAssignationRepository;
         }
+        public object Context => _context;
         public IUserRepository UserRepository => _userRepository;
         public ISessionRepository SessionRepository => _sessionRepository;
         public ICertificateRepository CertificateRepository => _certificateRepository;
@@ -113,5 +117,10 @@ namespace Infrastructure
         public ISubjectRepository SubjectRepository => _subjectRepository;
         public ISubjectCertificateRepository SubjectCertificateRepository => _subjectCertificateRepository;
         public ITraineeAssignationRepository TraineeAssignationRepository => _traineeAssignationRepository;
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
     }
 }

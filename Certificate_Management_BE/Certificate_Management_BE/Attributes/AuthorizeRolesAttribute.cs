@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Certificate_Management_BE.Attributes
 {
@@ -27,7 +28,15 @@ namespace Certificate_Management_BE.Attributes
             // Check if user is authenticated
             if (!user.Identity?.IsAuthenticated ?? true)
             {
-                context.Result = new UnauthorizedResult();
+                context.Result = new JsonResult(new
+                {
+                    success = false,
+                    message = "Unauthorized. Please login to access this resource.",
+                    statusCode = 401
+                })
+                {
+                    StatusCode = 401
+                };
                 return;
             }
 
@@ -37,7 +46,6 @@ namespace Certificate_Management_BE.Attributes
                 return;
             }
 
-            // Check if user has any of the required roles
             var userRoles = user.Claims
                 .Where(c => c.Type == ClaimTypes.Role)
                 .Select(c => c.Value)
@@ -45,7 +53,15 @@ namespace Certificate_Management_BE.Attributes
 
             if (!_roles.Any(role => userRoles.Contains(role)))
             {
-                context.Result = new ForbidResult();
+                context.Result = new JsonResult(new
+                {
+                    success = false,
+                    message = $"Forbidden. Required roles: {string.Join(", ", _roles)}.",
+                    statusCode = 403
+                })
+                {
+                    StatusCode = 403
+                };
                 return;
             }
         }

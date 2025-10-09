@@ -9,6 +9,7 @@ namespace Application
 {
     public interface IUnitOfWork
     {
+        public object Context { get; }
         public IUserRepository UserRepository { get; }
         public ISessionRepository SessionRepository { get; }
         public ICertificateRepository CertificateRepository { get; }
@@ -34,5 +35,7 @@ namespace Application
         public ISubjectRepository SubjectRepository { get; }
         public ISubjectCertificateRepository SubjectCertificateRepository { get; }
         public ITraineeAssignationRepository TraineeAssignationRepository { get; }
+
+        Task<int> SaveChangesAsync();
     }
 }
