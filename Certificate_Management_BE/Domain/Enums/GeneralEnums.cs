@@ -1,12 +1,6 @@
 namespace Domain.Enums
 {
-    public enum Location
-    {
-        SectionA = 0,
-        SectionB = 1
-    }
-
-    public enum Sex
+   public enum Sex
     {
         Male = 0,
         Female = 1
@@ -33,13 +27,19 @@ namespace Domain.Enums
         Approved = 1,
         Rejected = 2
     }
-
-    public enum CourseLevel
+    public enum SubjectStatus
     {
-        Initial = 0,
-        Recurrent = 1,
-        Relearn = 2,
+        Pending = 0,
+        Approved = 1,
+        Rejected = 2
     }
+    public enum PlanStatus
+    {
+        Pending = 0,
+        Approved = 1,
+        Rejected = 2
+    }
+
 
     public enum RequestStatus
     {
@@ -48,13 +48,6 @@ namespace Domain.Enums
         Rejected = 2,
         Updating = 3,
         Deleting = 4
-    }
-
-    public enum Progress
-    {
-        NotYet = 0,
-        Ongoing = 1,
-        Completed = 2
     }
     public enum DepartmentStatus
     {
@@ -85,41 +78,32 @@ namespace Domain.Enums
         Pass = 1,
         Fail = 0
     }
-    public enum GradeComponentType
+    
+    public enum GradeKind
     {
-        Participation,
-        ProgressTest,
-        Assignments,
-        GroupProject,
-        FinalExam,
-        PracticalExam,
-        FinalExamResit,
-        PracticalExamResit
-    }
+        Initial = 0,
+        Relearn=1,
+        Reccurent= 2
 
-    public enum DigitalSignatureStatus
-    {
-        Active = 1, Expired = 0, Revoked = 2
     }
-
-    public enum TemplateStatus
+        public enum TemplateStatus
     {
         Active = 1, Inactive = 0
     }
     public enum RequestType
     {
-        // Plan Management
+// Plan Management
         NewPlan = 0,
 
-        // Course Management
+// Course Management
         NewCourse = 1,
         UpdateCourse = 2,
         DeleteCourse = 3,
 
-        // Instructor Management
+// Instructor Management
         AssignInstructor = 4,
 
-        // Class Management
+// Class Management
         ClassSchedule = 5,
 
         // Trainee Management
@@ -150,13 +134,5 @@ namespace Domain.Enums
     public enum ReportType
     {
         ExpiredCertificate = 1, CourseResult = 2, TraineeResult = 3, PlanResult = 4
-    }
-    public enum ResultStatus
-    {
-        Draft = 0, Submitted = 1, Approved = 2, Rejected = 3
-    }
-    public enum ScheduleStatus
-    {
-        Pending = 0, Approved = 1, Incoming = 2, Canceled = 3, Completed = 4
     }
 }

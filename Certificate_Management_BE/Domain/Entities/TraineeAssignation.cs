@@ -29,20 +29,11 @@ namespace Domain.Entities
         [ForeignKey("Request")]
         public string RequestId { get; set; } = string.Empty;
         public virtual Request Request { get; set; } = null!;
-        //[ForeignKey("ClassSubject")]
-        //public string ClassSubjectId { get; set; }
-        //public ClassSubject ClassSubject { get; set; }
 
         [ForeignKey("Subject")]
         public string SubjectId { get; set; } = string.Empty;
         public virtual Subject Subject { get; set; } = null!;
         public string Notes { get; set; } = string.Empty;
-        //[Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
-        //public double AssignmentScore { get; set; }
-        //[Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
-        //public double FinalExamScore { get; set; }
-        //[Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
-        //public double? FinalResitScore { get; set; }
         [Required]
         [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
         public double TotalScore { get; set; } = 0;
@@ -60,7 +51,7 @@ namespace Domain.Entities
         [Range(0, 10, ErrorMessage = "Value must be between 0 and 10.")]
         public double? ResitFinalExamScore { get; set; }
         public GradeStatus GradeStatus { get; set; } = GradeStatus.Pending;
-        public string Remarks { get; set; } = string.Empty;
+        public GradeKind Gradekind { get; set; } = GradeKind.Initial;
 
         [ForeignKey("GradeUser")]
         public string? GradedByInstructorId { get; set; }

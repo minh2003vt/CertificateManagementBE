@@ -74,9 +74,24 @@ namespace Application.Services
                     SessionExpiry = DateTime.UtcNow.AddHours(7).AddMinutes(50)
                 };
                 await _unitOfWork.SessionRepository.AddAsync(session);
+                
+                // Get SignalR Hub URL based on user role
+                var roleName = user.Role?.RoleName ?? "User";
+                string? hubUrl = null;
+                try
+                {
+                    hubUrl = SignalRHelper.GetHubUrlByRole(roleName);
+                }
+                catch (ArgumentException)
+                {
+                    // Role doesn't have a hub, that's ok
+                    hubUrl = null;
+                }
+                
                 response.UserId = user.UserId;
                 response.Roles = roles;
                 response.Token = token;
+                response.HubUrl = hubUrl;
                 response.Success = true;
                 return response;
             }

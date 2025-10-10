@@ -91,7 +91,7 @@ namespace Application.Services
                 // Check if CitizenId is already used by another user
                 var existingUserWithCitizenId = await _unitOfWork.UserRepository
                     .GetSingleOrDefaultByNullableExpressionAsync(u => u.CitizenId == profileDto.CitizenId && u.UserId != userId);
-                
+
                 if (existingUserWithCitizenId != null)
                 {
                     response.Success = false;
@@ -102,7 +102,7 @@ namespace Application.Services
                 // Check if Email is already used by another user
                 var existingUserWithEmail = await _unitOfWork.UserRepository
                     .GetSingleOrDefaultByNullableExpressionAsync(u => u.Email == profileDto.Email && u.UserId != userId);
-                
+
                 if (existingUserWithEmail != null)
                 {
                     response.Success = false;
@@ -136,6 +136,15 @@ namespace Application.Services
                 response.Success = true;
                 response.Data = updated;
                 response.Message = "Profile updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
         #region ImportTrainees
         public async Task<ServiceResponse<ImportResultDto>> ImportTraineesAsync(IFormFile file, string performedByUsername)
         {
@@ -725,11 +734,7 @@ namespace Application.Services
             return response;
         }
         #endregion
-                response.Message = $"Failed to import trainees: {ex.Message}";
-                response.Data = result;
-                return response;
-            }
-        }
+
 
         private Task<string> GenerateNextUserIdAsync(List<User> existingUsers)
         {
