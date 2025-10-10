@@ -69,7 +69,7 @@ namespace Application.Services
                 // Query by UserId directly instead of GetAll() then filtering
                 var certificates = await _unitOfWork.ExternalCertificateRepository
                     .GetByNullableExpressionWithOrderingAsync(c => c.UserId == userId);
-                
+
                 var userCertificates = certificates
                     .Select(c => new ExternalCertificateListDto
                     {

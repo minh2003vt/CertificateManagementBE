@@ -14,7 +14,7 @@ namespace Domain.Entities
         [Key]
         public string PlanId { get; set; } = string.Empty;
         [Required, MaxLength(100)]
-        public string PlanName { get; set; } = string.Empty; 
+        public string PlanName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public DateTime StartDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime EndDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);

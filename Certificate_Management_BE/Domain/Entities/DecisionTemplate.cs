@@ -33,9 +33,9 @@ namespace Domain.Entities
         [ForeignKey("ApprovedByUser")]
         public string? ApprovedByUserId { get; set; }
         public virtual User? ApprovedByUser { get; set; }
-       
+
         public DateTime? LastUpdatedAt { get; set; }
-       
+
         public TemplateStatus TemplateStatus { get; set; }
         public virtual ICollection<Decision> Decisions { get; set; } = [];
     }

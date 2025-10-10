@@ -50,7 +50,7 @@ namespace Application.Dto.ExternalCertificateDto
             {
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
                 var extension = System.IO.Path.GetExtension(CertificateFile.FileName).ToLowerInvariant();
-                
+
                 if (!allowedExtensions.Contains(extension))
                 {
                     errors.Add("Only JPG, JPEG, and PNG files are allowed");

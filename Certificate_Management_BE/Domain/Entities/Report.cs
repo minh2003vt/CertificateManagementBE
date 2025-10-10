@@ -22,7 +22,7 @@ namespace Domain.Entities
         public DateTime StartDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime EndDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public string Content { get; set; } = string.Empty;
-        public string Format {  get; set; } = string.Empty;
+        public string Format { get; set; } = string.Empty;
         public string FileUrl { get; set; } = string.Empty;
     }
 }

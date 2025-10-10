@@ -45,7 +45,6 @@ namespace Application.Services
                 var notificationDto = new NotificationDto
                 {
                     NotificationId = notification.NotificationId,
-                    UserId = notification.UserId,
                     Title = notification.Title,
                     Message = notification.Message,
                     NotificationType = notification.NotificationType,
@@ -192,7 +191,6 @@ namespace Application.Services
                     .Select(n => new NotificationDto
                     {
                         NotificationId = n.NotificationId,
-                        UserId = n.UserId,
                         Title = n.Title,
                         Message = n.Message,
                         NotificationType = n.NotificationType,

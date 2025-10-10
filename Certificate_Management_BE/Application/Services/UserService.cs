@@ -22,15 +22,18 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly INotificationService _notificationService;
+        private readonly IEmailService _emailService;
 
         public UserService(
-            IUnitOfWork unitOfWork, 
+            IUnitOfWork unitOfWork,
             ICloudinaryService cloudinaryService,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _cloudinaryService = cloudinaryService;
             _notificationService = notificationService;
+            _emailService = emailService;
         }
 
         #region GetProfile
@@ -145,6 +148,53 @@ namespace Application.Services
 
             return response;
         }
+        #endregion
+
+        #region ChangePassword
+        public async Task<ServiceResponse<string>> ChangePasswordAsync(string userId, ChangePasswordDto dto)
+        {
+            var response = new ServiceResponse<string>();
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == userId);
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                    return response;
+                }
+
+                // Verify current password
+                if (!PasswordHashHelper.VerifyPassword(dto.CurrentPassword, user.PasswordHash))
+                {
+                    response.Success = false;
+                    response.Message = "Current password is incorrect.";
+                    return response;
+                }
+
+                // Hash and update new password
+                user.PasswordHash = PasswordHashHelper.HashPassword(dto.NewPassword);
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _unitOfWork.UserRepository.UpdateAsync(user);
+
+                response.Success = true;
+                response.Message = "Password changed successfully.";
+                response.Data = "Password updated";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Failed to change password.";
+                response.Message = ex.Message;
+
+            }
+
+            return response;
+        }
+        #endregion
+
         #region ImportTrainees
         public async Task<ServiceResponse<ImportResultDto>> ImportTraineesAsync(IFormFile file, string performedByUsername)
         {
@@ -181,8 +231,8 @@ namespace Application.Services
                             return response;
                         }
 
-                        var traineeSheet = package.Workbook.Worksheets[0]; 
-                        var certSheet = package.Workbook.Worksheets[1]; 
+                        var traineeSheet = package.Workbook.Worksheets[0];
+                        var certSheet = package.Workbook.Worksheets[1];
 
                         // Get total rows with data (excluding header)
                         if (traineeSheet.Dimension == null)
@@ -202,7 +252,7 @@ namespace Application.Services
                                 traineeDataRowCount++;
                             }
                         }
-                        
+
                         // Limit to maximum 20 records
                         if (traineeDataRowCount > 20)
                         {
@@ -210,18 +260,18 @@ namespace Application.Services
                             response.Message = "Maximum 20 trainees allowed per import. Your file contains " + traineeDataRowCount + " records.";
                             return response;
                         }
-                        
+
                         result.TraineeData.TotalRows = traineeDataRowCount;
 
                         // Store CitizenIDs from trainee sheet for certificate validation
                         var traineesCitizenIds = new HashSet<string>();
-                        
+
                         // Store certificates grouped by CitizenId for later mapping
                         var certificatesByCitizenId = new Dictionary<string, List<ExternalCertificateData>>();
-                        
+
                         // Store successfully created/updated users with their CitizenId
                         var processedUsersByCitizenId = new Dictionary<string, string>(); // CitizenId -> UserId
-                        
+
                         // Read images from worksheet.Drawings and map to rows
                         var imagesByRow = new Dictionary<int, MemoryStream>();
                         foreach (var drawing in certSheet.Drawings)
@@ -230,12 +280,12 @@ namespace Application.Services
                             {
                                 // Get row number where image is located (0-based, so add 1)
                                 var imageRow = pic.From.Row + 1;
-                                
+
                                 var imageBytes = pic.Image.ImageBytes;
-                                
+
                                 var imageStream = new MemoryStream(imageBytes);
                                 imageStream.Position = 0;
-                                
+
                                 imagesByRow[imageRow] = imageStream;
                             }
                         }
@@ -291,7 +341,7 @@ namespace Application.Services
                                     CitizenId = traineeSheet.Cells[row, 8].Text?.Trim() ?? "",
                                     SpecialtyId = traineeSheet.Cells[row, 9].Text?.Trim() ?? ""
                                 };
-                                
+
                                 // Skip empty rows
                                 if (string.IsNullOrEmpty(traineeDto.FullName))
                                 {
@@ -328,7 +378,7 @@ namespace Application.Services
 
                                     // User ID provided - validate it exists and info matches
                                     existingUser = existingUsers.FirstOrDefault(u => u.UserId == traineeDto.UserId);
-                                    
+
                                     if (existingUser == null)
                                     {
                                         result.TraineeData.Errors.Add(new ImportErrorDto
@@ -345,16 +395,16 @@ namespace Application.Services
 
                                     // Validate info matches
                                     var infoMismatch = new List<string>();
-                                    
+
                                     if (existingUser.FullName != traineeDto.FullName)
                                         infoMismatch.Add($"FullName mismatch (DB: '{existingUser.FullName}', Excel: '{traineeDto.FullName}')");
-                                    
+
                                     if (existingUser.CitizenId != traineeDto.CitizenId)
                                         infoMismatch.Add($"CitizenId mismatch (DB: '{existingUser.CitizenId}', Excel: '{traineeDto.CitizenId}')");
-                                    
+
                                     if (existingUser.DateOfBirth != parsedDateOfBirth)
                                         infoMismatch.Add($"DateOfBirth mismatch (DB: '{existingUser.DateOfBirth:yyyy-MM-dd}', Excel: '{parsedDateOfBirth:yyyy-MM-dd}')");
-                                    
+
                                     if (infoMismatch.Any())
                                     {
                                         result.TraineeData.Errors.Add(new ImportErrorDto
@@ -375,7 +425,7 @@ namespace Application.Services
                                     {
                                         var existingUserSpecialty = await context.Set<UserSpecialty>()
                                             .FirstOrDefaultAsync(us => us.UserId == traineeDto.UserId && us.SpecialtyId == traineeDto.SpecialtyId);
-                                        
+
                                         if (existingUserSpecialty != null)
                                         {
                                             result.TraineeData.Errors.Add(new ImportErrorDto
@@ -442,7 +492,7 @@ namespace Application.Services
                                         PhoneNumber = traineeDto.PhoneNumber,
                                         CitizenId = traineeDto.CitizenId,
                                         RoleId = traineeRoleId,
-                                        PasswordHash = PasswordHashHelper.HashPassword("VJA@2025"),
+                                        PasswordHash = PasswordHashHelper.HashPassword(usernameg),
                                         Status = AccountStatus.Pending,
                                         CreatedAt = DateTime.UtcNow,
                                         UpdatedAt = DateTime.UtcNow
@@ -485,7 +535,7 @@ namespace Application.Services
                         foreach (var certGroup in certificatesByCitizenId)
                         {
                             var citizenId = certGroup.Key;
-                            
+
                             // Check if CitizenId is in trainee sheet
                             if (!traineesCitizenIds.Contains(citizenId))
                             {
@@ -524,11 +574,11 @@ namespace Application.Services
 
                             // Get userId from processed trainees
                             var userId = processedUsersByCitizenId[citizenId];
-                            
+
                             // Get user details
                             var user = await _unitOfWork.UserRepository
                                 .GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == userId);
-                            
+
                             if (user == null)
                             {
                                 // This shouldn't happen, but safety check
@@ -560,7 +610,7 @@ namespace Application.Services
                                         IssuingOrganization = certRawData.IssuingOrganization,
                                         IssueDateStr = certRawData.IssueDate,
                                         ExpiredDateStr = certRawData.ExpiredDate,
-                                        CertificateImageBase64 = "" 
+                                        CertificateImageBase64 = ""
                                     };
 
                                     // Validate using DTO method
@@ -599,7 +649,7 @@ namespace Application.Services
                                     {
                                         // Reset stream position
                                         certRawData.ImageStream.Position = 0;
-                                        
+
                                         var fileName = $"{citizenId}_{certDto.CertificateCode}_{DateTime.UtcNow.Ticks}.png";
                                         imageUrl = await _cloudinaryService.UploadImageAsync(certRawData.ImageStream, fileName);
                                     }
@@ -668,10 +718,40 @@ namespace Application.Services
                 response.Success = true;
                 response.Data = result;
                 response.Message = $"Trainee Import: {result.TraineeData.SuccessCount} succeeded, {result.TraineeData.FailureCount} failed | Certificate Import: {result.ExternalCertificateData.SuccessCount} succeeded, {result.ExternalCertificateData.FailureCount} failed";
+
                 
-                // Notify admins about the import (only if there were successful imports)
-                if (result.TraineeData.SuccessCount > 0 || result.ExternalCertificateData.SuccessCount > 0)
+                // Notify admins about the import 
+                if (result.TraineeData.SuccessCount > 0)
                 {
+                    // Get all admin users (RoleId = 1)
+                    var adminUsers = await _unitOfWork.UserRepository
+                        .GetByNullableExpressionWithOrderingAsync(
+                            u => u.RoleId == 1,
+                            null
+                        );
+
+                    var title = "New Trainees Imported";
+                    var message = $"{performedByUsername} successfully imported {result.TraineeData.SuccessCount} trainee(s)" +
+                                  (result.TraineeData.FailureCount > 0 ? $" ({result.TraineeData.FailureCount} failed)" : "");
+                    var notificationType = "Trainee Import";
+
+                    // Create notification for each admin
+                    foreach (var admin in adminUsers)
+                    {
+                        var notification = new Domain.Entities.Notification
+                        {
+                            UserId = admin.UserId,
+                            Title = title,
+                            Message = message,
+                            NotificationType = notificationType,
+                            CreatedAt = DateTime.UtcNow,
+                            IsRead = false
+                        };
+                        
+                        await _unitOfWork.NotificationRepository.AddAsync(notification);
+                    }
+                    await _unitOfWork.SaveChangesAsync();
+                    // Send SignalR real-time notifications to each admin
                     await _notificationService.NotifyAdminsAboutNewTraineesAsync(
                         result.TraineeData.SuccessCount,
                         result.TraineeData.FailureCount,
@@ -684,10 +764,10 @@ namespace Application.Services
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Message = $"Failed to import trainees: {ex.Message}";
+                response.Data = result;
             }
-
-            return response;
+             return response;
         }
         #endregion
 
@@ -735,7 +815,7 @@ namespace Application.Services
         }
         #endregion
 
-
+        #region Helper Methods
         private Task<string> GenerateNextUserIdAsync(List<User> existingUsers)
         {
             var currentYear = DateTime.Now.Year.ToString().Substring(2); // Get last 2 digits of year (e.g., "25")
@@ -799,6 +879,94 @@ namespace Application.Services
             return username;
         }
         #endregion
+
+        #region UpdateUserStatus
+        public async Task<ServiceResponse<string>> UpdateUserStatusAsync(UserStatusDto dto)
+        {
+            var response = new ServiceResponse<string>();
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == dto.UserId);
+                
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                    return response;
+                }
+
+                user.Status = dto.Status;
+                await _unitOfWork.UserRepository.UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.Success = true;
+                response.Message = $"User status updated to {dto.Status} successfully.";
+                response.Data = user.UserId;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Failed to update user status.";
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        #endregion
+
+        #region SendCredentialsEmail
+        public async Task<ServiceResponse<string>> SendCredentialsEmailAsync(string userId)
+        {
+            var response = new ServiceResponse<string>();
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == userId);
+                
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                    return response;
+                }
+
+                if (string.IsNullOrEmpty(user.Email))
+                {
+                    response.Success = false;
+                    response.Message = "User does not have an email address.";
+                    return response;
+                }
+
+                // Generate a new temporary password (using username as default password)
+                string temporaryPassword = user.Username;
+
+                // Update user's password hash
+                user.PasswordHash = PasswordHashHelper.HashPassword(temporaryPassword);
+                await _unitOfWork.UserRepository.UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+
+                // Send email with credentials
+                await _emailService.SendCredentialsEmailAsync(
+                    user.Email,
+                    user.FullName,
+                    user.Username,
+                    temporaryPassword
+                );
+
+                response.Success = true;
+                response.Message = $"Credentials email sent successfully to {user.Email}";
+                response.Data = user.UserId;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Failed to send credentials email.";
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        #endregion
+
     }
 
     // Helper class for external certificate data
@@ -814,4 +982,3 @@ namespace Application.Services
         public MemoryStream? ImageStream { get; set; }
     }
 }
-

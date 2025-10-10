@@ -33,7 +33,7 @@ namespace Domain.Entities
         public string? ApprovedByUserId { get; set; }
         public virtual User? ApprovedByUser { get; set; }
 
-        public CertificateStatus Status { get; set; } 
+        public CertificateStatus Status { get; set; }
 
         public DateTime SignDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime? ExpirationDate { get; set; }
