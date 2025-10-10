@@ -74,6 +74,11 @@ namespace Certificate_Management_BE.Controllers
             }
 
             var result = await _userService.ChangePasswordAsync(userId, dto);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
         #endregion
@@ -169,3 +174,4 @@ namespace Certificate_Management_BE.Controllers
         #endregion
     }
 }
+

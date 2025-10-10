@@ -139,7 +139,6 @@ namespace Application.Services
                 response.Success = true;
                 response.Data = updated;
                 response.Message = "Profile updated successfully.";
-                return response;
             }
             catch (Exception ex)
             {
@@ -189,6 +188,7 @@ namespace Application.Services
                 response.Success = false;
                 response.Message = "Failed to change password.";
                 response.Message = ex.Message;
+
             }
 
             return response;
@@ -719,9 +719,39 @@ namespace Application.Services
                 response.Data = result;
                 response.Message = $"Trainee Import: {result.TraineeData.SuccessCount} succeeded, {result.TraineeData.FailureCount} failed | Certificate Import: {result.ExternalCertificateData.SuccessCount} succeeded, {result.ExternalCertificateData.FailureCount} failed";
 
-                // Notify admins about the import (only if there were successful imports)
-                if (result.TraineeData.SuccessCount > 0 || result.ExternalCertificateData.SuccessCount > 0)
+                
+                // Notify admins about the import 
+                if (result.TraineeData.SuccessCount > 0)
                 {
+                    // Get all admin users (RoleId = 1)
+                    var adminUsers = await _unitOfWork.UserRepository
+                        .GetByNullableExpressionWithOrderingAsync(
+                            u => u.RoleId == 1,
+                            null
+                        );
+
+                    var title = "New Trainees Imported";
+                    var message = $"{performedByUsername} successfully imported {result.TraineeData.SuccessCount} trainee(s)" +
+                                  (result.TraineeData.FailureCount > 0 ? $" ({result.TraineeData.FailureCount} failed)" : "");
+                    var notificationType = "Trainee Import";
+
+                    // Create notification for each admin
+                    foreach (var admin in adminUsers)
+                    {
+                        var notification = new Domain.Entities.Notification
+                        {
+                            UserId = admin.UserId,
+                            Title = title,
+                            Message = message,
+                            NotificationType = notificationType,
+                            CreatedAt = DateTime.UtcNow,
+                            IsRead = false
+                        };
+                        
+                        await _unitOfWork.NotificationRepository.AddAsync(notification);
+                    }
+                    await _unitOfWork.SaveChangesAsync();
+                    // Send SignalR real-time notifications to each admin
                     await _notificationService.NotifyAdminsAboutNewTraineesAsync(
                         result.TraineeData.SuccessCount,
                         result.TraineeData.FailureCount,
@@ -736,8 +766,52 @@ namespace Application.Services
                 response.Success = false;
                 response.Message = $"Failed to import trainees: {ex.Message}";
                 response.Data = result;
+            }
+             return response;
+        }
+        #endregion
+
+        #region ChangePassword
+        public async Task<ServiceResponse<string>> ChangePasswordAsync(string userId, ChangePasswordDto dto)
+        {
+            var response = new ServiceResponse<string>();
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == userId);
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                    return response;
+                }
+
+                // Verify current password
+                if (!PasswordHashHelper.VerifyPassword(dto.CurrentPassword, user.PasswordHash))
+                {
+                    response.Success = false;
+                    response.Message = "Current password is incorrect.";
+                    return response;
+                }
+
+                // Hash and update new password
+                user.PasswordHash = PasswordHashHelper.HashPassword(dto.NewPassword);
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _unitOfWork.UserRepository.UpdateAsync(user);
+
+                response.Success = true;
+                response.Message = "Password changed successfully.";
+                response.Data = "Password updated";
                 return response;
             }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Failed to change password.";
+                response.Message = ex.Message;
+            }
+
+            return response;
         }
         #endregion
 
@@ -892,6 +966,7 @@ namespace Application.Services
             }
         }
         #endregion
+
     }
 
     // Helper class for external certificate data

@@ -115,7 +115,10 @@ builder.Services.AddSwaggerGen(c =>
     });
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
     c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
     c.AddSecurityRequirement(new OpenApiSecurityRequirement()
                 {
@@ -207,6 +210,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.MapGet("/", () => Results.Redirect("/swagger"));
 }
 
 app.UseHttpsRedirection();
