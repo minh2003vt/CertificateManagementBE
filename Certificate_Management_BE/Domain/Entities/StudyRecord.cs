@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class StudyRecord 
+    public class StudyRecord
     {
         [Key, Column(Order = 0)]
         [ForeignKey("Course")]

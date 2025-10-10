@@ -36,7 +36,7 @@ namespace Infrastructure.Seed
 
             // Specialties
             var specialties = new[]
-            {             
+            {
                new Specialty { SpecialtyId = "SPL-PS", SpecialtyName = "Passenger service", Description = "Passenger service specialty", CreatedAt = utcNow, UpdatedAt = utcNow },
                 new Specialty { SpecialtyId = "SPL-RA", SpecialtyName = "Ramp agent", Description = "Ramp agent specialty", CreatedAt = utcNow, UpdatedAt = utcNow },
                 new Specialty { SpecialtyId = "SPL-DOC", SpecialtyName = "Document Staff", Description = "Document staff specialty", CreatedAt = utcNow, UpdatedAt = utcNow },

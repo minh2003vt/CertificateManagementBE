@@ -120,5 +120,58 @@ namespace Certificate_Management_BE.Controllers
             return Ok(result);
         }
         #endregion
+
+        #region UpdateUserStatus
+        /// <summary>
+        /// Update user account status (Active, Deactivated, Pending)
+        /// </summary>
+        /// <param name="dto">User status update DTO containing UserId and Status</param>
+        /// <returns>Success message with updated user ID</returns>
+        [HttpPut("status")]
+        [AuthorizeRoles("Education Officer","Administrator")]
+        public async Task<IActionResult> UpdateUserStatus([FromBody] UserStatusDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.UserId))
+            {
+                return BadRequest(new { Success = false, Message = "User ID is required" });
+            }
+
+            var result = await _userService.UpdateUserStatusAsync(dto);
+            
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region SendCredentialsEmail
+        /// <summary>
+        /// Send credentials email to user containing username and password
+        /// </summary>
+        /// <param name="userId">User ID to send credentials to</param>
+        /// <returns>Success message confirming email was sent</returns>
+        [HttpPost("send-credentials/{userId}")]
+        [AuthorizeRoles("Education Officer", "Administrator")]
+        public async Task<IActionResult> SendCredentialsEmail([FromBody] string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new { Success = false, Message = "User ID is required" });
+            }
+
+            var result = await _userService.SendCredentialsEmailAsync(userId);
+            
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        #endregion
     }
 }
+

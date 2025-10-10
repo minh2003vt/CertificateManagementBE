@@ -88,17 +88,17 @@ namespace Certificate_Management_BE.Controllers
         public async Task<IActionResult> TestAdminNotification()
         {
             var username = User.FindFirst(ClaimTypes.Name)?.Value ?? "Test User";
-            
+
             await _notificationService.NotifyAdminsAboutNewTraineesAsync(
                 successCount: 5,
                 failureCount: 2,
                 performedByUsername: username
             );
 
-            return Ok(new 
-            { 
-                success = true, 
-                message = "Test notification sent to all admins. Check your notifications!" 
+            return Ok(new
+            {
+                success = true,
+                message = "Test notification sent to all admins. Check your notifications!"
             });
         }
     }

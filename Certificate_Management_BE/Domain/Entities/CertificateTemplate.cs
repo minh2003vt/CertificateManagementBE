@@ -23,7 +23,7 @@ namespace Domain.Entities
         public virtual User CreatedByUser { get; set; } = null!;
         public TemplateStatus TemplateStatus { get; set; }
         [ForeignKey("ApprovedByUser")]
-        public string? ApprovedByUserId { get; set; }   
+        public string? ApprovedByUserId { get; set; }
         public User? ApprovedByUser { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime LastUpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
