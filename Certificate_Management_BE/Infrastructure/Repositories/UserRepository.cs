@@ -14,7 +14,8 @@ namespace Infrastructure.Repositories
         {
         }
         public async Task<User?> GetByUsernameAsync(string username)
-        {var user = await _context.Users
+        {
+            var user = await _context.Users
     .FirstOrDefaultAsync(u => u.Username.ToLower() == username.Trim().ToLower());
             return user;
         }

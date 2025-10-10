@@ -12,7 +12,7 @@ namespace Domain.Entities
     public class Department
     {
         [Key]
-        public string DepartmentId {  get; set; } = string.Empty;
+        public string DepartmentId { get; set; } = string.Empty;
 
         [Required]
         public string DepartmentName { get; set; } = string.Empty;

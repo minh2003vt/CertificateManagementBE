@@ -23,7 +23,7 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtTokenHelper _jwtTokenHelper;
         private readonly IEmailService _emailService;
-        
+
         public AuthenticationService(IUnitOfWork unitOfWork, JwtTokenHelper jwtTokenHelper, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
@@ -105,7 +105,7 @@ namespace Application.Services
             {
                 // Find user by email or username - query directly instead of GetAll()
                 var user = await _unitOfWork.UserRepository
-                    .GetSingleOrDefaultByNullableExpressionAsync(u => 
+                    .GetSingleOrDefaultByNullableExpressionAsync(u =>
                         u.Email == dto.EmailOrUsername || u.Username == dto.EmailOrUsername);
 
                 if (user == null)

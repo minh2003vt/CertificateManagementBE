@@ -9,7 +9,8 @@ namespace Application.Helpers
     public class PasswordHashHelper
     {
         public static string HashPassword(string password)
-        {var hashed = BCrypt.Net.BCrypt.HashPassword(password);
+        {
+            var hashed = BCrypt.Net.BCrypt.HashPassword(password);
             return hashed;
         }
 

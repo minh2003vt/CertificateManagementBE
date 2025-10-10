@@ -147,7 +147,7 @@ namespace Application.Helpers
             try
             {
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
-                
+
                 // Check if token has password-reset purpose
                 var purposeClaim = principal.FindFirst("purpose");
                 if (purposeClaim?.Value != "password-reset")

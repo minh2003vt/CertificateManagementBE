@@ -62,7 +62,7 @@ namespace Infrastructure
             ISpecialtyRepository specialtyRepository,
             ISubjectRepository subjectRepository,
             ISubjectCertificateRepository subjectCertificateRepository,
-            ITraineeAssignationRepository traineeAssignationRepository) 
+            ITraineeAssignationRepository traineeAssignationRepository)
         {
             _context = context;
             _userRepository = userRepository;

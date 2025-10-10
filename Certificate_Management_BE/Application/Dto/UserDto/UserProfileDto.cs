@@ -13,5 +13,6 @@ namespace Application.Dto.UserDto
         public DateOnly DateOfBirth { get; set; }
         public string CitizenId { get; set; } = string.Empty;
     }
+   
 }
 
