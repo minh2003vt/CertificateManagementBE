@@ -14,24 +14,22 @@ namespace Domain.Entities
         [Key]
         public string CourseId { get; set; } = string.Empty;
 
-        [Required, MaxLength(100)]
+        [Required, MaxLength(500)]
         public string CourseName { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public CourseLevel CourseLevel { get; set; } // Initial, Relearn, Recurrent
-        public CourseStatus Status { get; set; } // pending, approved, rejected
-        public Progress Progress { get; set; } // Ongoing, Completed
-
-        public DateTime StartDateTime { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime EndDateTime { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-
         [ForeignKey("CreatedByUser")]
         public string CreatedByUserId { get; set; } = string.Empty;
         public virtual User CreatedByUser { get; set; } = null!;
+        public CourseStatus Status { get; set; } = CourseStatus.Pending; // pending, approved, rejected
+
+        [ForeignKey("AprovedUser")]
+        public string? AprovedUserId { get; set; }
+        public virtual User? AprovedUser { get; set; }
+        public DateTime? ApprovedAt { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime UpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
 
-        //public ICollection<Class> Classes { get; set; } = [];
         public virtual ICollection<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; } = [];
         public virtual ICollection<StudyRecord> StudyRecords { get; set; } = [];
         public virtual ICollection<CourseCertificate> CourseCertificates { get; set; } = [];

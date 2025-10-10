@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,6 +22,13 @@ namespace Domain.Entities
         [ForeignKey("CreatedByUser")]
         public string? CreatedByUserId { get; set; }
         public virtual User? CreatedByUser { get; set; }
+        public PlanStatus Status { get; set; } // pending, approved, rejected
+
+        [ForeignKey("AprovedUser")]
+        public string? AprovedUserId { get; set; } = string.Empty;
+        public virtual User AprovedUser { get; set; } = null!;
+        public DateTime? ApprovedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+
         [ForeignKey("Specialty")]
         public string SpecialtyId { get; set; } = string.Empty;
         public virtual Specialty? Specialty { get; set; }

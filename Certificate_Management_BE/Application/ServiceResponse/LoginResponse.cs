@@ -22,5 +22,8 @@ namespace Application.ServiceResponse
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<string>? Roles { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public string? HubUrl { get; set; }
     }
 }

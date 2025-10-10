@@ -13,7 +13,6 @@ namespace Domain.Entities
     {
         //[Key]
         //public string AssignmentId { get; set; }
-
         [Key, Column(Order = 0)]
         [ForeignKey("Subject")]
         public string SubjectId { get; set; } = string.Empty;

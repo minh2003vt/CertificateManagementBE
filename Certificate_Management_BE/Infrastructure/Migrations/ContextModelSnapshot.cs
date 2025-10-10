@@ -181,14 +181,16 @@ namespace Infrastructure.Migrations
                     b.Property<string>("CourseId")
                         .HasColumnType("text");
 
-                    b.Property<string>("CourseLevel")
-                        .IsRequired()
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("AprovedUserId")
                         .HasColumnType("text");
 
                     b.Property<string>("CourseName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -200,16 +202,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("EndDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Progress")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("StartDateTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
@@ -218,6 +210,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("CourseId");
+
+                    b.HasIndex("AprovedUserId");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -387,9 +381,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ManagerId")
-                        .HasColumnType("text");
-
                     b.Property<string>("SpecialtyId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -401,11 +392,14 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
                     b.HasKey("DepartmentId");
 
-                    b.HasIndex("ManagerId");
-
                     b.HasIndex("SpecialtyId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Departments");
                 });
@@ -533,6 +527,12 @@ namespace Infrastructure.Migrations
                     b.Property<string>("PlanId")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("AprovedUserId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -558,7 +558,13 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("PlanId");
+
+                    b.HasIndex("AprovedUserId");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -787,6 +793,12 @@ namespace Infrastructure.Migrations
                     b.Property<string>("SubjectId")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("AprovedUserId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -809,15 +821,21 @@ namespace Infrastructure.Migrations
                     b.Property<double>("MinTotalScore")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("SubjectName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("SubjectId");
+
+                    b.HasIndex("AprovedUserId");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -877,16 +895,16 @@ namespace Infrastructure.Migrations
                     b.Property<string>("GradedByInstructorId")
                         .HasColumnType("text");
 
+                    b.Property<string>("Gradekind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Notes")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<double?>("PracticeExamScore")
                         .HasColumnType("double precision");
-
-                    b.Property<string>("Remarks")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("RequestId")
                         .IsRequired()
@@ -955,9 +973,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
 
-                    b.Property<string>("DepartmentId")
-                        .HasColumnType("text");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1001,8 +1016,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("CitizenId")
                         .IsUnique();
 
-                    b.HasIndex("DepartmentId");
-
                     b.HasIndex("Email")
                         .IsUnique();
 
@@ -1012,6 +1025,34 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserDepartment", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("DepartmentId")
+                        .HasColumnType("text")
+                        .HasColumnOrder(1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LeavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "DepartmentId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserDepartments");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserSpecialty", b =>
@@ -1119,11 +1160,18 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Course", b =>
                 {
+                    b.HasOne("Domain.Entities.User", "AprovedUser")
+                        .WithMany()
+                        .HasForeignKey("AprovedUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Domain.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("AprovedUser");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -1225,18 +1273,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Department", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "Manager")
-                        .WithMany("ManagedDepartments")
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Domain.Entities.Specialty", "Specialty")
                         .WithMany("Departments")
                         .HasForeignKey("SpecialtyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Manager");
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany("ManagedDepartments")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Specialty");
                 });
@@ -1291,6 +1336,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Plan", b =>
                 {
+                    b.HasOne("Domain.Entities.User", "AprovedUser")
+                        .WithMany()
+                        .HasForeignKey("AprovedUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
@@ -1301,6 +1351,8 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("SpecialtyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("AprovedUser");
 
                     b.Navigation("CreatedByUser");
 
@@ -1412,10 +1464,17 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Subject", b =>
                 {
+                    b.HasOne("Domain.Entities.User", "AprovedUser")
+                        .WithMany()
+                        .HasForeignKey("AprovedUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Domain.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AprovedUser");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -1489,20 +1548,32 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
-                    b.HasOne("Domain.Entities.Department", "Department")
-                        .WithMany("Users")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Domain.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserDepartment", b =>
+                {
+                    b.HasOne("Domain.Entities.Department", "Department")
+                        .WithMany("UserDepartments")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("UserDepartments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Department");
 
-                    b.Navigation("Role");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserSpecialty", b =>
@@ -1561,7 +1632,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Department", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("UserDepartments");
                 });
 
             modelBuilder.Entity("Domain.Entities.Plan", b =>
@@ -1637,6 +1708,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Sessions");
 
                     b.Navigation("TraineeAssignations");
+
+                    b.Navigation("UserDepartments");
 
                     b.Navigation("UserSpecialties");
                 });

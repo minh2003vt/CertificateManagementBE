@@ -14,7 +14,6 @@ using System;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
@@ -81,7 +80,13 @@ builder.Services.AddAuthentication(options =>
                         Console.WriteLine("Token validation failed: " + exception.Message);
                         return Task.CompletedTask;
                     },
-                    OnMessageReceived = context =>
+                OnMessageReceived = context =>
+                {
+                    // Allow SignalR to read JWT from query string for all hubs
+                    var accessToken = context.Request.Query["access_token"];
+                    var path = context.HttpContext.Request.Path;
+                    
+                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
                     {
                         // Allow SignalR to read JWT from query string
                         var accessToken = context.Request.Query["access_token"];
@@ -93,6 +98,8 @@ builder.Services.AddAuthentication(options =>
                         }
                         return Task.CompletedTask;
                     }
+                    return Task.CompletedTask;
+                }
                 };
             });
 builder.Services.AddSwaggerGen(c =>
@@ -199,6 +206,14 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IExternalCertificateService, ExternalCertificateService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
+builder.Services.AddScoped<IInstructorAssignationService, InstructorAssignationService>();
+builder.Services.AddScoped<ICourseSubjectSpecialtyService, CourseSubjectSpecialtyService>();
+
+// Register HubManagerService for SignalR hub management
+builder.Services.AddScoped<IHubManagerService, Certificate_Management_BE.Services.HubManagerService>();
 
 // Add SignalR
 builder.Services.AddSignalR();
@@ -218,8 +233,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map SignalR Hub
-app.MapHub<Certificate_Management_BE.Hubs.NotificationHub>("/hubs/notification");
+// Map SignalR Hubs - Each role has its own hub
+app.MapHub<Certificate_Management_BE.Hubs.AdminHub>("/hubs/admin");
+app.MapHub<Certificate_Management_BE.Hubs.EducationOfficerHub>("/hubs/education-officer");
+app.MapHub<Certificate_Management_BE.Hubs.InstructorHub>("/hubs/instructor");
+app.MapHub<Certificate_Management_BE.Hubs.TraineeHub>("/hubs/trainee");
 
 app.MapControllers();
 
