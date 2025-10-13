@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Domain.Entities
         [Key]
         public string SubjectId { get; set; } = string.Empty;
 
-        [Required, MaxLength(100)]
+        [Required, MaxLength(500)]
         public string SubjectName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int? MinAttendance { get; set; }
@@ -31,9 +32,14 @@ namespace Domain.Entities
         [ForeignKey("CreatedByUser")]
         public string? CreatedByUserId { get; set; }
         public virtual User? CreatedByUser { get; set; }
+        [ForeignKey("AprovedUser")]
+        public string? AprovedUserId { get; set; }
+        public virtual User? AprovedUser { get; set; }
+        public SubjectStatus Status { get; set; } = SubjectStatus.Pending; // pending, approved, rejected
+        public DateTime? ApprovedAt { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime UpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; } = [];
         public virtual ICollection<TraineeAssignation> TraineeAssignations { get; set; } = [];
         public virtual ICollection<InstructorAssignation> InstructorAssignations { get; set; } = [];

@@ -42,6 +42,8 @@ namespace Infrastructure
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Session> Sessions { get; set; }
+        public DbSet<UserDepartment> UserDepartments { get; set; }
+        public DbSet<RequestEntity> RequestEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,6 +73,12 @@ namespace Infrastructure
             modelBuilder.Entity<UserSpecialty>()
                 .HasKey(e => new { e.UserId, e.SpecialtyId });
 
+            modelBuilder.Entity<UserDepartment>()
+                .HasKey(e => new { e.UserId, e.DepartmentId });
+
+            modelBuilder.Entity<RequestEntity>()
+                .HasKey(re => new { re.RequestId, re.EntityId });
+
             // Configure relationships
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
@@ -78,29 +86,36 @@ namespace Infrastructure
                 .HasForeignKey(u => u.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Department)
-                .WithMany(d => d.Users)
-                .HasForeignKey(u => u.DepartmentId)
-                .OnDelete(DeleteBehavior.SetNull);
-
             modelBuilder.Entity<Department>()
                 .HasOne(d => d.Specialty)
                 .WithMany(s => s.Departments)
                 .HasForeignKey(d => d.SpecialtyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Department>()
-                .HasOne(d => d.Manager)
-                .WithMany(u => u.ManagedDepartments)
-                .HasForeignKey(d => d.ManagerId)
-                .OnDelete(DeleteBehavior.SetNull);
+            // UserDepartment relationships (many-to-many through junction table)
+            modelBuilder.Entity<UserDepartment>()
+                .HasOne(ud => ud.User)
+                .WithMany(u => u.UserDepartments)
+                .HasForeignKey(ud => ud.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserDepartment>()
+                .HasOne(ud => ud.Department)
+                .WithMany(d => d.UserDepartments)
+                .HasForeignKey(ud => ud.DepartmentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Class>()
                 .HasOne(c => c.Instructor)
                 .WithMany(u => u.Classes)
                 .HasForeignKey(c => c.InstructorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Class>()
+                .HasOne(c => c.AprovedUser)
+                .WithMany()
+                .HasForeignKey(c => c.AprovedUserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.User)
@@ -252,6 +267,12 @@ namespace Infrastructure
                 .HasForeignKey(c => c.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<CourseSubjectSpecialty>()
+                .HasOne(c => c.ApprovedByUser)
+                .WithMany()
+                .HasForeignKey(c => c.ApprovedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<StudyRecord>()
                 .HasOne(sr => sr.Course)
                 .WithMany(c => c.StudyRecords)
@@ -280,6 +301,12 @@ namespace Infrastructure
                 .HasOne(r => r.RequestUser)
                 .WithMany(u => u.Requests)
                 .HasForeignKey(r => r.RequestUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RequestEntity>()
+                .HasOne(re => re.Request)
+                .WithMany(r => r.RequestEntities)
+                .HasForeignKey(re => re.RequestId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>()
@@ -323,10 +350,22 @@ namespace Infrastructure
                 .HasForeignKey(c => c.CreatedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.AprovedUser)
+                .WithMany()
+                .HasForeignKey(c => c.AprovedUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<Subject>()
                 .HasOne(s => s.CreatedByUser)
                 .WithMany()
                 .HasForeignKey(s => s.CreatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Subject>()
+                .HasOne(s => s.AprovedUser)
+                .WithMany()
+                .HasForeignKey(s => s.AprovedUserId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Specialty>()
@@ -351,6 +390,12 @@ namespace Infrastructure
                 .HasOne(p => p.Specialty)
                 .WithMany()
                 .HasForeignKey(p => p.SpecialtyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Plan>()
+                .HasOne(p => p.AprovedUser)
+                .WithMany()
+                .HasForeignKey(p => p.AprovedUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<UserSpecialty>()
@@ -391,15 +436,11 @@ namespace Infrastructure
                 .HasConversion<string>();
 
             modelBuilder.Entity<Course>()
-                .Property(c => c.CourseLevel)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<Course>()
                 .Property(c => c.Status)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<Course>()
-                .Property(c => c.Progress)
+            modelBuilder.Entity<Subject>()
+                .Property(s => s.Status)
                 .HasConversion<string>();
 
             modelBuilder.Entity<Department>()
@@ -414,24 +455,32 @@ namespace Infrastructure
                 .Property(t => t.GradeStatus)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<InstructorAssignation>()
-                .Property(i => i.RequestStatus)
+            modelBuilder.Entity<TraineeAssignation>()
+                .Property(t => t.Gradekind)
                 .HasConversion<string>();
+
 
             modelBuilder.Entity<CertificateTemplate>()
                 .Property(ct => ct.TemplateStatus)
                 .HasConversion<string>();
 
+            modelBuilder.Entity<CertificateTemplate>()
+                .Property(ct => ct.TemplateContent)
+                .HasColumnType("text");
+
             modelBuilder.Entity<DecisionTemplate>()
                 .Property(dt => dt.TemplateStatus)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<Request>()
-                .Property(r => r.RequestType)
-                .HasConversion<string>();
+            modelBuilder.Entity<DecisionTemplate>()
+                .Property(dt => dt.TemplateContent)
+                .HasColumnType("text");
 
-            modelBuilder.Entity<Request>()
-                .Property(r => r.Status)
+            modelBuilder.Entity<RequestEntity>()
+                .Property(re => re.RequestType)
+                .HasConversion<string>();
+            modelBuilder.Entity<RequestEntity>()
+                .Property(re => re.RequestStatus)
                 .HasConversion<string>();
 
             modelBuilder.Entity<Decision>()
@@ -440,6 +489,14 @@ namespace Infrastructure
 
             modelBuilder.Entity<Report>()
                 .Property(r => r.ReportType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Report>()
+                .Property(r => r.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Plan>()
+                .Property(p => p.Status)
                 .HasConversion<string>();
 
 
@@ -462,7 +519,7 @@ namespace Infrastructure
                 .HasIndex(ec => ec.CertificateCode);
 
             modelBuilder.Entity<Request>()
-                .HasIndex(r => r.RequestDate);
+                .HasIndex(r => r.CreatedAt);
 
             // Add missing indexes for better performance
             modelBuilder.Entity<ExternalCertificate>()
@@ -471,8 +528,14 @@ namespace Infrastructure
             modelBuilder.Entity<Course>()
                 .HasIndex(c => c.CreatedByUserId);
 
+            modelBuilder.Entity<Course>()
+                .HasIndex(c => c.AprovedUserId);
+
             modelBuilder.Entity<Subject>()
                 .HasIndex(s => s.CreatedByUserId);
+
+            modelBuilder.Entity<Subject>()
+                .HasIndex(s => s.AprovedUserId);
 
             modelBuilder.Entity<Specialty>()
                 .HasIndex(s => s.CreatedByUserId);
@@ -493,13 +556,13 @@ namespace Infrastructure
                 .HasIndex(ct => ct.ApprovedByUserId);
 
             modelBuilder.Entity<Department>()
-                .HasIndex(d => d.ManagerId);
-
-            modelBuilder.Entity<Department>()
                 .HasIndex(d => d.SpecialtyId);
 
             modelBuilder.Entity<Class>()
                 .HasIndex(c => c.InstructorId);
+
+            modelBuilder.Entity<Class>()
+                .HasIndex(c => c.AprovedUserId);
 
             modelBuilder.Entity<Certificate>()
                 .HasIndex(c => c.UserId);
@@ -564,6 +627,9 @@ namespace Infrastructure
             modelBuilder.Entity<CourseSubjectSpecialty>()
                 .HasIndex(c => c.CourseId);
 
+            modelBuilder.Entity<CourseSubjectSpecialty>()
+                .HasIndex(c => c.ApprovedByUserId);
+
             modelBuilder.Entity<StudyRecord>()
                 .HasIndex(sr => sr.CourseId);
 
@@ -616,11 +682,20 @@ namespace Infrastructure
             modelBuilder.Entity<Plan>()
                 .HasIndex(p => p.SpecialtyId);
 
+            modelBuilder.Entity<Plan>()
+                .HasIndex(p => p.AprovedUserId);
+
             modelBuilder.Entity<UserSpecialty>()
                 .HasIndex(us => us.UserId);
 
             modelBuilder.Entity<UserSpecialty>()
                 .HasIndex(us => us.SpecialtyId);
+
+            modelBuilder.Entity<UserDepartment>()
+                .HasIndex(ud => ud.UserId);
+
+            modelBuilder.Entity<UserDepartment>()
+                .HasIndex(ud => ud.DepartmentId);
 
 
             modelBuilder.Entity<Certificate>()

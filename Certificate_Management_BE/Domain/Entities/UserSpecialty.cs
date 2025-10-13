@@ -19,7 +19,7 @@ namespace Domain.Entities
         [ForeignKey("Specialty")]
         public string SpecialtyId { get; set; } = string.Empty;
         public virtual Specialty Specialty { get; set; } = null!;
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     }
 }

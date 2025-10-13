@@ -12,7 +12,7 @@ namespace Domain.Entities
     public class Department
     {
         [Key]
-        public string DepartmentId {  get; set; } = string.Empty;
+        public string DepartmentId { get; set; } = string.Empty;
 
         [Required]
         public string DepartmentName { get; set; } = string.Empty;
@@ -21,14 +21,9 @@ namespace Domain.Entities
         [ForeignKey("Specialty")]
         public string SpecialtyId { get; set; } = string.Empty;
         public virtual Specialty Specialty { get; set; } = null!;
-
-        [ForeignKey("Manager")]
-        public string? ManagerId { get; set; }
-        public virtual User? Manager { get; set; }
-
         public DepartmentStatus Status { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime UpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public virtual ICollection<User>? Users { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public virtual ICollection<UserDepartment> UserDepartments { get; set; } = [];
     }
 }

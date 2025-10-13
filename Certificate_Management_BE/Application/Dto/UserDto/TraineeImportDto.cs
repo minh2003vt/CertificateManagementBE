@@ -22,7 +22,7 @@ namespace Application.Dto.UserDto
         public Sex Gender { get; private set; }
         public DateOnly DateOfBirth { get; private set; }
 
-        public ValidationErrorsDto Validate(System.Collections.Generic.IEnumerable<Domain.Entities.User> existingUsers, 
+        public ValidationErrorsDto Validate(System.Collections.Generic.IEnumerable<Domain.Entities.User> existingUsers,
                                            System.Collections.Generic.IEnumerable<Domain.Entities.Specialty> specialties)
         {
             var errors = new ValidationErrorsDto();

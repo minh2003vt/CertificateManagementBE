@@ -13,16 +13,16 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<NotificationService> _logger;
-        private readonly IHubContext<Hub<INotificationHub>, INotificationHub> _hubContext;
+        private readonly IHubManagerService _hubManager;
 
         public NotificationService(
             IUnitOfWork unitOfWork,
             ILogger<NotificationService> logger,
-            IHubContext<Hub<INotificationHub>, INotificationHub> hubContext)
+            IHubManagerService hubManager)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
-            _hubContext = hubContext;
+            _hubManager = hubManager;
         }
 
         public async Task<ServiceResponse<NotificationDto>> CreateNotificationAsync(CreateNotificationDto dto)
@@ -35,7 +35,7 @@ namespace Application.Services
                     Title = dto.Title,
                     Message = dto.Message,
                     NotificationType = dto.NotificationType,
-                    CreatedAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
                     IsRead = false
                 };
 
@@ -45,7 +45,6 @@ namespace Application.Services
                 var notificationDto = new NotificationDto
                 {
                     NotificationId = notification.NotificationId,
-                    UserId = notification.UserId,
                     Title = notification.Title,
                     Message = notification.Message,
                     NotificationType = notification.NotificationType,
@@ -75,6 +74,25 @@ namespace Application.Services
         {
             try
             {
+                // Get user to determine their role
+                var user = await _unitOfWork.UserRepository
+                    .GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == userId);
+
+                if (user == null)
+                {
+                    _logger.LogWarning($"User {userId} not found, cannot send SignalR notification");
+                    return false;
+                }
+
+                // Load role if not loaded
+                if (user.Role == null && user.RoleId > 0)
+                {
+                    user.Role = await _unitOfWork.RoleRepository
+                        .GetSingleOrDefaultByNullableExpressionAsync(r => r.RoleId == user.RoleId);
+                }
+
+                var roleName = user.Role?.RoleName ?? "User";
+
                 var notificationData = new
                 {
                     userId = userId,
@@ -84,11 +102,10 @@ namespace Application.Services
                     data = data
                 };
 
-                // Send to specific user's group
-                await _hubContext.Clients.Group($"user_{userId}")
-                    .ReceiveNotification(notificationData);
+                // Send to user's personal group in their role-specific hub
+                await _hubManager.SendToUserAsync(userId, roleName, notificationData);
 
-                _logger.LogInformation($"Successfully sent SignalR notification to user {userId}");
+                _logger.LogInformation($"Successfully sent SignalR notification to user {userId} via {roleName} hub");
                 return true;
             }
             catch (Exception ex)
@@ -174,7 +191,6 @@ namespace Application.Services
                     .Select(n => new NotificationDto
                     {
                         NotificationId = n.NotificationId,
-                        UserId = n.UserId,
                         Title = n.Title,
                         Message = n.Message,
                         NotificationType = n.NotificationType,

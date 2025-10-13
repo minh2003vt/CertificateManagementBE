@@ -34,18 +34,15 @@ namespace Domain.Entities
         [ForeignKey("Role")]
         public int RoleId { get; set; }
         public virtual Role Role { get; set; } = null!;
-
-        [ForeignKey("Department")]
-        public string? DepartmentId { get; set; }
         public AccountStatus Status { get; set; } = AccountStatus.Active;
 
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime UpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLogin { get; set; }
 
-        public virtual Department? Department { get; set; }
 
         public string? AvatarUrl { get; set; }
+        public virtual ICollection<UserDepartment> UserDepartments { get; set; } = [];
         public virtual ICollection<UserSpecialty> UserSpecialties { get; set; } = [];
         public virtual ICollection<Class> Classes { get; set; } = [];
         public virtual ICollection<TraineeAssignation> TraineeAssignations { get; set; } = [];

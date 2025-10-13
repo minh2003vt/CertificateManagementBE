@@ -31,11 +31,14 @@ namespace Infrastructure
         private readonly IStudyRecordRepository _planCourseRepository;
         private readonly IReportRepository _reportRepository;
         private readonly IRequestRepository _requestRepository;
+        private readonly IRequestEntityRepository _requestEntityRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly ISpecialtyRepository _specialtyRepository;
         private readonly ISubjectRepository _subjectRepository;
         private readonly ISubjectCertificateRepository _subjectCertificateRepository;
         private readonly ITraineeAssignationRepository _traineeAssignationRepository;
+        private readonly IUserSpecialtyRepository _userSpecialtyRepository;
+        private readonly IUserDepartmentRepository _userDepartmentRepository;
         public UnitOfWork(
             Context context,
             IUserRepository userRepository,
@@ -58,11 +61,14 @@ namespace Infrastructure
             IStudyRecordRepository planCourseRepository,
             IReportRepository reportRepository,
             IRequestRepository requestRepository,
+            IRequestEntityRepository requestEntityRepository,
             IRoleRepository roleRepository,
             ISpecialtyRepository specialtyRepository,
             ISubjectRepository subjectRepository,
             ISubjectCertificateRepository subjectCertificateRepository,
-            ITraineeAssignationRepository traineeAssignationRepository) 
+            ITraineeAssignationRepository traineeAssignationRepository,
+            IUserSpecialtyRepository userSpecialtyRepository,
+            IUserDepartmentRepository userDepartmentRepository)
         {
             _context = context;
             _userRepository = userRepository;
@@ -85,11 +91,14 @@ namespace Infrastructure
             _planCourseRepository = planCourseRepository;
             _reportRepository = reportRepository;
             _requestRepository = requestRepository;
+            _requestEntityRepository = requestEntityRepository;
             _roleRepository = roleRepository;
             _specialtyRepository = specialtyRepository;
             _subjectRepository = subjectRepository;
             _subjectCertificateRepository = subjectCertificateRepository;
             _traineeAssignationRepository = traineeAssignationRepository;
+            _userSpecialtyRepository = userSpecialtyRepository;
+            _userDepartmentRepository = userDepartmentRepository;
         }
         public object Context => _context;
         public IUserRepository UserRepository => _userRepository;
@@ -112,11 +121,14 @@ namespace Infrastructure
         public IStudyRecordRepository PlanCourseRepository => _planCourseRepository;
         public IReportRepository ReportRepository => _reportRepository;
         public IRequestRepository RequestRepository => _requestRepository;
+        public IRequestEntityRepository RequestEntityRepository => _requestEntityRepository;
         public IRoleRepository RoleRepository => _roleRepository;
         public ISpecialtyRepository SpecialtyRepository => _specialtyRepository;
         public ISubjectRepository SubjectRepository => _subjectRepository;
         public ISubjectCertificateRepository SubjectCertificateRepository => _subjectCertificateRepository;
         public ITraineeAssignationRepository TraineeAssignationRepository => _traineeAssignationRepository;
+        public IUserSpecialtyRepository UserSpecialtyRepository => _userSpecialtyRepository;
+        public IUserDepartmentRepository UserDepartmentRepository => _userDepartmentRepository;
 
         public async Task<int> SaveChangesAsync()
         {

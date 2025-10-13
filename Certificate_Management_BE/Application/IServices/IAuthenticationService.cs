@@ -13,5 +13,6 @@ namespace Application.IServices
         Task<LoginResponse> LoginAsync(LoginDto loginDto);
         Task<ServiceResponse<string>> ForgotPasswordAsync(ForgotPasswordDto dto);
         Task<ServiceResponse<string>> ResetPasswordAsync(string token, ResetPasswordDto dto);
+        Task<ServiceResponse<UserProfileDto>> CreateManualAccountAsync(CreateManualAccountDto dto, string createdByUserId);
     }
 }

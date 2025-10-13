@@ -14,16 +14,21 @@ namespace Domain.Entities
         [Key]
         public string CertificateTemplateId { get; set; } = string.Empty;
 
+        [Required, MaxLength(200)]
         public string TemplateName { get; set; } = string.Empty;
+        
+        [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
-        public string TemplateFile { get; set; } = string.Empty; // Path to PDF
+        
+        [Required, Column(TypeName = "text")]
+        public string TemplateContent { get; set; } = string.Empty; // HTML content
 
         [ForeignKey("CreatedByUser")]
         public string CreatedByUserId { get; set; } = string.Empty;
         public virtual User CreatedByUser { get; set; } = null!;
         public TemplateStatus TemplateStatus { get; set; }
         [ForeignKey("ApprovedByUser")]
-        public string? ApprovedByUserId { get; set; }   
+        public string? ApprovedByUserId { get; set; }
         public User? ApprovedByUser { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public DateTime LastUpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);

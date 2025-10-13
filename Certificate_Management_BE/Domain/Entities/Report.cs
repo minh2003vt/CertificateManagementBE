@@ -18,11 +18,11 @@ namespace Domain.Entities
         [ForeignKey("GeneratedByUser")]
         public string GeneratedByUserId { get; set; } = string.Empty;
         public virtual User GeneratedByUser { get; set; } = null!;
-        public DateTime GenerateDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime StartDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime EndDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime GenerateDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
+        public RequestStatus Status { get; set; } = RequestStatus.Pending;
         public string Content { get; set; } = string.Empty;
-        public string Format {  get; set; } = string.Empty;
+        public string Format { get; set; } = string.Empty;
         public string FileUrl { get; set; } = string.Empty;
     }
 }

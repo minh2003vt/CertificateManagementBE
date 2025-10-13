@@ -36,7 +36,7 @@ namespace Infrastructure.Repositories
         {
             predicate ??= p => true;
             var query = _context.Set<T>().Where(predicate);
-            return await (orderBy != null ?  orderBy(query) : query).ToListAsync();
+            return await (orderBy != null ? orderBy(query) : query).ToListAsync();
         }
 
         public async Task<IList<T>> GetAllAsNoTracking()

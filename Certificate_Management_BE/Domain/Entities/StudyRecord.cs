@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class StudyRecord 
+    public class StudyRecord
     {
         [Key, Column(Order = 0)]
         [ForeignKey("Course")]
@@ -23,6 +23,9 @@ namespace Domain.Entities
         [ForeignKey("Plan")]
         public string PlanId { get; set; } = string.Empty;
         public virtual Plan Plan { get; set; } = null!;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     }
 }

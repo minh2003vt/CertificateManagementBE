@@ -67,7 +67,7 @@ namespace Certificate_Management_BE.Controllers
         /// Create a notification (Admin only)
         /// </summary>
         [HttpPost]
-        [AuthorizeRoles("Admin")]
+        [AuthorizeRoles("Administrator")]
         public async Task<IActionResult> CreateNotification([FromBody] CreateNotificationDto dto)
         {
             var result = await _notificationService.CreateNotificationAsync(dto);
@@ -84,21 +84,21 @@ namespace Certificate_Management_BE.Controllers
         /// Test notification system - sends notification to all admins (Admin only)
         /// </summary>
         [HttpPost("test-admin-notification")]
-        [AuthorizeRoles("Admin")]
+        [AuthorizeRoles("Administrator")]
         public async Task<IActionResult> TestAdminNotification()
         {
             var username = User.FindFirst(ClaimTypes.Name)?.Value ?? "Test User";
-            
+
             await _notificationService.NotifyAdminsAboutNewTraineesAsync(
                 successCount: 5,
                 failureCount: 2,
                 performedByUsername: username
             );
 
-            return Ok(new 
-            { 
-                success = true, 
-                message = "Test notification sent to all admins. Check your notifications!" 
+            return Ok(new
+            {
+                success = true,
+                message = "Test notification sent to all admins. Check your notifications!"
             });
         }
     }

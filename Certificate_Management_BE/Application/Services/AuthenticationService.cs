@@ -23,7 +23,7 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtTokenHelper _jwtTokenHelper;
         private readonly IEmailService _emailService;
-        
+
         public AuthenticationService(IUnitOfWork unitOfWork, JwtTokenHelper jwtTokenHelper, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
@@ -54,6 +54,14 @@ namespace Application.Services
                     return response;
                 }
 
+                // Check if user account is active
+                if (user.Status != Domain.Enums.AccountStatus.Active)
+                {
+                    response.Success = false;
+                    response.Message = "Your account is not active. Please contact administrator.";
+                    return response;
+                }
+
                 if (user.Role == null)
                 {
                     var roleEntity = await _unitOfWork.RoleRepository.GetSingleOrDefaultByNullableExpressionAsync(r => r.RoleId == user.RoleId);
@@ -74,9 +82,24 @@ namespace Application.Services
                     SessionExpiry = DateTime.UtcNow.AddHours(7).AddMinutes(50)
                 };
                 await _unitOfWork.SessionRepository.AddAsync(session);
+                
+                // Get SignalR Hub URL based on user role
+                var roleName = user.Role?.RoleName ?? "User";
+                string? hubUrl = null;
+                try
+                {
+                    hubUrl = SignalRHelper.GetHubUrlByRole(roleName);
+                }
+                catch (ArgumentException)
+                {
+                    // Role doesn't have a hub, that's ok
+                    hubUrl = null;
+                }
+                
                 response.UserId = user.UserId;
                 response.Roles = roles;
                 response.Token = token;
+                response.HubUrl = hubUrl;
                 response.Success = true;
                 return response;
             }
@@ -105,7 +128,7 @@ namespace Application.Services
             {
                 // Find user by email or username - query directly instead of GetAll()
                 var user = await _unitOfWork.UserRepository
-                    .GetSingleOrDefaultByNullableExpressionAsync(u => 
+                    .GetSingleOrDefaultByNullableExpressionAsync(u =>
                         u.Email == dto.EmailOrUsername || u.Username == dto.EmailOrUsername);
 
                 if (user == null)
@@ -199,6 +222,113 @@ namespace Application.Services
             }
 
             return response;
+        }
+
+        public async Task<ServiceResponse<UserProfileDto>> CreateManualAccountAsync(CreateManualAccountDto dto, string createdByUserId)
+        {
+            var response = new ServiceResponse<UserProfileDto>();
+            try
+            {
+                // Check if email already exists
+                var existingUser = await _unitOfWork.UserRepository
+                    .GetSingleOrDefaultByNullableExpressionAsync(u => u.Email == dto.Email);
+                if (existingUser != null)
+                {
+                    response.Success = false;
+                    response.Message = "Email already exists";
+                    return response;
+                }
+
+                // Check if CitizenId already exists
+                var existingCitizen = await _unitOfWork.UserRepository
+                    .GetSingleOrDefaultByNullableExpressionAsync(u => u.CitizenId == dto.CitizenId);
+                if (existingCitizen != null)
+                {
+                    response.Success = false;
+                    response.Message = "Citizen ID already exists";
+                    return response;
+                }
+
+                // Generate UserId
+                var lastUser = await _unitOfWork.UserRepository
+                    .GetByNullableExpressionWithOrderingAsync(null, q => q.OrderByDescending(u => u.UserId));
+                var lastUserId = lastUser.FirstOrDefault()?.UserId ?? "VJA000000";
+                var userIdNumber = int.Parse(lastUserId.Substring(3)) + 1;
+                var newUserId = $"VJA{userIdNumber:D6}";
+
+                // Generate username
+                var username = GenerateUsername(dto.FirstName, dto.LastName, newUserId);
+
+                // Create user
+                var user = new User
+                {
+                    UserId = newUserId,
+                    Username = username,
+                    FullName = $"{dto.FirstName} {dto.LastName}",
+                    Email = dto.Email,
+                    CitizenId = dto.CitizenId,
+                    PhoneNumber = dto.PhoneNumber ,
+                    DateOfBirth = dto.DateOfBirth,
+                    Sex = dto.Sex,
+                    RoleId = dto.RoleId,
+                    Status = Domain.Enums.AccountStatus.Pending,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    UpdatedAt = DateTime.UtcNow.AddHours(7)
+                };
+
+                // Hash password (use username as initial password)
+                user.PasswordHash = PasswordHashHelper.HashPassword(username);
+
+                await _unitOfWork.UserRepository.AddAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+
+                // Send email with account details
+                var emailSubject = "Account Created - Certificate Management System";
+                var emailBody = $@"
+Dear {dto.FirstName} {dto.LastName},
+
+Your account has been created successfully in the Certificate Management System.
+
+Account Details:
+- Username: {username}
+- Password: {username}
+- User ID: {newUserId}
+
+Please log in and change your password for security.
+
+Best regards,
+Certificate Management Team";
+
+                await _emailService.SendEmailAsync(dto.Email, emailSubject, emailBody);
+
+                // Map to DTO
+                response.Success = true;
+                response.Data = new UserProfileDto
+                {
+                    UserId = user.UserId,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    CitizenId = user.CitizenId,
+                    PhoneNumber = user.PhoneNumber,
+                    DateOfBirth = user.DateOfBirth,
+                    Sex = user.Sex
+                };
+                response.Message = "Account created successfully. Login credentials sent to email.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Failed to create account: {ex.Message}";
+            }
+            return response;
+        }
+
+        private string GenerateUsername(string firstName, string lastName, string userId)
+        {
+            var firstname = firstName.ToLower();
+            var lastnameInitials = string.Join("", lastName.Split(' ').Select(n => n[0].ToString().ToLower()));
+            var userIdSuffix = userId.ToLower();
+            return $"{firstname}{lastnameInitials}{userIdSuffix}";
         }
         #endregion
     }

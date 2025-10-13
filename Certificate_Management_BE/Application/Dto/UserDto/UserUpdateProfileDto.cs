@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Application.Dto.UserDto
 {
     public class UserUpdateProfileDto
-    { 
+    {
         [Required(ErrorMessage = "Full name is required")]
         public string FullName { get; set; } = string.Empty;
 

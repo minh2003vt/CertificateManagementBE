@@ -69,7 +69,7 @@ namespace Application.Services
                 // Query by UserId directly instead of GetAll() then filtering
                 var certificates = await _unitOfWork.ExternalCertificateRepository
                     .GetByNullableExpressionWithOrderingAsync(c => c.UserId == userId);
-                
+
                 var userCertificates = certificates
                     .Select(c => new ExternalCertificateListDto
                     {
@@ -204,7 +204,7 @@ namespace Application.Services
                     IssueDate = issueDate,
                     Exp_date = expDate,
                     CertificateFileUrl = imageUrl,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow.AddHours(7)
                 };
 
                 await _unitOfWork.ExternalCertificateRepository.AddAsync(certificate);
