@@ -24,6 +24,12 @@ namespace Domain.Entities
         [ForeignKey("Course")]
         public string CourseId { get; set; } = string.Empty;
         public virtual Course Course { get; set; } = null!;
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        
+        [ForeignKey("ApprovedByUser")]
+        public string? ApprovedByUserId { get; set; }
+        public virtual User? ApprovedByUser { get; set; }
+        public DateTime? ApprovedAt { get; set; } =DateTime.UtcNow;
+        
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

@@ -21,7 +21,7 @@ namespace Domain.Entities
         [Required]
         public string Title { get; set; } = string.Empty;
 
-        [Required]
+        [Required, Column(TypeName = "text")]
         public string Content { get; set; } = string.Empty;
 
         [Required]

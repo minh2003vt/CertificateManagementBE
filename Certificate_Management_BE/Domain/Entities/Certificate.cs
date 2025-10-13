@@ -35,9 +35,9 @@ namespace Domain.Entities
 
         public CertificateStatus Status { get; set; }
 
-        public DateTime SignDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime SignDate { get; set; } = DateTime.UtcNow;
         public DateTime? ExpirationDate { get; set; }
-        public string CertificateUrl { get; set; } = string.Empty;
+        public string CertificateHTMLContent { get; set; } = string.Empty;
         public string? RevocationReason { get; set; }
         public DateTime? RevocationDate { get; set; }
         public bool IncludesRelearn { get; set; } = false;

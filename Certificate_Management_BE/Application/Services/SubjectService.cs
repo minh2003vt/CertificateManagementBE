@@ -157,8 +157,8 @@ namespace Application.Services
                     MinFinalExamScore = dto.MinFinalExamScore,
                     MinTotalScore = minTotalScore,
                     CreatedByUserId = createdByUserId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    UpdatedAt = DateTime.UtcNow.AddHours(7)
                 };
 
                 await _unitOfWork.SubjectRepository.AddAsync(subject);
@@ -219,6 +219,14 @@ namespace Application.Services
                 {
                     response.Success = false;
                     response.Message = $"Subject with ID '{subjectId}' not found";
+                    return response;
+                }
+
+                // Check if subject is approved - prevent modification
+                if (subject.Status == Domain.Enums.SubjectStatus.Approved)
+                {
+                    response.Success = false;
+                    response.Message = "Subject has been approved, please request to modify";
                     return response;
                 }
 
@@ -299,6 +307,14 @@ namespace Application.Services
                 {
                     response.Success = false;
                     response.Message = $"Subject with ID '{subjectId}' not found";
+                    return response;
+                }
+
+                // Check if subject is approved - prevent deletion
+                if (subject.Status == Domain.Enums.SubjectStatus.Approved)
+                {
+                    response.Success = false;
+                    response.Message = "Subject has been approved, please request to delete";
                     return response;
                 }
 

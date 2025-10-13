@@ -345,7 +345,7 @@ namespace Application.Services
                     SpecialtyId = dto.SpecialtyId,
                     SubjectId = dto.SubjectId,
                     CourseId = dto.CourseId,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow.AddHours(7)
                 };
 
                 await _unitOfWork.CourseSubjectSpecialtyRepository.AddAsync(relationship);

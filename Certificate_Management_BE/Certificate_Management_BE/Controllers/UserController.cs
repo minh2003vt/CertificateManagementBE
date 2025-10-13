@@ -1,6 +1,7 @@
 using Application.IServices;
 using Application.Dto.UserDto;
 using Certificate_Management_BE.Attributes;
+using Certificate_Management_BE.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
@@ -14,10 +15,12 @@ namespace Certificate_Management_BE.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IAuthenticationService _authenticationService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IAuthenticationService authenticationService)
         {
             _userService = userService;
+            _authenticationService = authenticationService;
         }
 
         #region GetProfile
@@ -120,8 +123,6 @@ namespace Certificate_Management_BE.Controllers
                 return Ok(result);
             }
             #endregion
-        }
-        #endregion
 
         #region UpdateUserStatus
         /// <summary>
@@ -157,7 +158,7 @@ namespace Certificate_Management_BE.Controllers
         /// <returns>Success message confirming email was sent</returns>
         [HttpPost("send-credentials/{userId}")]
         [AuthorizeRoles("Education Officer", "Administrator")]
-        public async Task<IActionResult> SendCredentialsEmail([FromBody] string userId)
+        public async Task<IActionResult> SendCredentialsEmail(string userId)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -174,6 +175,33 @@ namespace Certificate_Management_BE.Controllers
             return Ok(result);
         }
         #endregion
+
+        /// <summary>
+        /// Create manual account (Education Officer only)
+        /// </summary>
+        [HttpPost("create-manual-account")]
+        [AuthorizeRoles("Education Officer")]
+        public async Task<IActionResult> CreateManualAccount([FromBody] CreateManualAccountDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token");
+            }
+
+            var result = await _authenticationService.CreateManualAccountAsync(dto, userId);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
     }
 }
 

@@ -34,11 +34,11 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("CertificateTemplateId")
+                    b.Property<string>("CertificateHTMLContent")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("CertificateUrl")
+                    b.Property<string>("CertificateTemplateId")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -106,18 +106,20 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("LastUpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("TemplateFile")
+                    b.Property<string>("TemplateContent")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("TemplateName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("TemplateStatus")
                         .IsRequired()
@@ -140,6 +142,15 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ClassId"));
 
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("AprovedUserId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("End")
                         .HasColumnType("timestamp with time zone");
 
@@ -150,7 +161,12 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("Start")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("ClassId");
+
+                    b.HasIndex("AprovedUserId");
 
                     b.HasIndex("InstructorId");
 
@@ -252,10 +268,18 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnOrder(2);
 
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ApprovedByUserId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("SpecialtyId", "SubjectId", "CourseId");
+
+                    b.HasIndex("ApprovedByUserId");
 
                     b.HasIndex("CourseId");
 
@@ -339,7 +363,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -350,7 +375,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("TemplateName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("TemplateStatus")
                         .IsRequired()
@@ -470,10 +496,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("RequestStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("SubjectId", "InstructorId");
 
                     b.HasIndex("AssignedByUserId");
@@ -543,8 +565,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("PlanName")
                         .IsRequired()
@@ -555,12 +577,15 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("PlanId");
 
@@ -602,7 +627,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FileUrl")
@@ -628,8 +653,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("ReportId");
 
@@ -660,18 +686,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("RequestType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("RequestUserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -682,11 +697,32 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ApprovedByUserId");
 
-                    b.HasIndex("RequestDate");
+                    b.HasIndex("CreatedAt");
 
                     b.HasIndex("RequestUserId");
 
                     b.ToTable("Requests");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RequestEntity", b =>
+                {
+                    b.Property<string>("RequestId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequestStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequestType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("RequestId", "EntityId");
+
+                    b.ToTable("RequestEntities");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -776,6 +812,12 @@ namespace Infrastructure.Migrations
                     b.Property<string>("SubjectId")
                         .HasColumnType("text")
                         .HasColumnOrder(2);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("CourseId", "PlanId", "SubjectId");
 
@@ -1130,11 +1172,18 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Class", b =>
                 {
+                    b.HasOne("Domain.Entities.User", "AprovedUser")
+                        .WithMany()
+                        .HasForeignKey("AprovedUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Domain.Entities.User", "Instructor")
                         .WithMany("Classes")
                         .HasForeignKey("InstructorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("AprovedUser");
 
                     b.Navigation("Instructor");
                 });
@@ -1197,6 +1246,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.CourseSubjectSpecialty", b =>
                 {
+                    b.HasOne("Domain.Entities.User", "ApprovedByUser")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Domain.Entities.Course", "Course")
                         .WithMany("CourseSubjectSpecialties")
                         .HasForeignKey("CourseId")
@@ -1214,6 +1268,8 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ApprovedByUser");
 
                     b.Navigation("Course");
 
@@ -1405,6 +1461,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("ApprovedByUser");
 
                     b.Navigation("RequestUser");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RequestEntity", b =>
+                {
+                    b.HasOne("Domain.Entities.Request", "Request")
+                        .WithMany("RequestEntities")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
                 });
 
             modelBuilder.Entity("Domain.Entities.Session", b =>
@@ -1644,6 +1711,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Request", b =>
                 {
+                    b.Navigation("RequestEntities");
+
                     b.Navigation("TraineeAssignations");
                 });
 
