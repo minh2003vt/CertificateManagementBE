@@ -22,8 +22,8 @@ namespace Domain.Entities
         public string SpecialtyId { get; set; } = string.Empty;
         public virtual Specialty Specialty { get; set; } = null!;
         public DepartmentStatus Status { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime UpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<UserDepartment> UserDepartments { get; set; } = [];
     }
 }

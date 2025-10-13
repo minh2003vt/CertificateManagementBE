@@ -30,11 +30,14 @@ namespace Application
         public IStudyRecordRepository PlanCourseRepository { get; }
         public IReportRepository ReportRepository { get; }
         public IRequestRepository RequestRepository { get; }
+        public IRequestEntityRepository RequestEntityRepository { get; }
         public IRoleRepository RoleRepository { get; }
         public ISpecialtyRepository SpecialtyRepository { get; }
         public ISubjectRepository SubjectRepository { get; }
         public ISubjectCertificateRepository SubjectCertificateRepository { get; }
         public ITraineeAssignationRepository TraineeAssignationRepository { get; }
+        public IUserSpecialtyRepository UserSpecialtyRepository { get; }
+        public IUserDepartmentRepository UserDepartmentRepository { get; }
 
         Task<int> SaveChangesAsync();
     }

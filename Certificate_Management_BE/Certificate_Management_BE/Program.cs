@@ -88,15 +88,7 @@ builder.Services.AddAuthentication(options =>
                     
                     if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
                     {
-                        // Allow SignalR to read JWT from query string
-                        var accessToken = context.Request.Query["access_token"];
-                        var path = context.HttpContext.Request.Path;
-
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/notification"))
-                        {
-                            context.Token = accessToken;
-                        }
-                        return Task.CompletedTask;
+                        context.Token = accessToken;
                     }
                     return Task.CompletedTask;
                 }
@@ -105,7 +97,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
-    {
+    {   
         Version = "v1",
         Title = "OCMS.API",
     });
@@ -168,11 +160,14 @@ builder.Services.AddScoped<IUnitOfWork>(sp =>
         sp.GetRequiredService<IStudyRecordRepository>(),
         sp.GetRequiredService<IReportRepository>(),
         sp.GetRequiredService<IRequestRepository>(),
+        sp.GetRequiredService<IRequestEntityRepository>(),
         sp.GetRequiredService<IRoleRepository>(),
         sp.GetRequiredService<ISpecialtyRepository>(),
         sp.GetRequiredService<ISubjectRepository>(),
         sp.GetRequiredService<ISubjectCertificateRepository>(),
-        sp.GetRequiredService<ITraineeAssignationRepository>()
+        sp.GetRequiredService<ITraineeAssignationRepository>(),
+        sp.GetRequiredService<IUserSpecialtyRepository>(),
+        sp.GetRequiredService<IUserDepartmentRepository>()
     );
 });
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -195,11 +190,14 @@ builder.Services.AddScoped<IPlanCertificateRepository, PlanCertificateRepository
 builder.Services.AddScoped<IStudyRecordRepository, StudyRecordRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+builder.Services.AddScoped<IRequestEntityRepository, RequestEntityRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<ISubjectCertificateRepository, SubjectCertificateRepository>();
 builder.Services.AddScoped<ITraineeAssignationRepository, TraineeAssignationRepository>();
+builder.Services.AddScoped<IUserSpecialtyRepository, UserSpecialtyRepository>();
+builder.Services.AddScoped<IUserDepartmentRepository, UserDepartmentRepository>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -211,6 +209,9 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
 builder.Services.AddScoped<IInstructorAssignationService, InstructorAssignationService>();
 builder.Services.AddScoped<ICourseSubjectSpecialtyService, CourseSubjectSpecialtyService>();
+builder.Services.AddScoped<IStudyRecordService, StudyRecordService>();
+builder.Services.AddScoped<IPlanService, PlanService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 
 // Register HubManagerService for SignalR hub management
 builder.Services.AddScoped<IHubManagerService, Certificate_Management_BE.Services.HubManagerService>();
@@ -232,6 +233,12 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Add user status middleware after authentication but before authorization
+app.UseMiddleware<Certificate_Management_BE.Middleware.UserStatusMiddleware>();
+
+// Add approval status middleware to prevent modifications to approved entities
+app.UseMiddleware<Certificate_Management_BE.Middleware.ApprovalStatusMiddleware>();
 
 // Map SignalR Hubs - Each role has its own hub
 app.MapHub<Certificate_Management_BE.Hubs.AdminHub>("/hubs/admin");

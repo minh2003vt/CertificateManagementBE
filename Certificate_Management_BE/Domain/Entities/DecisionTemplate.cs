@@ -14,17 +14,17 @@ namespace Domain.Entities
         [Key]
         public string DecisionTemplateId { get; set; } = string.Empty;
 
-        [Required]
+        [Required, MaxLength(200)]
         public string TemplateName { get; set; } = string.Empty;
 
-        [Required]
-        public string TemplateContent { get; set; } = string.Empty;
+        [Required, Column(TypeName = "text")]
+        public string TemplateContent { get; set; } = string.Empty; // HTML content
 
-        [Required]
+        [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
 
         [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("CreatedByUser")]
         public string CreatedByUserId { get; set; } = string.Empty;

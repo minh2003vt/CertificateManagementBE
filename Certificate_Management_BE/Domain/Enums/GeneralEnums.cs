@@ -37,7 +37,8 @@ namespace Domain.Enums
     {
         Pending = 0,
         Approved = 1,
-        Rejected = 2
+        Rejected = 2,
+        finished = 3
     }
 
 
@@ -94,38 +95,25 @@ namespace Domain.Enums
     {
 // Plan Management
         NewPlan = 0,
+        ModifyPlan = 1,
+        // Course Management
+        NewCourse = 2,
+        ModifyCourse = 3,
 
-// Course Management
-        NewCourse = 1,
-        UpdateCourse = 2,
-        DeleteCourse = 3,
-
-// Instructor Management
-        AssignInstructor = 4,
-
-// Class Management
-        ClassSchedule = 5,
-
+        newSubject = 4,
+        modifySubject = 5,
         // Trainee Management
-        AssignTrainee = 6,
-        AddTraineeAssignation = 7,
-
+        NewClass = 6,
+        modifyTraineeAssign = 7,
         // Template Management
         CertificateTemplate = 8,
         DecisionTemplate = 9,
-
-        // Creation Types
-        CreateNew = 10,
-        CreateRecurrent = 11,
-        CreateRelearn = 12,
-        CandidateImport = 13,
-
+        NewMatrix=10,
+        RemoveMatrix=11,
         // General Actions
-        Complaint = 14,
-        Update = 15,
-        Delete = 16,
-        SignRequest = 17,
-        Revoke = 18
+        Complaint = 12,
+        SignRequest = 13,
+        Revoke = 14
     }
     public enum DecisionStatus
     {

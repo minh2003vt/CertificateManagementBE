@@ -14,9 +14,14 @@ namespace Domain.Entities
         [Key]
         public string CertificateTemplateId { get; set; } = string.Empty;
 
+        [Required, MaxLength(200)]
         public string TemplateName { get; set; } = string.Empty;
+        
+        [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
-        public string TemplateFile { get; set; } = string.Empty; // Path to PDF
+        
+        [Required, Column(TypeName = "text")]
+        public string TemplateContent { get; set; } = string.Empty; // HTML content
 
         [ForeignKey("CreatedByUser")]
         public string CreatedByUserId { get; set; } = string.Empty;

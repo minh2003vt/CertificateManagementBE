@@ -1,4 +1,5 @@
 using Application.Dto.SubjectDto;
+using Application.Dto.RequestDto;
 using Application.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace Certificate_Management_BE.Controllers
     public class SubjectController : ControllerBase
     {
         private readonly ISubjectService _subjectService;
+        private readonly IRequestService _requestService;
 
-        public SubjectController(ISubjectService subjectService)
+        public SubjectController(ISubjectService subjectService, IRequestService requestService)
         {
             _subjectService = subjectService;
+            _requestService = requestService;
         }
 
         /// <summary>
@@ -236,6 +239,60 @@ namespace Certificate_Management_BE.Controllers
 
             var result = await _subjectService.RejectAsync(subjectId, userId);
 
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Send request for new subject
+        /// </summary>
+        [HttpPost("{subjectId}/request/new")]
+        [AuthorizeRoles("Administrator", "Education Officer", "Instructor", "Trainee")]
+        public async Task<IActionResult> SendNewRequest(string subjectId, [FromBody] CreateRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token");
+            }
+
+            var result = await _requestService.CreateRequestAsync(dto, userId, subjectId, Domain.Enums.RequestType.newSubject);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Send request to modify subject
+        /// </summary>
+        [HttpPost("{subjectId}/request/modify")]
+        [AuthorizeRoles("Administrator", "Education Officer", "Instructor", "Trainee")]
+        public async Task<IActionResult> SendModifyRequest(string subjectId, [FromBody] CreateRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token");
+            }
+
+            var result = await _requestService.CreateRequestAsync(dto, userId, subjectId, Domain.Enums.RequestType.modifySubject);
             if (!result.Success)
             {
                 return BadRequest(result);

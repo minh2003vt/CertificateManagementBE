@@ -204,7 +204,7 @@ namespace Application.Services
                     IssueDate = issueDate,
                     Exp_date = expDate,
                     CertificateFileUrl = imageUrl,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow.AddHours(7)
                 };
 
                 await _unitOfWork.ExternalCertificateRepository.AddAsync(certificate);

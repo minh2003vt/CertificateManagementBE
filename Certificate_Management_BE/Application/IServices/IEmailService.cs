@@ -6,6 +6,7 @@ namespace Application.IServices
     {
         Task SendPasswordResetEmailAsync(string toEmail, string userName, string resetToken);
         Task SendCredentialsEmailAsync(string toEmail, string userName, string username, string password);
+        Task SendEmailAsync(string toEmail, string subject, string body);
     }
 }
 

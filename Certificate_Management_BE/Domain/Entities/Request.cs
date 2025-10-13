@@ -17,20 +17,16 @@ namespace Domain.Entities
         [ForeignKey("RequestUser")]
         public string RequestUserId { get; set; } = string.Empty;
         public virtual User RequestUser { get; set; } = null!;
-        public RequestType RequestType { get; set; }
-        public DateTime RequestDate { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
         public string Description { get; set; } = string.Empty;
         public string Notes { get; set; } = string.Empty;
-
-        public RequestStatus Status { get; set; }
-
         [ForeignKey("ApprovedByUser")]
         public string? ApprovedByUserId { get; set; }
         public virtual User? ApprovedByUser { get; set; }
         public DateTime? ApprovedDate { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime UpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<TraineeAssignation> TraineeAssignations { get; set; } = [];
+        public virtual ICollection<RequestEntity> RequestEntities { get; set; } = [];
     }
 }

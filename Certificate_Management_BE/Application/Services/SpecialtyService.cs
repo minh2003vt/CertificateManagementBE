@@ -138,8 +138,8 @@ namespace Application.Services
                     Description = dto.Description ?? string.Empty,
                     CreatedByUserId = createdByUserId,
                     UpdatedByUserId = createdByUserId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    UpdatedAt = DateTime.UtcNow.AddHours(7)
                 };
 
                 await _unitOfWork.SpecialtyRepository.AddAsync(specialty);

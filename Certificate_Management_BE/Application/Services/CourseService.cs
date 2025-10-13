@@ -144,8 +144,8 @@ namespace Application.Services
                     CreatedByUserId = createdByUserId,
                     Status = Domain.Enums.CourseStatus.Pending,
                     // AprovedUserId and ApprovedAt will be null by default
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    UpdatedAt = DateTime.UtcNow.AddHours(7)
                 };
 
                 await _unitOfWork.CourseRepository.AddAsync(course);
@@ -285,6 +285,14 @@ namespace Application.Services
                 {
                     response.Success = false;
                     response.Message = "Course not found";
+                    return response;
+                }
+
+                // Check if course is approved - prevent deletion
+                if (course.Status == Domain.Enums.CourseStatus.Approved)
+                {
+                    response.Success = false;
+                    response.Message = "Course has been approved, please request to delete";
                     return response;
                 }
 

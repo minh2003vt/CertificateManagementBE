@@ -1,4 +1,5 @@
 using Application.Dto.CourseDto;
+using Application.Dto.RequestDto;
 using Application.IServices;
 using Certificate_Management_BE.Attributes;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace Certificate_Management_BE.Controllers
     public class CourseController : ControllerBase
     {
         private readonly ICourseService _courseService;
+        private readonly IRequestService _requestService;
 
-        public CourseController(ICourseService courseService)
+        public CourseController(ICourseService courseService, IRequestService requestService)
         {
             _courseService = courseService;
+            _requestService = requestService;
         }
 
         /// <summary>
@@ -173,6 +176,60 @@ namespace Certificate_Management_BE.Controllers
             {
                 return BadRequest(result);
             }
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Send request for new course
+        /// </summary>
+        [HttpPost("{courseId}/request/new")]
+        [AuthorizeRoles("Administrator", "Education Officer", "Instructor", "Trainee")]
+        public async Task<IActionResult> SendNewRequest(string courseId, [FromBody] CreateRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token");
+            }
+
+            var result = await _requestService.CreateRequestAsync(dto, userId, courseId, Domain.Enums.RequestType.NewCourse);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Send request to modify course
+        /// </summary>
+        [HttpPost("{courseId}/request/modify")]
+        [AuthorizeRoles("Administrator", "Education Officer", "Instructor", "Trainee")]
+        public async Task<IActionResult> SendModifyRequest(string courseId, [FromBody] CreateRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token");
+            }
+
+            var result = await _requestService.CreateRequestAsync(dto, userId, courseId, Domain.Enums.RequestType.ModifyCourse);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
     }

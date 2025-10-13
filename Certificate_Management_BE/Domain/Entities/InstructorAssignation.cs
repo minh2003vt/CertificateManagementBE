@@ -27,7 +27,6 @@ namespace Domain.Entities
         public string AssignedByUserId { get; set; } = string.Empty;
         public virtual User AssignedByUser { get; set; } = null!;
         public DateTime AssignDate { get; set; }
-        public RequestStatus RequestStatus { get; set; }
         public string Notes { get; set; } = string.Empty;
 
     }
