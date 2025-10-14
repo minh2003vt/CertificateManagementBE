@@ -3,6 +3,7 @@ using Application.Dto.UserDto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Certificate_Management_BE.Attributes;
+using Certificate_Management_BE.Extensions;
 using System.Security.Claims;
 
 namespace Certificate_Management_BE.Controllers
@@ -85,6 +86,7 @@ namespace Certificate_Management_BE.Controllers
 
             return Ok(result);
         }
+
         #endregion
 
     }

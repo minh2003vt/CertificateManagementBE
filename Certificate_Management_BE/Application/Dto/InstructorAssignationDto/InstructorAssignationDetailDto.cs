@@ -15,8 +15,7 @@ namespace Application.Dto.InstructorAssignationDto
         public string AssignedByUserName { get; set; } = string.Empty;
         
         public DateTime AssignDate { get; set; }
-        public string RequestStatus { get; set; } = string.Empty;
-        public string? Notes { get; set; }
+        public string Notes { get; set; } = string.Empty;
     }
 }
 

@@ -10,5 +10,3 @@ namespace Infrastructure.Repositories
         }
     }
 }
-
-

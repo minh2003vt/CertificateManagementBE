@@ -24,5 +24,12 @@ namespace Domain.Entities
 
         public virtual ICollection<ClassTraineeAssignation> ClassTraineeAssignations { get; set; } = [];
 
+
+        [ForeignKey("AprovedUser")]
+        public string? AprovedUserId { get; set; }
+        public virtual User? AprovedUser { get; set; }
+        public DateTime? ApprovedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

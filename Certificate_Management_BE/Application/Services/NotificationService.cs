@@ -35,7 +35,7 @@ namespace Application.Services
                     Title = dto.Title,
                     Message = dto.Message,
                     NotificationType = dto.NotificationType,
-                    CreatedAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
                     IsRead = false
                 };
 

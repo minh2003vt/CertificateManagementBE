@@ -38,8 +38,8 @@ namespace Domain.Entities
         public SubjectStatus Status { get; set; } = SubjectStatus.Pending; // pending, approved, rejected
         public DateTime? ApprovedAt { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime UpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; } = [];
         public virtual ICollection<TraineeAssignation> TraineeAssignations { get; set; } = [];
         public virtual ICollection<InstructorAssignation> InstructorAssignations { get; set; } = [];

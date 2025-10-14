@@ -120,7 +120,7 @@ namespace Application.Services
                 user.Sex = profileDto.Sex;
                 user.DateOfBirth = profileDto.DateOfBirth;
                 user.CitizenId = profileDto.CitizenId;
-                user.UpdatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow.AddHours(7);
 
                 await _unitOfWork.UserRepository.UpdateAsync(user);
 
@@ -174,7 +174,7 @@ namespace Application.Services
 
                 // Hash and update new password
                 user.PasswordHash = PasswordHashHelper.HashPassword(dto.NewPassword);
-                user.UpdatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow.AddHours(7);
 
                 await _unitOfWork.UserRepository.UpdateAsync(user);
 
@@ -445,7 +445,7 @@ namespace Application.Services
                                         {
                                             UserId = traineeDto.UserId,
                                             SpecialtyId = traineeDto.SpecialtyId,
-                                            CreatedAt = DateTime.UtcNow
+                                            CreatedAt = DateTime.UtcNow.AddHours(7)
                                         };
                                         await context.Set<UserSpecialty>().AddAsync(newUserSpecialty);
                                     }
@@ -492,10 +492,10 @@ namespace Application.Services
                                         PhoneNumber = traineeDto.PhoneNumber,
                                         CitizenId = traineeDto.CitizenId,
                                         RoleId = traineeRoleId,
-                                        PasswordHash = PasswordHashHelper.HashPassword(usernameg),
+                                        PasswordHash = PasswordHashHelper.HashPassword(username),
                                         Status = AccountStatus.Pending,
-                                        CreatedAt = DateTime.UtcNow,
-                                        UpdatedAt = DateTime.UtcNow
+                                        CreatedAt = DateTime.UtcNow.AddHours(7),
+                                        UpdatedAt = DateTime.UtcNow.AddHours(7)
                                     };
 
                                     await _unitOfWork.UserRepository.AddAsync(newUser);
@@ -506,7 +506,7 @@ namespace Application.Services
                                     {
                                         UserId = userId,
                                         SpecialtyId = traineeDto.SpecialtyId,
-                                        CreatedAt = DateTime.UtcNow
+                                        CreatedAt = DateTime.UtcNow.AddHours(7)
                                     };
                                     var context = _unitOfWork.Context as DbContext;
                                     if (context != null)
@@ -690,7 +690,7 @@ namespace Application.Services
                                         IssueDate = certDto.IssueDate,
                                         Exp_date = certDto.ExpiredDate,
                                         CertificateFileUrl = imageUrl, // Cloudinary URL
-                                        CreatedAt = DateTime.UtcNow
+                                        CreatedAt = DateTime.UtcNow.AddHours(7)
                                     };
 
                                     await _unitOfWork.ExternalCertificateRepository.AddAsync(externalCert);
@@ -744,7 +744,7 @@ namespace Application.Services
                             Title = title,
                             Message = message,
                             NotificationType = notificationType,
-                            CreatedAt = DateTime.UtcNow,
+                            CreatedAt = DateTime.UtcNow.AddHours(7),
                             IsRead = false
                         };
                         
@@ -768,50 +768,6 @@ namespace Application.Services
                 response.Data = result;
             }
              return response;
-        }
-        #endregion
-
-        #region ChangePassword
-        public async Task<ServiceResponse<string>> ChangePasswordAsync(string userId, ChangePasswordDto dto)
-        {
-            var response = new ServiceResponse<string>();
-            try
-            {
-                var user = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == userId);
-                if (user == null)
-                {
-                    response.Success = false;
-                    response.Message = "User not found.";
-                    return response;
-                }
-
-                // Verify current password
-                if (!PasswordHashHelper.VerifyPassword(dto.CurrentPassword, user.PasswordHash))
-                {
-                    response.Success = false;
-                    response.Message = "Current password is incorrect.";
-                    return response;
-                }
-
-                // Hash and update new password
-                user.PasswordHash = PasswordHashHelper.HashPassword(dto.NewPassword);
-                user.UpdatedAt = DateTime.UtcNow;
-
-                await _unitOfWork.UserRepository.UpdateAsync(user);
-
-                response.Success = true;
-                response.Message = "Password changed successfully.";
-                response.Data = "Password updated";
-                return response;
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = "Failed to change password.";
-                response.Message = ex.Message;
-            }
-
-            return response;
         }
         #endregion
 
@@ -935,12 +891,13 @@ namespace Application.Services
                     response.Message = "User does not have an email address.";
                     return response;
                 }
-
-                // Generate a new temporary password (using username as default password)
-                string temporaryPassword = user.Username;
-
-                // Update user's password hash
-                user.PasswordHash = PasswordHashHelper.HashPassword(temporaryPassword);
+                if (user.Status != AccountStatus.Pending)
+                {
+                    response.Success = false;
+                    response.Message = "User is not pending.";
+                    return response;
+                }
+                user.s =  AccountStatus.Active;
                 await _unitOfWork.UserRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -949,7 +906,7 @@ namespace Application.Services
                     user.Email,
                     user.FullName,
                     user.Username,
-                    temporaryPassword
+                    user.PasswordHash
                 );
 
                 response.Success = true;

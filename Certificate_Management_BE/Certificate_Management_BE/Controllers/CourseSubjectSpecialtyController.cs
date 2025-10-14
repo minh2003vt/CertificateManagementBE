@@ -1,7 +1,9 @@
 using Application.Dto.CourseSubjectSpecialtyDto;
+using Application.Dto.RequestDto;
 using Application.IServices;
 using Certificate_Management_BE.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Certificate_Management_BE.Controllers
 {
@@ -10,10 +12,12 @@ namespace Certificate_Management_BE.Controllers
     public class CourseSubjectSpecialtyController : ControllerBase
     {
         private readonly ICourseSubjectSpecialtyService _courseSubjectSpecialtyService;
+        private readonly IRequestService _requestService;
 
-        public CourseSubjectSpecialtyController(ICourseSubjectSpecialtyService courseSubjectSpecialtyService)
+        public CourseSubjectSpecialtyController(ICourseSubjectSpecialtyService courseSubjectSpecialtyService, IRequestService requestService)
         {
             _courseSubjectSpecialtyService = courseSubjectSpecialtyService;
+            _requestService = requestService;
         }
 
         /// <summary>
@@ -135,6 +139,66 @@ namespace Certificate_Management_BE.Controllers
             {
                 return BadRequest(result);
             }
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Send request for new course-subject-specialty relationship
+        /// </summary>
+        [HttpPost("{specialtyId}/{subjectId}/{courseId}/request/new")]
+        [AuthorizeRoles("Administrator", "Education Officer", "Instructor", "Trainee")]
+        public async Task<IActionResult> SendNewRequest(string specialtyId, string subjectId, string courseId, [FromBody] CreateRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token");
+            }
+
+            // Set the entity ID (using composite key format)
+            var entityId = $"{specialtyId}{subjectId}{courseId}";
+
+            var result = await _requestService.CreateRequestAsync(dto, userId, entityId, Domain.Enums.RequestType.NewMatrix);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Send request to modify course-subject-specialty relationship
+        /// </summary>
+        [HttpPost("{specialtyId}/{subjectId}/{courseId}/request/modify")]
+        [AuthorizeRoles("Administrator", "Education Officer", "Instructor", "Trainee")]
+        public async Task<IActionResult> RemoveMatrixRequest(string specialtyId, string subjectId, string courseId, [FromBody] CreateRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token");
+            }
+
+            // Set the entity ID (using composite key format)
+            var entityId = $"{specialtyId}{subjectId}{courseId}";
+
+            var result = await _requestService.CreateRequestAsync(dto, userId, entityId, Domain.Enums.RequestType.RemoveMatrix);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
     }

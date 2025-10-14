@@ -24,5 +24,8 @@ namespace Domain.Entities
         public string PlanId { get; set; } = string.Empty;
         public virtual Plan Plan { get; set; } = null!;
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
     }
 }

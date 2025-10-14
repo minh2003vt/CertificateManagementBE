@@ -18,8 +18,8 @@ namespace Domain.Entities
         [ForeignKey("Department")]
         public string DepartmentId { get; set; } = string.Empty;
         public virtual Department Department { get; set; } = null!;
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime LeavedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime LeavedAt { get; set; } = DateTime.UtcNow;
         public string?  Note{get; set; } = string.Empty;
     }
 }

@@ -39,14 +39,19 @@ namespace Application.Services
                     var instructor = await _unitOfWork.UserRepository
                         .GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == assignation.InstructorId);
 
+                    // Load AssignedByUser
+                    var assignedByUser = await _unitOfWork.UserRepository
+                        .GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == assignation.AssignedByUserId);
+
                     assignationDtos.Add(new InstructorAssignationListDto
                     {
                         SubjectId = assignation.SubjectId,
                         SubjectName = subject?.SubjectName ?? string.Empty,
                         InstructorId = assignation.InstructorId,
                         InstructorName = instructor?.FullName ?? string.Empty,
-                        RequestStatus = assignation.RequestStatus.ToString(),
-                        AssignDate = assignation.AssignDate
+                        AssignedByUserName = assignedByUser?.FullName ?? string.Empty,
+                        AssignDate = assignation.AssignDate,
+                        Notes = assignation.Notes
                     });
                 }
 
@@ -99,7 +104,6 @@ namespace Application.Services
                     AssignedByUserId = assignation.AssignedByUserId,
                     AssignedByUserName = assignedByUser?.FullName ?? string.Empty,
                     AssignDate = assignation.AssignDate,
-                    RequestStatus = assignation.RequestStatus.ToString(),
                     Notes = assignation.Notes
                 };
 
@@ -139,14 +143,19 @@ namespace Application.Services
                     var instructor = await _unitOfWork.UserRepository
                         .GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == assignation.InstructorId);
 
+                    // Load AssignedByUser
+                    var assignedByUser = await _unitOfWork.UserRepository
+                        .GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == assignation.AssignedByUserId);
+
                     assignationDtos.Add(new InstructorAssignationListDto
                     {
                         SubjectId = assignation.SubjectId,
                         SubjectName = subject?.SubjectName ?? string.Empty,
                         InstructorId = assignation.InstructorId,
                         InstructorName = instructor?.FullName ?? string.Empty,
-                        RequestStatus = assignation.RequestStatus.ToString(),
-                        AssignDate = assignation.AssignDate
+                        AssignedByUserName = assignedByUser?.FullName ?? string.Empty,
+                        AssignDate = assignation.AssignDate,
+                        Notes = assignation.Notes
                     });
                 }
 
@@ -186,14 +195,19 @@ namespace Application.Services
                     var instructor = await _unitOfWork.UserRepository
                         .GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == assignation.InstructorId);
 
+                    // Load AssignedByUser
+                    var assignedByUser = await _unitOfWork.UserRepository
+                        .GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == assignation.AssignedByUserId);
+
                     assignationDtos.Add(new InstructorAssignationListDto
                     {
                         SubjectId = assignation.SubjectId,
                         SubjectName = subject?.SubjectName ?? string.Empty,
                         InstructorId = assignation.InstructorId,
                         InstructorName = instructor?.FullName ?? string.Empty,
-                        RequestStatus = assignation.RequestStatus.ToString(),
-                        AssignDate = assignation.AssignDate
+                        AssignedByUserName = assignedByUser?.FullName ?? string.Empty,
+                        AssignDate = assignation.AssignDate,
+                        Notes = assignation.Notes
                     });
                 }
 
@@ -257,15 +271,22 @@ namespace Application.Services
                     response.Message = $"Instructor with ID '{dto.InstructorId}' not found";
                     return response;
                 }
+                if(instructor.RoleId != 2)
+                {
+                    response.Success = false;
+                    response.Message = $"'{dto.InstructorId}' is not a instructor";
+                    return response;
 
-                // Create new assignation with default values
+
+                }
+
+                // Create new assignation
                 var assignation = new InstructorAssignation
                 {
                     SubjectId = dto.SubjectId,
                     InstructorId = dto.InstructorId,
                     AssignedByUserId = assignedByUserId,
                     AssignDate = DateTime.UtcNow, // Set to current date/time
-                    RequestStatus = RequestStatus.Pending, // Default to Pending
                     Notes = dto.Notes ?? string.Empty
                 };
 
@@ -285,7 +306,6 @@ namespace Application.Services
                     AssignedByUserId = assignation.AssignedByUserId,
                     AssignedByUserName = assignedByUser?.FullName ?? string.Empty,
                     AssignDate = assignation.AssignDate,
-                    RequestStatus = assignation.RequestStatus.ToString(),
                     Notes = assignation.Notes
                 };
 
