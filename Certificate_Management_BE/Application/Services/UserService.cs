@@ -897,7 +897,7 @@ namespace Application.Services
                     response.Message = "User is not pending.";
                     return response;
                 }
-                user.s =  AccountStatus.Active;
+                user.Status = AccountStatus.Active;
                 await _unitOfWork.UserRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
