@@ -11,8 +11,6 @@ namespace Domain.Entities
 
         public string EntityId { get; set; } = string.Empty;
         public RequestType RequestType { get; set; }
-
-        public RequestStatus RequestStatus { get; set; }
     }
 }
 

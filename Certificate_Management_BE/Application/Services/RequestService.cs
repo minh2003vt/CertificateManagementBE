@@ -55,8 +55,7 @@ namespace Application.Services
                 {
                     RequestId = newRequestId,
                     EntityId = entityId,
-                    RequestType = requestType,
-                    RequestStatus = RequestStatus.Pending
+                    RequestType = requestType
                 };
 
                 await _unitOfWork.RequestEntityRepository.AddAsync(requestEntity);
@@ -84,8 +83,7 @@ namespace Application.Services
                         {
                             RequestId = requestEntity.RequestId,
                             EntityId = requestEntity.EntityId,
-                            RequestType = requestEntity.RequestType.ToString(),
-                            RequestStatus = requestEntity.RequestStatus.ToString()
+                            RequestType = requestEntity.RequestType.ToString()
                         }
                     }
                 };
@@ -234,8 +232,7 @@ namespace Application.Services
                     {
                         RequestId = re.RequestId,
                         EntityId = re.EntityId,
-                        RequestType = re.RequestType.ToString(),
-                        RequestStatus = re.RequestStatus.ToString()
+                        RequestType = re.RequestType.ToString()
                     }).ToList()
                 };
 
@@ -331,9 +328,6 @@ namespace Application.Services
 
                 foreach (var requestEntity in requestEntities)
                 {
-                    requestEntity.RequestStatus = RequestStatus.Approved;
-                    await _unitOfWork.RequestEntityRepository.UpdateAsync(requestEntity);
-
                     // Update the actual entity based on request type
                     await UpdateEntityStatus(requestEntity.EntityId, requestEntity.RequestType, true, approvedByUserId);
                 }
@@ -383,9 +377,6 @@ namespace Application.Services
 
                 foreach (var requestEntity in requestEntities)
                 {
-                    requestEntity.RequestStatus = RequestStatus.Rejected;
-                    await _unitOfWork.RequestEntityRepository.UpdateAsync(requestEntity);
-
                     // Update the actual entity based on request type
                     await UpdateEntityStatus(requestEntity.EntityId, requestEntity.RequestType, false, approvedByUserId);
                 }

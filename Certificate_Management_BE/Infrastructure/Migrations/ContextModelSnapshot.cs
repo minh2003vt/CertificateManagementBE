@@ -690,6 +690,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -710,10 +714,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("EntityId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RequestStatus")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RequestType")
