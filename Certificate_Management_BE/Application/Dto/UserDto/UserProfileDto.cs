@@ -12,6 +12,7 @@ namespace Application.Dto.UserDto
         public Sex Sex { get; set; }
         public DateOnly DateOfBirth { get; set; }
         public string CitizenId { get; set; } = string.Empty;
+        public string? AvatarUrl { get; set; }
     }
    
 }

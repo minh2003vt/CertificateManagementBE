@@ -14,6 +14,8 @@ namespace Application.IServices
         Task<ServiceResponse<ImportResultDto>> ImportTraineesAsync(IFormFile file, string performedByUsername);
         Task<ServiceResponse<string>> UpdateUserStatusAsync(UserStatusDto dto);
         Task<ServiceResponse<string>> SendCredentialsEmailAsync(string userId);
+        Task<ServiceResponse<UserProfileDto>> UploadAvatarAsync(string userId, IFormFile file);
+        Task<ServiceResponse<List<UserProfileDto>>> GetAllUsersAsync();
     }
 }
 

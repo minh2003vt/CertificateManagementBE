@@ -205,7 +205,7 @@ namespace Application.Services
 
                 // Hash new password
                 user.PasswordHash = PasswordHashHelper.HashPassword(dto.NewPassword);
-                user.UpdatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow.AddHours(7);
 
                 await _unitOfWork.UserRepository.UpdateAsync(user);
 

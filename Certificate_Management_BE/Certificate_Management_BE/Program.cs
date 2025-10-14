@@ -218,6 +218,7 @@ builder.Services.AddScoped<ICourseSubjectSpecialtyService, CourseSubjectSpecialt
 builder.Services.AddScoped<IStudyRecordService, StudyRecordService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IGeminiService, GeminiService>();
 
 // Register HubManagerService for SignalR hub management
 builder.Services.AddScoped<IHubManagerService, Certificate_Management_BE.Services.HubManagerService>();
