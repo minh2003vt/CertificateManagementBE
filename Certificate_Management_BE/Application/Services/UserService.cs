@@ -60,6 +60,7 @@ namespace Application.Services
                     Sex = user.Sex,
                     DateOfBirth = user.DateOfBirth,
                     CitizenId = user.CitizenId,
+                    AvatarUrl = user.AvatarUrl
                 };
 
                 response.Success = true;
@@ -134,6 +135,7 @@ namespace Application.Services
                     Sex = user.Sex,
                     DateOfBirth = user.DateOfBirth,
                     CitizenId = user.CitizenId,
+                    AvatarUrl = user.AvatarUrl
                 };
 
                 response.Success = true;
@@ -146,6 +148,108 @@ namespace Application.Services
                 response.Message = ex.Message;
             }
 
+            return response;
+        }
+        #endregion
+
+        #region UploadAvatar
+        public async Task<ServiceResponse<UserProfileDto>> UploadAvatarAsync(string userId, IFormFile file)
+        {
+            var response = new ServiceResponse<UserProfileDto>();
+            try
+            {
+                if (file == null || file.Length == 0 )
+                {
+                    response.Success = false;
+                    response.Message = "Please upload a valid image file";
+                    return response;
+                }
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var extension = System.IO.Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    response.Success = false;
+                    response.Message = "Only JPG, JPEG, and PNG files are allowed";
+                    return response;
+                }
+
+                var user = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == userId);
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                    return response;
+                }
+
+                using var stream = new MemoryStream();
+                await file.CopyToAsync(stream);
+                stream.Position = 0;
+
+                var fileName = $"avatar_{userId}_{DateTime.UtcNow.Ticks}{Path.GetExtension(file.FileName)}";
+                var imageUrl = await _cloudinaryService.UploadImageAsync(stream, fileName);
+
+                if (string.IsNullOrEmpty(imageUrl))
+                {
+                    response.Success = false;
+                    response.Message = "Failed to upload avatar";
+                    return response;
+                }
+
+                user.AvatarUrl = imageUrl;
+                user.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                await _unitOfWork.UserRepository.UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.Success = true;
+                response.Data = new UserProfileDto
+                {
+                    UserId = user.UserId,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Sex = user.Sex,
+                    DateOfBirth = user.DateOfBirth,
+                    CitizenId = user.CitizenId,
+                    AvatarUrl = user.AvatarUrl
+                };
+                response.Message = "Avatar updated successfully";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+        #endregion
+
+        #region GetAllUsers
+        public async Task<ServiceResponse<List<UserProfileDto>>> GetAllUsersAsync()
+        {
+            var response = new ServiceResponse<List<UserProfileDto>>();
+            try
+            {
+                var users = await _unitOfWork.UserRepository.GetAll();
+                response.Data = users.Select(u => new UserProfileDto
+                {
+                    UserId = u.UserId,
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                    Sex = u.Sex,
+                    DateOfBirth = u.DateOfBirth,
+                    CitizenId = u.CitizenId,
+                    AvatarUrl = u.AvatarUrl
+                }).ToList();
+                response.Success = true;
+                response.Message = "Users retrieved successfully";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
             return response;
         }
         #endregion
