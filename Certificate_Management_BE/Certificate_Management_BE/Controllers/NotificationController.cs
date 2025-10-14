@@ -20,7 +20,7 @@ namespace Certificate_Management_BE.Controllers
         /// <summary>
         /// Get all notifications for the current user
         /// </summary>
-        [HttpGet]
+        [HttpGet("all")]
         [AuthorizeRoles()]
         public async Task<IActionResult> GetUserNotifications([FromQuery] bool unreadOnly = false)
         {

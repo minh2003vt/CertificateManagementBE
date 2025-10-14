@@ -58,9 +58,16 @@ namespace Application.Helpers
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
             var secretKeyBytes = Encoding.UTF8.GetBytes(_secretKey);
-            if (secretKeyBytes.Length != 32)
+            // Ensure the key is at least 32 bytes for HMAC-SHA256
+            if (secretKeyBytes.Length < 32)
             {
-                secretKeyBytes = System.Security.Cryptography.SHA256.HashData(secretKeyBytes);
+                // Pad with zeros if too short
+                Array.Resize(ref secretKeyBytes, 32);
+            }
+            else if (secretKeyBytes.Length > 32)
+            {
+                // Truncate if too long
+                Array.Resize(ref secretKeyBytes, 32);
             }
             var secretKey = new SymmetricSecurityKey(secretKeyBytes);
             var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -100,9 +107,16 @@ namespace Application.Helpers
             };
 
             var secretKeyBytes = Encoding.UTF8.GetBytes(_secretKey);
-            if (secretKeyBytes.Length != 32)
+            // Ensure the key is at least 32 bytes for HMAC-SHA256
+            if (secretKeyBytes.Length < 32)
             {
-                secretKeyBytes = System.Security.Cryptography.SHA256.HashData(secretKeyBytes);
+                // Pad with zeros if too short
+                Array.Resize(ref secretKeyBytes, 32);
+            }
+            else if (secretKeyBytes.Length > 32)
+            {
+                // Truncate if too long
+                Array.Resize(ref secretKeyBytes, 32);
             }
             var secretKey = new SymmetricSecurityKey(secretKeyBytes);
             var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -126,9 +140,16 @@ namespace Application.Helpers
             }
 
             var secretKeyBytes = Encoding.UTF8.GetBytes(_secretKey);
-            if (secretKeyBytes.Length != 32)
+            // Ensure the key is at least 32 bytes for HMAC-SHA256
+            if (secretKeyBytes.Length < 32)
             {
-                secretKeyBytes = System.Security.Cryptography.SHA256.HashData(secretKeyBytes);
+                // Pad with zeros if too short
+                Array.Resize(ref secretKeyBytes, 32);
+            }
+            else if (secretKeyBytes.Length > 32)
+            {
+                // Truncate if too long
+                Array.Resize(ref secretKeyBytes, 32);
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();

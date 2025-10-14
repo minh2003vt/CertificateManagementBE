@@ -20,7 +20,7 @@ namespace Certificate_Management_BE.Controllers
         /// <summary>
         /// Get all instructor assignations
         /// </summary>
-        [HttpGet]
+        [HttpGet("all")]
         [AuthorizeRoles("Administrator", "Education Officer", "Instructor")]
         public async Task<IActionResult> GetAll()
         {

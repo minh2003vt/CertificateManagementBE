@@ -47,8 +47,6 @@ namespace Domain.Enums
         Pending = 0,
         Approved = 1,
         Rejected = 2,
-        Updating = 3,
-        Deleting = 4
     }
     public enum DepartmentStatus
     {

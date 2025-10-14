@@ -55,7 +55,7 @@ namespace Certificate_Management_BE.Controllers
         /// <summary>
         /// Get all requests (Administrator and Education Officer only)
         /// </summary>
-        [HttpGet]
+        [HttpGet("all")]
         [AuthorizeRoles("Administrator", "Education Officer")]
         public async Task<IActionResult> GetAllRequests()
         {

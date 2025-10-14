@@ -521,6 +521,11 @@ namespace Infrastructure
             modelBuilder.Entity<Request>()
                 .HasIndex(r => r.CreatedAt);
 
+            // Enum conversions for Request
+            modelBuilder.Entity<Request>()
+                .Property(r => r.Status)
+                .HasConversion<string>();
+
             // Add missing indexes for better performance
             modelBuilder.Entity<ExternalCertificate>()
                 .HasIndex(ec => ec.CertificateCode);

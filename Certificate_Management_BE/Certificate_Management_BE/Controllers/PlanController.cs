@@ -26,7 +26,7 @@ namespace Certificate_Management_BE.Controllers
         /// <summary>
         /// Get all plans
         /// </summary>
-        [HttpGet]
+        [HttpGet("all")]
         [AuthorizeRoles("Administrator", "Education Officer", "Instructor", "Trainee")]
         public async Task<IActionResult> GetAll()
         {

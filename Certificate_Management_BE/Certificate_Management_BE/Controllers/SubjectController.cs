@@ -25,7 +25,7 @@ namespace Certificate_Management_BE.Controllers
         /// <summary>
         /// Get all subjects (lightweight list)
         /// </summary>
-        [HttpGet]
+        [HttpGet("all")]
         [AuthorizeRoles("Administrator", "Education Officer", "Instructor", "Trainee")]
         public async Task<IActionResult> GetAll()
         {

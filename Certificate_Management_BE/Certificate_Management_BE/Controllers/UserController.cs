@@ -44,6 +44,44 @@ namespace Certificate_Management_BE.Controllers
         }
         #endregion
 
+        #region UploadAvatar
+        /// <summary>
+        /// Upload user avatar to Cloudinary and update profile
+        /// </summary>
+        [HttpPut("profile/avatar")]
+        [AuthorizeRoles()]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadAvatar(IFormFile file)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Success = false, Message = "User ID not found in token" });
+            }
+
+            var result = await _userService.UploadAvatarAsync(userId, file);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region GetAllUsers
+        [HttpGet("all")]
+        [AuthorizeRoles("Administrator", "Education Officer")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var result = await _userService.GetAllUsersAsync();
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        #endregion
         #region UpdateProfile
         [HttpPut("profile")]
         [AuthorizeRoles()]
@@ -53,6 +91,29 @@ namespace Certificate_Management_BE.Controllers
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized(new { Success = false, Message = "User ID not found in token" });
+            }
+
+            var result = await _userService.UpdateUserProfileAsync(userId, dto);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region AdminUpdateUserProfile
+        /// <summary>
+        /// Admin updates a user's profile by userId
+        /// </summary>
+        [HttpPut("profile/{userId}")]
+        [AuthorizeRoles("Administrator")]
+        public async Task<IActionResult> UpdateUserProfileByAdmin(string userId, [FromBody] UserUpdateProfileDto dto)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new { Success = false, Message = "User ID is required" });
             }
 
             var result = await _userService.UpdateUserProfileAsync(userId, dto);

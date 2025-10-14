@@ -56,9 +56,16 @@ builder.Services.AddAuthentication(options =>
                 }
 
                 var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
-                if (secretKeyBytes.Length != 32)
+                // Ensure the key is at least 32 bytes for HMAC-SHA256
+                if (secretKeyBytes.Length < 32)
                 {
-                    secretKeyBytes = System.Security.Cryptography.SHA256.HashData(secretKeyBytes);
+                    // Pad with zeros if too short
+                    Array.Resize(ref secretKeyBytes, 32);
+                }
+                else if (secretKeyBytes.Length > 32)
+                {
+                    // Truncate if too long
+                    Array.Resize(ref secretKeyBytes, 32);
                 }
 
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -108,9 +115,8 @@ builder.Services.AddSwaggerGen(c =>
                       "\n\nEnter your token in the text input below. " +
                       "\n\nExample: '12345abcde'",
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "bearer"
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
     });
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -130,7 +136,7 @@ builder.Services.AddSwaggerGen(c =>
                                 Id = "Bearer"
                             }
                         },
-                        Array.Empty<string>()
+                        new string[] {}
                     }
                 });
 });
@@ -212,6 +218,7 @@ builder.Services.AddScoped<ICourseSubjectSpecialtyService, CourseSubjectSpecialt
 builder.Services.AddScoped<IStudyRecordService, StudyRecordService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IGeminiService, GeminiService>();
 
 // Register HubManagerService for SignalR hub management
 builder.Services.AddScoped<IHubManagerService, Certificate_Management_BE.Services.HubManagerService>();
@@ -227,6 +234,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapGet("/", () => Results.Redirect("/swagger"));
+}
+else
+{
+    // In production, enable Swagger for API documentation
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Certificate Management API v1");
+        c.RoutePrefix = "swagger";
+    });
 }
 
 app.UseHttpsRedirection();

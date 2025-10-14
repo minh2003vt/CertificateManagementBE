@@ -20,7 +20,7 @@ namespace Certificate_Management_BE.Controllers
         /// <summary>
         /// Get all external certificates (id, code, name only)
         /// </summary>
-        [HttpGet]
+        [HttpGet("all")]
         [AuthorizeRoles()] // All authenticated users
         public async Task<IActionResult> GetAll()
         {
