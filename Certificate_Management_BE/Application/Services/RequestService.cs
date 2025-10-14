@@ -44,6 +44,7 @@ namespace Application.Services
                     RequestUserId = requestUserId,
                     Description = dto.Description,
                     Notes = dto.Notes ?? string.Empty,
+                    Status = RequestStatus.Pending,
                     CreatedAt = DateTime.UtcNow.AddHours(7),
                     UpdatedAt = DateTime.UtcNow.AddHours(7)
                 };
@@ -319,6 +320,7 @@ namespace Application.Services
                 request.ApprovedByUserId = approvedByUserId;
                 request.ApprovedDate = DateTime.UtcNow.AddHours(7);
                 request.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                request.Status = RequestStatus.Approved;
 
                 await _unitOfWork.RequestRepository.UpdateAsync(request);
 
@@ -368,6 +370,7 @@ namespace Application.Services
                 request.ApprovedByUserId = approvedByUserId;
                 request.ApprovedDate = DateTime.UtcNow.AddHours(7);
                 request.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                request.Status = RequestStatus.Rejected;
 
                 await _unitOfWork.RequestRepository.UpdateAsync(request);
 
@@ -405,7 +408,7 @@ namespace Application.Services
                 // Get all users with Administrator role (assuming this is Director role)
                 var administrators = await _unitOfWork.UserRepository
                     .GetByNullableExpressionWithOrderingAsync(
-                        u => u.RoleId == 6, // Assuming RoleId 1 is Administrator
+                        u => u.RoleId == 6, 
                         null
                     );
 
@@ -515,6 +518,74 @@ namespace Application.Services
                                 plan.ApprovedAt = DateTime.UtcNow.AddHours(7);
                             }
                             await _unitOfWork.PlanRepository.UpdateAsync(plan);
+
+                            // If approving a Plan, ensure related Courses, Subjects, and CSS are also approved
+                            if (isApproved)
+                            {
+                                // Get all study records under this plan
+                                var studyRecords = await _unitOfWork.PlanCourseRepository
+                                    .GetByNullableExpressionWithOrderingAsync(sr => sr.PlanId == plan.PlanId, null);
+
+                                foreach (var sr in studyRecords)
+                                {
+                                    // Approve Course if still pending
+                                    var relatedCourse = await _unitOfWork.CourseRepository
+                                        .GetSingleOrDefaultByNullableExpressionAsync(c => c.CourseId == sr.CourseId);
+                                    if (relatedCourse != null && relatedCourse.Status == CourseStatus.Pending)
+                                    {
+                                        relatedCourse.Status = CourseStatus.Approved;
+                                        relatedCourse.AprovedUserId = approverUserId;
+                                        relatedCourse.ApprovedAt = DateTime.UtcNow.AddHours(7);
+                                        relatedCourse.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                                        await _unitOfWork.CourseRepository.UpdateAsync(relatedCourse);
+                                    }
+
+                                    // Approve Subject if still pending
+                                    var relatedSubject = await _unitOfWork.SubjectRepository
+                                        .GetSingleOrDefaultByNullableExpressionAsync(s => s.SubjectId == sr.SubjectId);
+                                    if (relatedSubject != null && relatedSubject.Status == SubjectStatus.Pending)
+                                    {
+                                        relatedSubject.Status = SubjectStatus.Approved;
+                                        relatedSubject.AprovedUserId = approverUserId;
+                                        relatedSubject.ApprovedAt = DateTime.UtcNow.AddHours(7);
+                                        relatedSubject.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                                        await _unitOfWork.SubjectRepository.UpdateAsync(relatedSubject);
+                                    }
+
+                                    // Ensure CourseSubjectSpecialty entry for Plan.Specialty is marked approved
+                                    var css = await _unitOfWork.CourseSubjectSpecialtyRepository
+                                        .GetSingleOrDefaultByNullableExpressionAsync(x =>
+                                            x.SpecialtyId == plan.SpecialtyId &&
+                                            x.CourseId == sr.CourseId &&
+                                            x.SubjectId == sr.SubjectId);
+                                    if (css != null)
+                                    {
+                                        css.ApprovedByUserId = approverUserId;
+                                        css.ApprovedAt = DateTime.UtcNow.AddHours(7);
+                                        await _unitOfWork.CourseSubjectSpecialtyRepository.UpdateAsync(css);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // If rejecting a Plan, clear approval on CSS entries tied to its study records (non-destructive)
+                                var studyRecords = await _unitOfWork.PlanCourseRepository
+                                    .GetByNullableExpressionWithOrderingAsync(sr => sr.PlanId == plan.PlanId, null);
+                                foreach (var sr in studyRecords)
+                                {
+                                    var css = await _unitOfWork.CourseSubjectSpecialtyRepository
+                                        .GetSingleOrDefaultByNullableExpressionAsync(x =>
+                                            x.SpecialtyId == plan.SpecialtyId &&
+                                            x.CourseId == sr.CourseId &&
+                                            x.SubjectId == sr.SubjectId);
+                                    if (css != null)
+                                    {
+                                        css.ApprovedAt = null;
+                                        css.ApprovedByUserId = null;
+                                        await _unitOfWork.CourseSubjectSpecialtyRepository.UpdateAsync(css);
+                                    }
+                                }
+                            }
                         }
                         break;
 
@@ -534,6 +605,29 @@ namespace Application.Services
                                 {
                                     courseSubjectSpecialty.ApprovedAt = DateTime.UtcNow.AddHours(7);
                                     courseSubjectSpecialty.ApprovedByUserId = approverUserId;
+
+                                    // Ensure related Course and Subject are approved as well
+                                    var cssCourse = await _unitOfWork.CourseRepository
+                                        .GetSingleOrDefaultByNullableExpressionAsync(c => c.CourseId == courseSubjectSpecialty.CourseId);
+                                    if (cssCourse != null && cssCourse.Status == CourseStatus.Pending)
+                                    {
+                                        cssCourse.Status = CourseStatus.Approved;
+                                        cssCourse.AprovedUserId = approverUserId;
+                                        cssCourse.ApprovedAt = DateTime.UtcNow.AddHours(7);
+                                        cssCourse.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                                        await _unitOfWork.CourseRepository.UpdateAsync(cssCourse);
+                                    }
+
+                                    var cssSubject = await _unitOfWork.SubjectRepository
+                                        .GetSingleOrDefaultByNullableExpressionAsync(s => s.SubjectId == courseSubjectSpecialty.SubjectId);
+                                    if (cssSubject != null && cssSubject.Status == SubjectStatus.Pending)
+                                    {
+                                        cssSubject.Status = SubjectStatus.Approved;
+                                        cssSubject.AprovedUserId = approverUserId;
+                                        cssSubject.ApprovedAt = DateTime.UtcNow.AddHours(7);
+                                        cssSubject.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                                        await _unitOfWork.SubjectRepository.UpdateAsync(cssSubject);
+                                    }
                                 }
                                 else
                                 {
