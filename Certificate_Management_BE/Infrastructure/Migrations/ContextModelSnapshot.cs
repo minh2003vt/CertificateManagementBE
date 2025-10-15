@@ -716,10 +716,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("EntityId")
                         .HasColumnType("text");
 
-                    b.Property<string>("RequestStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("RequestType")
                         .IsRequired()
                         .HasColumnType("text");

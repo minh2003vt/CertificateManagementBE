@@ -479,8 +479,9 @@ namespace Infrastructure
             modelBuilder.Entity<RequestEntity>()
                 .Property(re => re.RequestType)
                 .HasConversion<string>();
-            modelBuilder.Entity<RequestEntity>()
-                .Property(re => re.RequestStatus)
+
+            modelBuilder.Entity<Request>()
+                .Property(r => r.Status)
                 .HasConversion<string>();
 
             modelBuilder.Entity<Decision>()
