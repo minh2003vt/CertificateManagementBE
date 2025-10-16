@@ -240,7 +240,8 @@ namespace Application.Services
                     Sex = u.Sex,
                     DateOfBirth = u.DateOfBirth,
                     CitizenId = u.CitizenId,
-                    AvatarUrl = u.AvatarUrl
+                    AvatarUrl = u.AvatarUrl,
+                    Status = u.Status
                 }).ToList();
                 response.Success = true;
                 response.Message = "Users retrieved successfully";
@@ -1012,6 +1013,9 @@ namespace Application.Services
                     user.Username,
                     user.PasswordHash
                 );
+
+                // Send welcome notification (DB + real-time)
+                await _notificationService.SendWelcomeAsync(user.UserId);
 
                 response.Success = true;
                 response.Message = $"Credentials email sent successfully to {user.Email}";

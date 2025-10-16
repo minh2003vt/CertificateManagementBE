@@ -142,19 +142,52 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ClassId"));
 
-                    b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("AprovedUserId")
-                        .HasColumnType("text");
+                    b.Property<int>("ClassGroupId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("InstructorId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubjectId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("ClassId");
+
+                    b.HasIndex("ClassGroupId");
+
+                    b.HasIndex("InstructorId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("Classes");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ClassGroup", b =>
+                {
+                    b.Property<int>("ClassGroupId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ClassGroupId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("End")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("InstructorId")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -164,13 +197,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("ClassId");
+                    b.HasKey("ClassGroupId");
 
-                    b.HasIndex("AprovedUserId");
-
-                    b.HasIndex("InstructorId");
-
-                    b.ToTable("Classes");
+                    b.ToTable("ClassGroups");
                 });
 
             modelBuilder.Entity("Domain.Entities.ClassTraineeAssignation", b =>
@@ -909,65 +938,28 @@ namespace Infrastructure.Migrations
                     b.Property<string>("TraineeAssignationId")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("ApprovalDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ApprovedByUserId")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("AssignDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("AssignedByUserId")
                         .HasColumnType("text");
 
-                    b.Property<int?>("Attendance")
-                        .HasColumnType("integer");
+                    b.Property<string>("AssignmentKind")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("EvaluationDate")
+                    b.Property<DateTime>("GradeDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<double?>("FinalExamScore")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("GradeStatus")
+                    b.Property<string>("OverallGradeStatus")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("GradedByInstructorId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Gradekind")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double?>("PracticeExamScore")
-                        .HasColumnType("double precision");
 
                     b.Property<string>("RequestId")
-                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("RequestStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double?>("ResitFinalExamScore")
-                        .HasColumnType("double precision");
-
-                    b.Property<double?>("ResitPracticeExamScore")
-                        .HasColumnType("double precision");
 
                     b.Property<string>("SubjectId")
-                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<double>("TotalScore")
-                        .HasColumnType("double precision");
 
                     b.Property<string>("TraineeId")
                         .IsRequired()
@@ -978,11 +970,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("TraineeAssignationId");
 
-                    b.HasIndex("ApprovedByUserId");
-
                     b.HasIndex("AssignedByUserId");
-
-                    b.HasIndex("GradedByInstructorId");
 
                     b.HasIndex("RequestId");
 
@@ -991,6 +979,43 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TraineeId");
 
                     b.ToTable("TraineeAssignations");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TraineeAssignationGrade", b =>
+                {
+                    b.Property<string>("TraineeAssignationGradeId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("Grade")
+                        .HasPrecision(4, 1)
+                        .HasColumnType("numeric(4,1)");
+
+                    b.Property<string>("GradeKind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GradeStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TraineeAssignationId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("TraineeAssignationGradeId");
+
+                    b.HasIndex("TraineeAssignationId");
+
+                    b.ToTable("TraineeAssignationGrades");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -1172,10 +1197,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Class", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "AprovedUser")
-                        .WithMany()
-                        .HasForeignKey("AprovedUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("Domain.Entities.ClassGroup", "ClassGroup")
+                        .WithMany("Classes")
+                        .HasForeignKey("ClassGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "Instructor")
                         .WithMany("Classes")
@@ -1183,9 +1209,17 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("AprovedUser");
+                    b.HasOne("Domain.Entities.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ClassGroup");
 
                     b.Navigation("Instructor");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("Domain.Entities.ClassTraineeAssignation", b =>
@@ -1567,32 +1601,18 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.TraineeAssignation", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "ApprovedByUser")
-                        .WithMany()
-                        .HasForeignKey("ApprovedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("Domain.Entities.User", "AssignedByUser")
                         .WithMany()
                         .HasForeignKey("AssignedByUserId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Domain.Entities.User", "GradedByInstructor")
-                        .WithMany()
-                        .HasForeignKey("GradedByInstructorId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Domain.Entities.Request", "Request")
+                    b.HasOne("Domain.Entities.Request", null)
                         .WithMany("TraineeAssignations")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RequestId");
 
-                    b.HasOne("Domain.Entities.Subject", "Subject")
+                    b.HasOne("Domain.Entities.Subject", null)
                         .WithMany("TraineeAssignations")
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("SubjectId");
 
                     b.HasOne("Domain.Entities.User", "Trainee")
                         .WithMany("TraineeAssignations")
@@ -1600,17 +1620,20 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApprovedByUser");
-
                     b.Navigation("AssignedByUser");
 
-                    b.Navigation("GradedByInstructor");
-
-                    b.Navigation("Request");
-
-                    b.Navigation("Subject");
-
                     b.Navigation("Trainee");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TraineeAssignationGrade", b =>
+                {
+                    b.HasOne("Domain.Entities.TraineeAssignation", "TraineeAssignation")
+                        .WithMany("Grades")
+                        .HasForeignKey("TraineeAssignationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TraineeAssignation");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -1683,6 +1706,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("ClassTraineeAssignations");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ClassGroup", b =>
+                {
+                    b.Navigation("Classes");
+                });
+
             modelBuilder.Entity("Domain.Entities.Course", b =>
                 {
                     b.Navigation("CourseCertificates");
@@ -1746,6 +1774,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.TraineeAssignation", b =>
                 {
                     b.Navigation("ClassTraineeAssignations");
+
+                    b.Navigation("Grades");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
