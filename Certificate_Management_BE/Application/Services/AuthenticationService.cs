@@ -56,7 +56,6 @@ namespace Application.Services
                     return response;
                 }
 
-                // Check if user account is active
                 if (user.Status != Domain.Enums.AccountStatus.Active)
                 {
                     response.Success = false;

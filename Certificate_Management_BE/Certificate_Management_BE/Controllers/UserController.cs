@@ -263,7 +263,7 @@ namespace Certificate_Management_BE.Controllers
 
             return Ok(result);
         }
-        #region GetAllTrainees
+        #region GetAllByRole
         [HttpGet("get-all-by-role")]
         [AuthorizeRoles("Administrator", "Education Officer")]
         public async Task<IActionResult> GetAllByRole(int roleid)

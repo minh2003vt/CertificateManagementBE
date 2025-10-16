@@ -958,9 +958,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("RequestId")
                         .HasColumnType("text");
 
-                    b.Property<string>("SubjectId")
-                        .HasColumnType("text");
-
                     b.Property<string>("TraineeId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -973,8 +970,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AssignedByUserId");
 
                     b.HasIndex("RequestId");
-
-                    b.HasIndex("SubjectId");
 
                     b.HasIndex("TraineeId");
 
@@ -1610,10 +1605,6 @@ namespace Infrastructure.Migrations
                         .WithMany("TraineeAssignations")
                         .HasForeignKey("RequestId");
 
-                    b.HasOne("Domain.Entities.Subject", null)
-                        .WithMany("TraineeAssignations")
-                        .HasForeignKey("SubjectId");
-
                     b.HasOne("Domain.Entities.User", "Trainee")
                         .WithMany("TraineeAssignations")
                         .HasForeignKey("TraineeId")
@@ -1767,8 +1758,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("StudyRecords");
 
                     b.Navigation("SubjectCertificates");
-
-                    b.Navigation("TraineeAssignations");
                 });
 
             modelBuilder.Entity("Domain.Entities.TraineeAssignation", b =>

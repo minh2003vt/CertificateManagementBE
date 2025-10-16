@@ -41,7 +41,6 @@ namespace Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; } = [];
-        public virtual ICollection<TraineeAssignation> TraineeAssignations { get; set; } = [];
         public virtual ICollection<InstructorAssignation> InstructorAssignations { get; set; } = [];
         public virtual ICollection<SubjectCertificate> SubjectCertificates { get; set; } = [];
         public virtual ICollection<StudyRecord> StudyRecords { get; set; } = [];
