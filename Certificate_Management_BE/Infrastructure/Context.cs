@@ -24,12 +24,14 @@ namespace Infrastructure
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Class> Classes { get; set; }
+        public DbSet<ClassGroup> ClassGroups { get; set; }
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<CertificateTemplate> CertificateTemplates { get; set; }
         public DbSet<Decision> Decisions { get; set; }
         public DbSet<DecisionTemplate> DecisionTemplates { get; set; }
         public DbSet<Plan> Plans { get; set; }
-        public DbSet<TraineeAssignation> TraineeAssignations { get; set; }
+            public DbSet<TraineeAssignation> TraineeAssignations { get; set; }
+            public DbSet<TraineeAssignationGrade> TraineeAssignationGrades { get; set; }
         public DbSet<InstructorAssignation> InstructorAssignations { get; set; }
         public DbSet<ClassTraineeAssignation> ClassTraineeAssignations { get; set; }
         public DbSet<CourseSubjectSpecialty> CourseSubjectSpecialties { get; set; }
@@ -112,10 +114,16 @@ namespace Infrastructure
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Class>()
-                .HasOne(c => c.AprovedUser)
+                .HasOne(c => c.Subject)
                 .WithMany()
-                .HasForeignKey(c => c.AprovedUserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(c => c.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Class>()
+                .HasOne(c => c.ClassGroup)
+                .WithMany(g => g.Classes)
+                .HasForeignKey(c => c.ClassGroupId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Certificate>()
                 .HasOne(c => c.User)
@@ -193,30 +201,6 @@ namespace Infrastructure
                 .HasOne(t => t.AssignedByUser)
                 .WithMany()
                 .HasForeignKey(t => t.AssignedByUserId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .HasOne(t => t.ApprovedByUser)
-                .WithMany()
-                .HasForeignKey(t => t.ApprovedByUserId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .HasOne(t => t.Request)
-                .WithMany(r => r.TraineeAssignations)
-                .HasForeignKey(t => t.RequestId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .HasOne(t => t.Subject)
-                .WithMany(s => s.TraineeAssignations)
-                .HasForeignKey(t => t.SubjectId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .HasOne(t => t.GradedByInstructor)
-                .WithMany()
-                .HasForeignKey(t => t.GradedByInstructorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<InstructorAssignation>()
@@ -446,20 +430,6 @@ namespace Infrastructure
             modelBuilder.Entity<Department>()
                 .Property(d => d.Status)
                 .HasConversion<string>();
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.RequestStatus)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.GradeStatus)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<TraineeAssignation>()
-                .Property(t => t.Gradekind)
-                .HasConversion<string>();
-
-
             modelBuilder.Entity<CertificateTemplate>()
                 .Property(ct => ct.TemplateStatus)
                 .HasConversion<string>();
@@ -567,8 +537,7 @@ namespace Infrastructure
             modelBuilder.Entity<Class>()
                 .HasIndex(c => c.InstructorId);
 
-            modelBuilder.Entity<Class>()
-                .HasIndex(c => c.AprovedUserId);
+            // Removed index on Class.AprovedUserId (field removed)
 
             modelBuilder.Entity<Certificate>()
                 .HasIndex(c => c.UserId);
@@ -597,17 +566,35 @@ namespace Infrastructure
             modelBuilder.Entity<TraineeAssignation>()
                 .HasIndex(t => t.AssignedByUserId);
 
-            modelBuilder.Entity<TraineeAssignation>()
-                .HasIndex(t => t.ApprovedByUserId);
+            modelBuilder.Entity<TraineeAssignationGrade>()
+                .HasOne(g => g.TraineeAssignation)
+                .WithMany(t => t.Grades)
+                .HasForeignKey(g => g.TraineeAssignationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TraineeAssignationGrade>()
+                .Property(g => g.GradeKind)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<TraineeAssignationGrade>()
+                .Property(g => g.GradeStatus)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<TraineeAssignationGrade>()
+                .Property(g => g.Grade)
+                .HasPrecision(4, 1); // up to 10.0 with 0.5 increments
+
+            modelBuilder.Entity<TraineeAssignationGrade>()
+                .HasIndex(g => g.TraineeAssignationId);
 
             modelBuilder.Entity<TraineeAssignation>()
-                .HasIndex(t => t.RequestId);
+                .Property(t => t.OverallGradeStatus)
+                .HasConversion<string>();
 
             modelBuilder.Entity<TraineeAssignation>()
-                .HasIndex(t => t.SubjectId);
+                .Property(t => t.AssignmentKind)
+                .HasConversion<string>();
 
-            modelBuilder.Entity<TraineeAssignation>()
-                .HasIndex(t => t.GradedByInstructorId);
 
             modelBuilder.Entity<InstructorAssignation>()
                 .HasIndex(i => i.SubjectId);

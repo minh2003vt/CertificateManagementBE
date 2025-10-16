@@ -23,9 +23,7 @@ namespace Domain.Entities
         public string? ApprovedByUserId { get; set; }
         public virtual User? ApprovedByUser { get; set; }
         public DateTime? ApprovedDate { get; set; }
-
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
-
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<TraineeAssignation> TraineeAssignations { get; set; } = [];

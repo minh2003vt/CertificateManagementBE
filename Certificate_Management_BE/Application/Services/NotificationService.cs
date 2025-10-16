@@ -263,6 +263,32 @@ namespace Application.Services
                 };
             }
         }
+
+        public async Task SendWelcomeAsync(string userId)
+        {
+            try
+            {
+                var title = "Welcome";
+                var message = "Welcome to the system! Your account is ready to use.";
+
+                // Create DB notification
+                var createDto = new CreateNotificationDto
+                {
+                    UserId = userId,
+                    Title = title,
+                    Message = message,
+                    NotificationType = "Welcome"
+                };
+                await CreateNotificationAsync(createDto);
+
+                // Send SignalR notification
+                await SendSignalRNotificationAsync(userId, title, message, new { type = "welcome" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to send welcome notification to user {userId}");
+            }
+        }
     }
 }
 

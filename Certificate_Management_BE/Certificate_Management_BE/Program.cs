@@ -39,6 +39,16 @@ builder.Services.AddDbContext<Context>(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:3001", "http://localhost:5173", "https://localhost:3001")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -219,6 +229,7 @@ builder.Services.AddScoped<IStudyRecordService, StudyRecordService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IGeminiService, GeminiService>();
+builder.Services.AddScoped<IClassService, ClassService>();
 
 // Register HubManagerService for SignalR hub management
 builder.Services.AddScoped<IHubManagerService, Certificate_Management_BE.Services.HubManagerService>();
@@ -248,6 +259,7 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowLocalhost");
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -23,12 +23,14 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtTokenHelper _jwtTokenHelper;
         private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
 
-        public AuthenticationService(IUnitOfWork unitOfWork, JwtTokenHelper jwtTokenHelper, IEmailService emailService)
+        public AuthenticationService(IUnitOfWork unitOfWork, JwtTokenHelper jwtTokenHelper, IEmailService emailService, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _jwtTokenHelper = jwtTokenHelper;
             _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         #region Login
@@ -300,6 +302,7 @@ Best regards,
 Certificate Management Team";
 
                 await _emailService.SendEmailAsync(dto.Email, emailSubject, emailBody);
+                await _notificationService.SendWelcomeAsync(user.UserId);
 
                 // Map to DTO
                 response.Success = true;
