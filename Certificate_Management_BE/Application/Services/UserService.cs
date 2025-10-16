@@ -225,13 +225,13 @@ namespace Application.Services
         #endregion
 
         #region GetAllUsers
-        public async Task<ServiceResponse<List<UserProfileDto>>> GetAllUsersAsync()
+        public async Task<ServiceResponse<List<ListUserDTO>>> GetAllUsersAsync()
         {
-            var response = new ServiceResponse<List<UserProfileDto>>();
+            var response = new ServiceResponse<List<ListUserDTO>>();
             try
             {
                 var users = await _unitOfWork.UserRepository.GetAll();
-                response.Data = users.Select(u => new UserProfileDto
+                response.Data = users.Select(u => new ListUserDTO
                 {
                     UserId = u.UserId,
                     FullName = u.FullName,
@@ -240,7 +240,7 @@ namespace Application.Services
                     Sex = u.Sex,
                     DateOfBirth = u.DateOfBirth,
                     CitizenId = u.CitizenId,
-                    AvatarUrl = u.AvatarUrl,
+                    RoleId = u.RoleId,
                     Status = u.Status
                 }).ToList();
                 response.Success = true;
@@ -1031,16 +1031,16 @@ namespace Application.Services
             }
         }
         #endregion
-        #region GetAllTrainees
-        public async Task<ServiceResponse<List<UserProfileDto>>> GetAllByRoleAsync(int id)
+        #region GetAllByRole
+        public async Task<ServiceResponse<List<ListUserDTO>>> GetAllByRoleAsync(int id)
         {
-            var response = new ServiceResponse<List<UserProfileDto>>();
+            var response = new ServiceResponse<List<ListUserDTO>>();
             try
             {
                 var users = await _unitOfWork.UserRepository.GetAll();
                 var list = users.Where(u => u.RoleId == id).ToList();
 
-                response.Data = list.Select(u => new UserProfileDto
+                response.Data = list.Select(u => new ListUserDTO
                 {
                     UserId = u.UserId,
                     FullName = u.FullName,
@@ -1049,7 +1049,7 @@ namespace Application.Services
                     Sex = u.Sex,
                     DateOfBirth = u.DateOfBirth,
                     CitizenId = u.CitizenId,
-                    AvatarUrl = u.AvatarUrl
+                    Status = u.Status
                 }).ToList();
                 response.Success = true;
                 response.Message = "Users retrieved successfully";
