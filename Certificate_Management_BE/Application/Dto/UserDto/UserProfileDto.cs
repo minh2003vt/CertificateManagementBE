@@ -13,6 +13,7 @@ namespace Application.Dto.UserDto
         public DateOnly DateOfBirth { get; set; }
         public string CitizenId { get; set; } = string.Empty;
         public string? AvatarUrl { get; set; }
+        public AccountStatus Status { get; set; }
     }
    
 }

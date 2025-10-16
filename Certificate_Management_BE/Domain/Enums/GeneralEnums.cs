@@ -70,20 +70,32 @@ namespace Domain.Enums
         Recurrent = 1,
         Relearn = 2
     }
-
+    public enum  GradeKind
+    {
+     TotalScore = 0,
+     PracticeExamScore = 1,
+     FinalExamScore = 2,
+     ResitPracticeExamScore = 3,
+     ResitFinalExamScore = 4,
+     Attendance = 5
+    }
     public enum GradeStatus
+    {
+        Pass = 1,
+        Fail = 0
+    }
+    public enum OverallGradeStatus
     {
         Pending = -1,
         Pass = 1,
         Fail = 0
     }
-    
-    public enum GradeKind
+
+    public enum AssignmentKind
     {
         Initial = 0,
         Relearn=1,
         Reccurent= 2
-
     }
         public enum TemplateStatus
     {

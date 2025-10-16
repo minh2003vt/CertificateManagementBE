@@ -240,7 +240,8 @@ namespace Application.Services
                     Sex = u.Sex,
                     DateOfBirth = u.DateOfBirth,
                     CitizenId = u.CitizenId,
-                    AvatarUrl = u.AvatarUrl
+                    AvatarUrl = u.AvatarUrl,
+                    Status = u.Status
                 }).ToList();
                 response.Success = true;
                 response.Message = "Users retrieved successfully";
@@ -1013,6 +1014,9 @@ namespace Application.Services
                     user.PasswordHash
                 );
 
+                // Send welcome notification (DB + real-time)
+                await _notificationService.SendWelcomeAsync(user.UserId);
+
                 response.Success = true;
                 response.Message = $"Credentials email sent successfully to {user.Email}";
                 response.Data = user.UserId;
@@ -1027,7 +1031,37 @@ namespace Application.Services
             }
         }
         #endregion
+        #region GetAllTrainees
+        public async Task<ServiceResponse<List<UserProfileDto>>> GetAllByRoleAsync(int id)
+        {
+            var response = new ServiceResponse<List<UserProfileDto>>();
+            try
+            {
+                var users = await _unitOfWork.UserRepository.GetAll();
+                var list = users.Where(u => u.RoleId == id).ToList();
 
+                response.Data = list.Select(u => new UserProfileDto
+                {
+                    UserId = u.UserId,
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                    Sex = u.Sex,
+                    DateOfBirth = u.DateOfBirth,
+                    CitizenId = u.CitizenId,
+                    AvatarUrl = u.AvatarUrl
+                }).ToList();
+                response.Success = true;
+                response.Message = "Users retrieved successfully";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+        #endregion
     }
 
     // Helper class for external certificate data

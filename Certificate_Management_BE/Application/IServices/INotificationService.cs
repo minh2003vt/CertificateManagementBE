@@ -29,6 +29,11 @@ namespace Application.IServices
         /// Marks a notification as read
         /// </summary>
         Task<ServiceResponse<bool>> MarkAsReadAsync(int notificationId, string userId);
+
+        /// <summary>
+        /// Sends a welcome notification to a specific user (DB + SignalR)
+        /// </summary>
+        Task SendWelcomeAsync(string userId);
     }
 }
 

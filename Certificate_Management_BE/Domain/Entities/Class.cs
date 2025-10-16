@@ -17,18 +17,17 @@ namespace Domain.Entities
         public string InstructorId { get; set; } = string.Empty;
         public virtual User Instructor { get; set; } = null!;
 
-        [Required]
-        public DateTime Start { get; set; }
-        [Required]
-        public DateTime End { get; set; }
+        [ForeignKey("Subject")]
+        public string SubjectId { get; set; } = string.Empty;
+        public virtual Subject Subject { get; set; } = null!;
+
+        [ForeignKey("ClassGroup")]
+        public int ClassGroupId { get; set; }
+        public virtual ClassGroup ClassGroup { get; set; } = null!;
 
         public virtual ICollection<ClassTraineeAssignation> ClassTraineeAssignations { get; set; } = [];
 
 
-        [ForeignKey("AprovedUser")]
-        public string? AprovedUserId { get; set; }
-        public virtual User? AprovedUser { get; set; }
-        public DateTime? ApprovedAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
