@@ -6,7 +6,7 @@ namespace Application.Dto.GeminiDto
     public class GeminiCheckRequestDto
     {
         [Required]
-        public JsonElement JsonPayload { get; set; }
+        public string JsonPayload { get; set; }
     }
 }
 

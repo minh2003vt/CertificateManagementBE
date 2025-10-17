@@ -38,6 +38,7 @@ namespace Application
         public ITraineeAssignationRepository TraineeAssignationRepository { get; }
         public IUserSpecialtyRepository UserSpecialtyRepository { get; }
         public IUserDepartmentRepository UserDepartmentRepository { get; }
+        public IClassGroupRepository ClassGroupRepository { get; }
 
         Task<int> SaveChangesAsync();
     }

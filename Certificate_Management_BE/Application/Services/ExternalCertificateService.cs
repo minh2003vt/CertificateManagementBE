@@ -446,6 +446,46 @@ namespace Application.Services
             return response;
         }
         #endregion
+
+        #region DeleteCertificateImage
+        public async Task<ServiceResponse<string>> DeleteCertificateImageAsync(int id)
+        {
+            var response = new ServiceResponse<string>();
+            try
+            {
+                var certificate = await _unitOfWork.ExternalCertificateRepository
+                    .GetSingleOrDefaultByNullableExpressionAsync(c => c.ExternalCertificateId == id);
+
+                if (certificate == null)
+                {
+                    response.Success = false;
+                    response.Message = "Certificate not found";
+                    return response;
+                }
+
+                if (!string.IsNullOrEmpty(certificate.CertificateFileUrl))
+                {
+                    await _cloudinaryService.DeleteImageAsync(certificate.CertificateFileUrl);
+                }
+
+                certificate.CertificateFileUrl = null;
+                await _unitOfWork.ExternalCertificateRepository.UpdateAsync(certificate);
+
+                response.Success = true;
+                response.Data = "Certificate image removed";
+                response.Message = "Certificate image deleted and URL cleared";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Failed to delete certificate image";
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+        #endregion
     }
 }
 

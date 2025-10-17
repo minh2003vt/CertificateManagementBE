@@ -1,7 +1,6 @@
 using Application.Dto.PlanDto;
 using Application.Dto.RequestDto;
 using Application.IServices;
-using Certificate_Management_BE.Extensions;
 using Certificate_Management_BE.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -86,12 +85,7 @@ namespace Certificate_Management_BE.Controllers
         [AuthorizeRoles("Education Officer")]
         public async Task<IActionResult> Create([FromBody] CreatePlanDto dto)
         {
-            var userId = User.GetUserId();
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User ID not found in token.");
-            }
-
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
             var result = await _planService.CreateAsync(dto, userId);
             if (!result.Success)
             {
@@ -137,12 +131,7 @@ namespace Certificate_Management_BE.Controllers
         [AuthorizeRoles("Administrator")]
         public async Task<IActionResult> Approve(string planId)
         {
-            var userId = User.GetUserId();
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User ID not found in token.");
-            }
-
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
             var result = await _planService.ApproveAsync(planId, userId);
             if (!result.Success)
             {
@@ -158,12 +147,7 @@ namespace Certificate_Management_BE.Controllers
         [AuthorizeRoles("Administrator")]
         public async Task<IActionResult> Reject(string planId)
         {
-            var userId = User.GetUserId();
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User ID not found in token.");
-            }
-
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
             var result = await _planService.RejectAsync(planId, userId);
             if (!result.Success)
             {
