@@ -183,7 +183,8 @@ builder.Services.AddScoped<IUnitOfWork>(sp =>
         sp.GetRequiredService<ISubjectCertificateRepository>(),
         sp.GetRequiredService<ITraineeAssignationRepository>(),
         sp.GetRequiredService<IUserSpecialtyRepository>(),
-        sp.GetRequiredService<IUserDepartmentRepository>()
+        sp.GetRequiredService<IUserDepartmentRepository>(),
+        sp.GetRequiredService<IClassGroupRepository>()
     );
 });
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -214,6 +215,7 @@ builder.Services.AddScoped<ISubjectCertificateRepository, SubjectCertificateRepo
 builder.Services.AddScoped<ITraineeAssignationRepository, TraineeAssignationRepository>();
 builder.Services.AddScoped<IUserSpecialtyRepository, UserSpecialtyRepository>();
 builder.Services.AddScoped<IUserDepartmentRepository, UserDepartmentRepository>();
+builder.Services.AddScoped<IClassGroupRepository, ClassGroupRepository>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -230,6 +232,7 @@ builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IGeminiService, GeminiService>();
 builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<IClassGroupService, ClassGroupService>();
 
 // Register HubManagerService for SignalR hub management
 builder.Services.AddScoped<IHubManagerService, Certificate_Management_BE.Services.HubManagerService>();

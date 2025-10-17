@@ -68,7 +68,8 @@ namespace Infrastructure
             ISubjectCertificateRepository subjectCertificateRepository,
             ITraineeAssignationRepository traineeAssignationRepository,
             IUserSpecialtyRepository userSpecialtyRepository,
-            IUserDepartmentRepository userDepartmentRepository)
+            IUserDepartmentRepository userDepartmentRepository,
+            IClassGroupRepository classGroupRepository)
         {
             _context = context;
             _userRepository = userRepository;
@@ -99,6 +100,7 @@ namespace Infrastructure
             _traineeAssignationRepository = traineeAssignationRepository;
             _userSpecialtyRepository = userSpecialtyRepository;
             _userDepartmentRepository = userDepartmentRepository;
+            _classGroupRepository = classGroupRepository;
         }
         public object Context => _context;
         public IUserRepository UserRepository => _userRepository;
@@ -129,6 +131,8 @@ namespace Infrastructure
         public ITraineeAssignationRepository TraineeAssignationRepository => _traineeAssignationRepository;
         public IUserSpecialtyRepository UserSpecialtyRepository => _userSpecialtyRepository;
         public IUserDepartmentRepository UserDepartmentRepository => _userDepartmentRepository;
+        private readonly IClassGroupRepository _classGroupRepository;
+        public IClassGroupRepository ClassGroupRepository => _classGroupRepository;
 
         public async Task<int> SaveChangesAsync()
         {

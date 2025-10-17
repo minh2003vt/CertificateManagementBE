@@ -15,6 +15,7 @@ namespace Application.IServices
         Task<ServiceResponse<ExternalCertificateDetailDto>> UpdateAsync(int id, UpdateExternalCertificateDto dto);
         Task<ServiceResponse<ExternalCertificateDetailDto>> UpdateCertificateFileAsync(int id, IFormFile file);
         Task<ServiceResponse<string>> DeleteAsync(int id);
+        Task<ServiceResponse<string>> DeleteCertificateImageAsync(int id);
     }
 }
 
