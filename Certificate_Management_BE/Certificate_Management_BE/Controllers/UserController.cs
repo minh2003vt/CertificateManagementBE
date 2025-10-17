@@ -69,6 +69,29 @@ namespace Certificate_Management_BE.Controllers
         }
         #endregion
 
+        #region DeleteAvatar
+        /// <summary>
+        /// Delete user avatar on Cloudinary and clear AvatarUrl
+        /// </summary>
+        [HttpDelete("profile/avatar")]
+        [AuthorizeRoles()]
+        public async Task<IActionResult> DeleteAvatar()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Success = false, Message = "User ID not found in token" });
+            }
+
+            var result = await _userService.DeleteAvatarAsync(userId);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        #endregion
+
         #region GetAllUsers
         [HttpGet("all")]
         [AuthorizeRoles("Administrator", "Education Officer")]
@@ -241,7 +264,7 @@ namespace Certificate_Management_BE.Controllers
         /// Create manual account (Education Officer only)
         /// </summary>
         [HttpPost("create-manual-account")]
-        [AuthorizeRoles("Education Officer")]
+        [AuthorizeRoles("Administrator")]
         public async Task<IActionResult> CreateManualAccount([FromBody] CreateManualAccountDto dto)
         {
             if (!ModelState.IsValid)

@@ -54,6 +54,55 @@ namespace Application.Services
                 throw new Exception($"Failed to upload image to Cloudinary: {ex.Message}", ex);
             }
         }
+
+        public async Task<bool> DeleteImageAsync(string publicIdOrUrl)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(publicIdOrUrl))
+                {
+                    return true; // nothing to delete
+                }
+
+                // Accept either a Cloudinary public id or a full URL; if URL, derive public id by stripping version and extension
+                string publicId = publicIdOrUrl;
+                if (publicIdOrUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || publicIdOrUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                    // URL format: https://res.cloudinary.com/<cloud>/image/upload/v<version>/<folder>/<name>.<ext>
+                    // Extract part after '/upload/'
+                    var marker = "/upload/";
+                    var idx = publicIdOrUrl.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
+                    if (idx >= 0)
+                    {
+                        var after = publicIdOrUrl.Substring(idx + marker.Length);
+                        // remove leading version segment like v1691234567/
+                        if (after.StartsWith("v"))
+                        {
+                            var slashIdx = after.IndexOf('/');
+                            if (slashIdx > 0)
+                            {
+                                after = after.Substring(slashIdx + 1);
+                            }
+                        }
+                        // drop extension (last dot segment)
+                        var lastDot = after.LastIndexOf('.');
+                        publicId = lastDot > 0 ? after.Substring(0, lastDot) : after;
+                    }
+                }
+
+                var deletionParams = new DeletionParams(publicId)
+                {
+                    ResourceType = ResourceType.Image
+                };
+                var result = await _cloudinary.DestroyAsync(deletionParams);
+                return string.Equals(result.Result, "ok", StringComparison.OrdinalIgnoreCase) || string.Equals(result.Result, "not found", StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception)
+            {
+                // swallow and report failure; callers decide how to proceed
+                return false;
+            }
+        }
     }
 }
 

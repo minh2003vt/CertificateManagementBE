@@ -68,7 +68,8 @@ namespace Application.Services
                     var roleEntity = await _unitOfWork.RoleRepository.GetSingleOrDefaultByNullableExpressionAsync(r => r.RoleId == user.RoleId);
                     user.Role = roleEntity;
                 }
-
+                user.LastLogin = DateTime.UtcNow.AddHours(7);
+                await _unitOfWork.UserRepository.UpdateAsync(user);
                 var roles = new List<string> { user.Role?.RoleName ?? "User" };
                 var token = _jwtTokenHelper.GenerateToken(user, roles);
 
@@ -138,7 +139,12 @@ namespace Application.Services
                     response.Message = "User not found with the provided email or username.";
                     return response;
                 }
-
+                if(user.Status != Domain.Enums.AccountStatus.Active)
+                {
+                    response.Success = false;
+                    response.Message = "Your account is not active. Please contact administrator.";
+                    return response;
+                }
                 // Generate JWT reset token (expires in 5 minutes)
                 var resetToken = _jwtTokenHelper.GeneratePasswordResetToken(user.UserId, user.Email);
 
@@ -203,6 +209,12 @@ namespace Application.Services
                     response.Message = "User not found.";
                     return response;
                 }
+                if (user.Status != Domain.Enums.AccountStatus.Active)
+                {
+                    response.Success = false;
+                    response.Message = "Your account is not active. Please contact administrator.";
+                    return response;
+                }
 
                 // Hash new password
                 user.PasswordHash = PasswordHashHelper.HashPassword(dto.NewPassword);
@@ -230,6 +242,13 @@ namespace Application.Services
             var response = new ServiceResponse<UserProfileDto>();
             try
             {
+                var ByUser = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == createdByUserId);
+                if (ByUser?.Status != Domain.Enums.AccountStatus.Active)
+                {
+                    response.Success = false;
+                    response.Message = "Your account is not active. Please contact administrator.";
+                    return response;
+                }
                 // Check if email already exists
                 var existingUser = await _unitOfWork.UserRepository
                     .GetSingleOrDefaultByNullableExpressionAsync(u => u.Email == dto.Email);

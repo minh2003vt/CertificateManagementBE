@@ -10,10 +10,11 @@ namespace Application.Services
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
-
+       private readonly string frontendUrl;
         public EmailService(IConfiguration configuration)
         {
             _configuration = configuration;
+            frontendUrl = "http://localhost:5173";
         }
 
         public async Task SendPasswordResetEmailAsync(string toEmail, string userName, string resetToken)
@@ -23,7 +24,6 @@ namespace Application.Services
             var senderEmail = _configuration["EmailSettings:SenderEmail"];
             var senderPassword = _configuration["EmailSettings:SenderPassword"];
             var senderName = _configuration["EmailSettings:SenderName"];
-            var frontendUrl = _configuration["FrontendUrl:Resetpass"];
 
             var resetLink = $"{frontendUrl}/reset-password?token={resetToken}";
 

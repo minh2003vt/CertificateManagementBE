@@ -224,6 +224,44 @@ namespace Application.Services
         }
         #endregion
 
+        #region DeleteAvatar
+        public async Task<ServiceResponse<string>> DeleteAvatarAsync(string userId)
+        {
+            var response = new ServiceResponse<string>();
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetSingleOrDefaultByNullableExpressionAsync(u => u.UserId == userId);
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                    return response;
+                }
+
+                if (!string.IsNullOrEmpty(user.AvatarUrl))
+                {
+                    await _cloudinaryService.DeleteImageAsync(user.AvatarUrl);
+                }
+
+                user.AvatarUrl = null;
+                user.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                await _unitOfWork.UserRepository.UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.Success = true;
+                response.Message = "Avatar deleted successfully";
+                response.Data = userId;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+        #endregion
+
         #region GetAllUsers
         public async Task<ServiceResponse<List<ListUserDTO>>> GetAllUsersAsync()
         {
@@ -1011,7 +1049,7 @@ namespace Application.Services
                     user.Email,
                     user.FullName,
                     user.Username,
-                    user.PasswordHash
+                    user.Username
                 );
 
                 // Send welcome notification (DB + real-time)
@@ -1031,6 +1069,7 @@ namespace Application.Services
             }
         }
         #endregion
+
         #region GetAllByRole
         public async Task<ServiceResponse<List<ListUserDTO>>> GetAllByRoleAsync(int id)
         {
@@ -1049,6 +1088,7 @@ namespace Application.Services
                     Sex = u.Sex,
                     DateOfBirth = u.DateOfBirth,
                     CitizenId = u.CitizenId,
+                    RoleId = u.RoleId,
                     Status = u.Status
                 }).ToList();
                 response.Success = true;

@@ -18,6 +18,21 @@ namespace Certificate_Management_BE.Controllers
         }
 
         /// <summary>
+        /// Delete certificate image on Cloudinary and clear URL in DB
+        /// </summary>
+        [HttpDelete("{id}/image")]
+        [AuthorizeRoles("Administrator", "Education Officer", "Trainee")]
+        public async Task<IActionResult> DeleteImage(int id)
+        {
+            var result = await _externalCertificateService.DeleteCertificateImageAsync(id);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Get all external certificates (id, code, name only)
         /// </summary>
         [HttpGet("all")]
