@@ -36,6 +36,8 @@ namespace Application
         public ISubjectRepository SubjectRepository { get; }
         public ISubjectCertificateRepository SubjectCertificateRepository { get; }
         public ITraineeAssignationRepository TraineeAssignationRepository { get; }
+        public ITraineeAssignationGradeRepository TraineeAssignationGradeRepository { get; }
+        public ITraineePlanEnrollmentRepository TraineePlanEnrollmentRepository { get; }
         public IUserSpecialtyRepository UserSpecialtyRepository { get; }
         public IUserDepartmentRepository UserDepartmentRepository { get; }
         public IClassGroupRepository ClassGroupRepository { get; }

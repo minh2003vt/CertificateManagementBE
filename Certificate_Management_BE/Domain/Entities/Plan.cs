@@ -35,5 +35,6 @@ namespace Domain.Entities
         public virtual Specialty? Specialty { get; set; }
         public virtual ICollection<StudyRecord> StudyRecords { get; set; } = [];
         public virtual ICollection<PlanCertificate> PlanCertificates { get; set; } = [];
+        public virtual ICollection<TraineePlanEnrollment> TraineePlanEnrollments { get; set; } = [];
     }
 }
