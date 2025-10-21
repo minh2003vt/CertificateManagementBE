@@ -20,18 +20,19 @@ namespace Domain.Entities
         [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
         
-        [Required, Column(TypeName = "text")]
-        public string TemplateContent { get; set; } = string.Empty; // HTML content
+        [Column(TypeName = "text")]
+        public string? TemplateFileUrl { get; set; } // HTML content
 
         [ForeignKey("CreatedByUser")]
         public string CreatedByUserId { get; set; } = string.Empty;
         public virtual User CreatedByUser { get; set; } = null!;
         public TemplateStatus TemplateStatus { get; set; }
+        public CertificateKind CertificateKind { get; set; }
         [ForeignKey("ApprovedByUser")]
         public string? ApprovedByUserId { get; set; }
         public User? ApprovedByUser { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
-        public DateTime LastUpdatedAt { get; set; } = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime LastUpdatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<Certificate> Certificates { get; set; } = [];
     }
 }

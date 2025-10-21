@@ -1,5 +1,7 @@
 using Application.Dto.ClassDto;
+using Application.Dto.GradeImportDto;
 using Application.ServiceResponse;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,6 +14,8 @@ namespace Application.IServices
         Task<ServiceResponse<ClassDetailDto>> CreateAsync(CreateClassDto dto, string createdByUserId);
         Task<ServiceResponse<ClassDetailDto>> UpdateAsync(int classId, UpdateClassDto dto, string updatedByUserId);
         Task<ServiceResponse<bool>> DeleteAsync(int classId);
+        Task<ServiceResponse<ImportGradeResultDto>> ImportGradesAsync(int classId, IFormFile file);
+        Task<ServiceResponse<List<TraineeAssignationWithGradesDto>>> GetTraineeAssignationsWithGradesAsync(int classId);
     }
 }
 

@@ -37,11 +37,11 @@ namespace Domain.Entities
 
         public DateTime SignDate { get; set; } = DateTime.UtcNow;
         public DateTime? ExpirationDate { get; set; }
+         [Required, Column(TypeName = "text")]
         public string CertificateHTMLContent { get; set; } = string.Empty;
         public string? RevocationReason { get; set; }
         public DateTime? RevocationDate { get; set; }
         public bool IncludesRelearn { get; set; } = false;
-        public string? RelearnSubjects { get; set; }
         public virtual PlanCertificate? PlanCertificate { get; set; }
         public virtual SubjectCertificate? SubjectCertificate { get; set; }
         public virtual CourseCertificate? CourseCertificate { get; set; }

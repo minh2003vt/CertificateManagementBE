@@ -101,6 +101,13 @@ namespace Domain.Enums
     {
         Active = 1, Inactive = 0
     }
+    public enum CertificateKind
+    {
+        Initial = 0,
+        Recurrent = 1,
+        Course = 2,
+        Subject = 3
+    }
     public enum RequestType
     {
 // Plan Management

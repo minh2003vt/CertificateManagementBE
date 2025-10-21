@@ -1,6 +1,8 @@
 using Application.Dto.ClassDto;
+using Application.Dto.GradeImportDto;
 using Application.IServices;
 using Certificate_Management_BE.Attributes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -61,6 +63,24 @@ namespace Certificate_Management_BE.Controllers
         public async Task<IActionResult> Delete(int classId)
         {
             var result = await _classService.DeleteAsync(classId);
+            if (!result.Success) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPost("{classId}/import-grades")]
+        [AuthorizeRoles("Education Officer", "Instructor")]
+        public async Task<IActionResult> ImportGrades(int classId, IFormFile file)
+        {
+            var result = await _classService.ImportGradesAsync(classId, file);
+            if (!result.Success) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpGet("{classId}/trainee-assignations")]
+        [AuthorizeRoles("Administrator", "Education Officer", "Instructor")]
+        public async Task<IActionResult> GetTraineeAssignationsWithGrades(int classId)
+        {
+            var result = await _classService.GetTraineeAssignationsWithGradesAsync(classId);
             if (!result.Success) return BadRequest(result);
             return Ok(result);
         }

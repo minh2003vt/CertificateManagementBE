@@ -182,6 +182,8 @@ builder.Services.AddScoped<IUnitOfWork>(sp =>
         sp.GetRequiredService<ISubjectRepository>(),
         sp.GetRequiredService<ISubjectCertificateRepository>(),
         sp.GetRequiredService<ITraineeAssignationRepository>(),
+        sp.GetRequiredService<ITraineeAssignationGradeRepository>(),
+        sp.GetRequiredService<ITraineePlanEnrollmentRepository>(),
         sp.GetRequiredService<IUserSpecialtyRepository>(),
         sp.GetRequiredService<IUserDepartmentRepository>(),
         sp.GetRequiredService<IClassGroupRepository>()
@@ -213,6 +215,8 @@ builder.Services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<ISubjectCertificateRepository, SubjectCertificateRepository>();
 builder.Services.AddScoped<ITraineeAssignationRepository, TraineeAssignationRepository>();
+builder.Services.AddScoped<ITraineeAssignationGradeRepository, TraineeAssignationGradeRepository>();
+builder.Services.AddScoped<ITraineePlanEnrollmentRepository, TraineePlanEnrollmentRepository>();
 builder.Services.AddScoped<IUserSpecialtyRepository, UserSpecialtyRepository>();
 builder.Services.AddScoped<IUserDepartmentRepository, UserDepartmentRepository>();
 builder.Services.AddScoped<IClassGroupRepository, ClassGroupRepository>();
@@ -233,6 +237,11 @@ builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IGeminiService, GeminiService>();
 builder.Services.AddScoped<IClassService, ClassService>();
 builder.Services.AddScoped<IClassGroupService, ClassGroupService>();
+builder.Services.AddScoped<ITraineeAssignationService, TraineeAssignationService>();
+builder.Services.AddScoped<ITraineePlanEnrollmentService, TraineePlanEnrollmentService>();
+builder.Services.AddScoped<ICertificateTemplateService, CertificateTemplateService>();
+builder.Services.AddScoped<IDecisionTemplateService, DecisionTemplateService>();
+builder.Services.AddScoped<ICertificateEligibilityService, CertificateEligibilityService>();
 
 // Register HubManagerService for SignalR hub management
 builder.Services.AddScoped<IHubManagerService, Certificate_Management_BE.Services.HubManagerService>();
@@ -268,9 +277,6 @@ app.UseAuthorization();
 
 // Add user status middleware after authentication but before authorization
 app.UseMiddleware<Certificate_Management_BE.Middleware.UserStatusMiddleware>();
-
-// Add approval status middleware to prevent modifications to approved entities
-app.UseMiddleware<Certificate_Management_BE.Middleware.ApprovalStatusMiddleware>();
 
 // Map SignalR Hubs - Each role has its own hub
 app.MapHub<Certificate_Management_BE.Hubs.AdminHub>("/hubs/admin");
