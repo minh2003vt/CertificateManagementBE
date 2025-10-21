@@ -582,8 +582,6 @@ namespace Application.Services
                                             result.TraineeData.FailureCount++;
                                             continue;
                                         }
-
-                                        // Create new UserSpecialty for existing user
                                         var newUserSpecialty = new UserSpecialty
                                         {
                                             UserId = traineeDto.UserId,

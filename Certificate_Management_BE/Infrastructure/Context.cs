@@ -304,7 +304,6 @@ namespace Infrastructure
                 .WithMany(u => u.ApprovedRequests)
                 .HasForeignKey(r => r.ApprovedByUserId)
                 .OnDelete(DeleteBehavior.SetNull);
-
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.User)
                 .WithMany(u => u.Notifications)
@@ -434,17 +433,9 @@ namespace Infrastructure
                 .Property(ct => ct.TemplateStatus)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<CertificateTemplate>()
-                .Property(ct => ct.TemplateContent)
-                .HasColumnType("text");
-
             modelBuilder.Entity<DecisionTemplate>()
                 .Property(dt => dt.TemplateStatus)
                 .HasConversion<string>();
-
-            modelBuilder.Entity<DecisionTemplate>()
-                .Property(dt => dt.TemplateContent)
-                .HasColumnType("text");
 
             modelBuilder.Entity<RequestEntity>()
                 .Property(re => re.RequestType)
@@ -708,6 +699,25 @@ namespace Infrastructure
                 .WithOne(cc => cc.Certificate)
                 .HasForeignKey<CourseCertificate>(cc => cc.CertificateId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // TraineePlanEnrollment relationships
+            modelBuilder.Entity<TraineePlanEnrollment>()
+                .HasOne(tpe => tpe.Trainee)
+                .WithMany(u => u.TraineePlanEnrollments)
+                .HasForeignKey(tpe => tpe.TraineeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TraineePlanEnrollment>()
+                .HasOne(tpe => tpe.Plan)
+                .WithMany(p => p.TraineePlanEnrollments)
+                .HasForeignKey(tpe => tpe.PlanId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TraineePlanEnrollment>()
+                .HasOne(tpe => tpe.EnrolledByUser)
+                .WithMany()
+                .HasForeignKey(tpe => tpe.EnrolledByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
         }
     }

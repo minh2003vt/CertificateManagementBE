@@ -58,5 +58,6 @@ namespace Domain.Entities
         public virtual ICollection<Certificate>? IssuedCertificates { get; set; }
         public virtual ICollection<Certificate>? ApprovedCertificates { get; set; }
         public virtual ICollection<Decision> Decisions { get; set; } = [];
+        public virtual ICollection<TraineePlanEnrollment> TraineePlanEnrollments { get; set; } = [];
     }
 }

@@ -17,8 +17,8 @@ namespace Domain.Entities
         [Required, MaxLength(200)]
         public string TemplateName { get; set; } = string.Empty;
 
-        [Required, Column(TypeName = "text")]
-        public string TemplateContent { get; set; } = string.Empty; // HTML content
+        [Column(TypeName = "text")]
+        public string? TemplateFileUrl { get; set; } // HTML content
 
         [MaxLength(500)]
         public string Description { get; set; } = string.Empty;

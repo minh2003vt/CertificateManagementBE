@@ -37,6 +37,8 @@ namespace Infrastructure
         private readonly ISubjectRepository _subjectRepository;
         private readonly ISubjectCertificateRepository _subjectCertificateRepository;
         private readonly ITraineeAssignationRepository _traineeAssignationRepository;
+        private readonly ITraineeAssignationGradeRepository _traineeAssignationGradeRepository;
+        private readonly ITraineePlanEnrollmentRepository _traineePlanEnrollmentRepository;
         private readonly IUserSpecialtyRepository _userSpecialtyRepository;
         private readonly IUserDepartmentRepository _userDepartmentRepository;
         public UnitOfWork(
@@ -67,6 +69,8 @@ namespace Infrastructure
             ISubjectRepository subjectRepository,
             ISubjectCertificateRepository subjectCertificateRepository,
             ITraineeAssignationRepository traineeAssignationRepository,
+            ITraineeAssignationGradeRepository traineeAssignationGradeRepository,
+            ITraineePlanEnrollmentRepository traineePlanEnrollmentRepository,
             IUserSpecialtyRepository userSpecialtyRepository,
             IUserDepartmentRepository userDepartmentRepository,
             IClassGroupRepository classGroupRepository)
@@ -98,6 +102,8 @@ namespace Infrastructure
             _subjectRepository = subjectRepository;
             _subjectCertificateRepository = subjectCertificateRepository;
             _traineeAssignationRepository = traineeAssignationRepository;
+            _traineeAssignationGradeRepository = traineeAssignationGradeRepository;
+            _traineePlanEnrollmentRepository = traineePlanEnrollmentRepository;
             _userSpecialtyRepository = userSpecialtyRepository;
             _userDepartmentRepository = userDepartmentRepository;
             _classGroupRepository = classGroupRepository;
@@ -129,6 +135,8 @@ namespace Infrastructure
         public ISubjectRepository SubjectRepository => _subjectRepository;
         public ISubjectCertificateRepository SubjectCertificateRepository => _subjectCertificateRepository;
         public ITraineeAssignationRepository TraineeAssignationRepository => _traineeAssignationRepository;
+        public ITraineeAssignationGradeRepository TraineeAssignationGradeRepository => _traineeAssignationGradeRepository;
+        public ITraineePlanEnrollmentRepository TraineePlanEnrollmentRepository => _traineePlanEnrollmentRepository;
         public IUserSpecialtyRepository UserSpecialtyRepository => _userSpecialtyRepository;
         public IUserDepartmentRepository UserDepartmentRepository => _userDepartmentRepository;
         private readonly IClassGroupRepository _classGroupRepository;

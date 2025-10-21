@@ -54,9 +54,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("IssuedByUserId")
                         .HasColumnType("text");
 
-                    b.Property<string>("RelearnSubjects")
-                        .HasColumnType("text");
-
                     b.Property<DateTime?>("RevocationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -97,6 +94,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ApprovedByUserId")
                         .HasColumnType("text");
 
+                    b.Property<int>("CertificateKind")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -112,8 +112,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("LastUpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("TemplateContent")
-                        .IsRequired()
+                    b.Property<string>("TemplateFileUrl")
                         .HasColumnType("text");
 
                     b.Property<string>("TemplateName")
@@ -398,8 +397,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("TemplateContent")
-                        .IsRequired()
+                    b.Property<string>("TemplateFileUrl")
                         .HasColumnType("text");
 
                     b.Property<string>("TemplateName")
@@ -955,9 +953,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("RequestId")
-                        .HasColumnType("text");
-
                     b.Property<string>("TraineeId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -968,8 +963,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("TraineeAssignationId");
 
                     b.HasIndex("AssignedByUserId");
-
-                    b.HasIndex("RequestId");
 
                     b.HasIndex("TraineeId");
 
@@ -1011,6 +1004,51 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TraineeAssignationId");
 
                     b.ToTable("TraineeAssignationGrades");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TraineePlanEnrollment", b =>
+                {
+                    b.Property<string>("TraineePlanEnrollmentId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CompletionDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EnrolledByUserId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("EnrollmentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PlanId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TraineeId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("TraineePlanEnrollmentId");
+
+                    b.HasIndex("EnrolledByUserId");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("TraineeId");
+
+                    b.ToTable("TraineePlanEnrollment");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -1601,10 +1639,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("AssignedByUserId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Domain.Entities.Request", null)
-                        .WithMany("TraineeAssignations")
-                        .HasForeignKey("RequestId");
-
                     b.HasOne("Domain.Entities.User", "Trainee")
                         .WithMany("TraineeAssignations")
                         .HasForeignKey("TraineeId")
@@ -1625,6 +1659,32 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("TraineeAssignation");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TraineePlanEnrollment", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "EnrolledByUser")
+                        .WithMany()
+                        .HasForeignKey("EnrolledByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Domain.Entities.Plan", "Plan")
+                        .WithMany("TraineePlanEnrollments")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "Trainee")
+                        .WithMany("TraineePlanEnrollments")
+                        .HasForeignKey("TraineeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EnrolledByUser");
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("Trainee");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -1726,13 +1786,13 @@ namespace Infrastructure.Migrations
                     b.Navigation("PlanCertificates");
 
                     b.Navigation("StudyRecords");
+
+                    b.Navigation("TraineePlanEnrollments");
                 });
 
             modelBuilder.Entity("Domain.Entities.Request", b =>
                 {
                     b.Navigation("RequestEntities");
-
-                    b.Navigation("TraineeAssignations");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -1796,6 +1856,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Sessions");
 
                     b.Navigation("TraineeAssignations");
+
+                    b.Navigation("TraineePlanEnrollments");
 
                     b.Navigation("UserDepartments");
 
